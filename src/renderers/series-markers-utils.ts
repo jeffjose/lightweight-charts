@@ -18,6 +18,9 @@ export function shapeSize(shape: SeriesMarkerShape, originalSize: number): numbe
 		case 'arrowDown':
 		case 'arrowUp':
 			return size(originalSize, 1);
+		case 'triangleDown':
+		case 'triangleUp':
+			return size(originalSize, 0.8);
 		case 'circle':
 			return size(originalSize, 0.8);
 		case 'square':
