@@ -4,8 +4,8 @@ import { BarPrice } from '../model/bar';
 import { Coordinate } from '../model/coordinate';
 import { MismatchDirection } from '../model/plot-list';
 import { PriceLineOptions } from '../model/price-line-options';
-import { SeriesMarker } from '../model/series-markers';
 import { SeriesLollipop } from '../model/series-lollipops';
+import { SeriesMarker } from '../model/series-markers';
 import {
 	SeriesOptionsMap,
 	SeriesPartialOptionsMap,

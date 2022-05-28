@@ -78,6 +78,13 @@ export interface MarkerData {
 	backgroundColor: string;
 }
 
+export interface LollipopData {
+	price: BarPrice;
+	radius: number;
+	borderColor: string | null;
+	backgroundColor: string;
+}
+
 export interface SeriesDataAtTypeMap {
 	Bar: BarPrices;
 	Candlestick: BarPrices;
@@ -246,9 +253,11 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		this._data.setData(data);
 
 		this._recalculateMarkers();
+		this._recalculateLollipops();
 
 		this._paneView.update('data');
 		this._markersPaneView.update('data');
+		this._lollipopsPaneView.update('data');
 
 		if (this._lastPriceAnimationPaneView !== null) {
 			if (updateInfo && updateInfo.lastBarUpdatedOrNewBarsAddedToTheRight) {
@@ -284,7 +293,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return this._indexedMarkers;
 	}
 
-	public setLollipops(data: readonly SeriesMarker<TimePoint>[]): void {
+	public setLollipops(data: readonly SeriesLollipop<TimePoint>[]): void {
 		this._lollipops = data;
 		this._recalculateLollipops();
 		const sourcePane = this.model().paneForSource(this);
@@ -395,7 +404,8 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		res.push(
 			this._paneView,
 			this._priceLineView,
-			this._markersPaneView
+			this._markersPaneView,
+			this._lollipopsPaneView
 		);
 
 		const priceLineViews = this._customPriceLines.map((line: CustomPriceLine) => line.paneView());
@@ -445,6 +455,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	public updateAllViews(): void {
 		this._paneView.update();
 		this._markersPaneView.update();
+		this._lollipopsPaneView.update();
 
 		for (const priceAxisView of this._priceAxisViews) {
 			priceAxisView.update();
@@ -481,6 +492,24 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return { price, radius, borderColor, backgroundColor };
 	}
 
+	public lollipopDataAtIndex(index: TimePointIndex): LollipopData | null {
+		const getValue = (this._seriesType === 'Line' || this._seriesType === 'Area' || this._seriesType === 'Baseline') &&
+			(this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerVisible;
+
+		if (!getValue) {
+			return null;
+		}
+		const bar = this._data.valueAt(index);
+		if (bar === null) {
+			return null;
+		}
+		const price = bar.value[PlotRowValueIndex.Close] as BarPrice;
+		const radius = this._lollipopRadius();
+		const borderColor = this._lollipopBorderColor();
+		const backgroundColor = this._lollipopBackgroundColor(index);
+		return { price, radius, borderColor, backgroundColor };
+	}
+
 	public title(): string {
 		return this._options.title;
 	}
@@ -513,9 +542,8 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			const base = (this._options as HistogramStyleOptions).base;
 			const rangeWithBase = new PriceRangeImpl(base, base);
 			range = range !== null ? range.merge(rangeWithBase) : rangeWithBase;
-		}
-
-		return new AutoscaleInfoImpl(range,	this._markersPaneView.autoScaleMargins());
+		} // TODO (jeffjose):  No lollipop here
+		return new AutoscaleInfoImpl(range, this._markersPaneView.autoScaleMargins());
 	}
 
 	private _markerRadius(): number {
@@ -545,6 +573,47 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	private _markerBackgroundColor(index: TimePointIndex): string {
+		switch (this._seriesType) {
+			case 'Line':
+			case 'Area':
+			case 'Baseline': {
+				const crosshairMarkerBackgroundColor = (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerBackgroundColor;
+				if (crosshairMarkerBackgroundColor.length !== 0) {
+					return crosshairMarkerBackgroundColor;
+				}
+			}
+		}
+
+		return this.barColorer().barStyle(index).barColor;
+	}
+
+	private _lollipopRadius(): number {
+		switch (this._seriesType) {
+			case 'Line':
+			case 'Area':
+			case 'Baseline':
+				return (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerRadius;
+		}
+
+		return 0;
+	}
+
+	private _lollipopBorderColor(): string | null {
+		switch (this._seriesType) {
+			case 'Line':
+			case 'Area':
+			case 'Baseline': {
+				const crosshairMarkerBorderColor = (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerBorderColor;
+				if (crosshairMarkerBorderColor.length !== 0) {
+					return crosshairMarkerBorderColor;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private _lollipopBackgroundColor(index: TimePointIndex): string {
 		switch (this._seriesType) {
 			case 'Line':
 			case 'Area':
@@ -647,6 +716,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 	private _recreatePaneViews(): void {
 		this._markersPaneView = new SeriesMarkersPaneView(this, this.model());
+		this._lollipopsPaneView = new SeriesLollipopsPaneView(this, this.model());
 
 		switch (this._seriesType) {
 			case 'Bar': {

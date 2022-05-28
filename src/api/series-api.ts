@@ -175,7 +175,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 			const { originalTime, time, ...item } = internalItem;
 			return {
 				time: originalTime as unknown as Time,
-				...item as Omit<SeriesMarker<TimePoint>, 'time' | 'originalTIme'>,
+				...item as Omit<SeriesLollipop<TimePoint>, 'time' | 'originalTIme'>,
 			};
 		});
 	}
