@@ -3,56 +3,60 @@ import { makeFont } from '../helpers/make-font';
 
 import { HoveredObject } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
-import { SeriesMarkerShape } from '../model/series-markers';
+import { SeriesLollipopPosition, SeriesLollipopShape } from '../model/series-lollipops';
 import { TextWidthCache } from '../model/text-width-cache';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
-import { ScaledRenderer } from './scaled-renderer';
+import { LineStyle, LineWidth } from './draw-line';
+import { IPaneRenderer } from './ipane-renderer';
+import { drawSquare, hitTestSquare } from './series-lollipops-square';
+// import { hitTestText } from './series-lollipops-text';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
-import { drawSquare, hitTestSquare } from './series-markers-square';
-import { drawText, hitTestText } from './series-markers-text';
 import { drawTriangle, hitTestTriangle } from './series-markers-triangle';
 
-export interface SeriesMarkerText {
-	content: string;
-	y: Coordinate;
-	width: number;
-	height: number;
-}
+// TODO: Update to lollipop items
 
-export interface SeriesMarkerRendererDataItem extends TimedValue {
+export interface SeriesLollipopRendererDataItem extends TimedValue {
 	y: Coordinate;
 	size: number;
-	shape: SeriesMarkerShape;
+	shape: SeriesLollipopShape;
 	color: string;
+	lineWidth: LineWidth;
+	lineStyle: LineStyle;
+	lineVisible: boolean;
+	paneHeight: number;
+	position: SeriesLollipopPosition;
 	internalId: number;
 	externalId?: string;
-	text?: SeriesMarkerText;
+	text: string;
 }
 
-export interface SeriesMarkerRendererData {
-	items: SeriesMarkerRendererDataItem[];
+export interface SeriesLollipopRendererData {
+	items: SeriesLollipopRendererDataItem[];
 	visibleRange: SeriesItemsIndexesRange | null;
 }
 
-export class SeriesMarkersRenderer extends ScaledRenderer {
-	private _data: SeriesMarkerRendererData | null = null;
+export class SeriesLollipopsRenderer implements IPaneRenderer {
+	private _data: SeriesLollipopRendererData | null = null;
 	private _textWidthCache: TextWidthCache = new TextWidthCache();
 	private _fontSize: number = -1;
 	private _fontFamily: string = '';
 	private _font: string = '';
+	private _paneHeight: number = -1;
 
-	public setData(data: SeriesMarkerRendererData): void {
+	public setData(data: SeriesLollipopRendererData): void {
 		this._data = data;
 	}
 
-	public setParams(fontSize: number, fontFamily: string): void {
+	public setParams(fontSize: number, fontFamily: string, paneHeight: number): void {
 		if (this._fontSize !== fontSize || this._fontFamily !== fontFamily) {
-			this._fontSize = fontSize;
+			this._fontSize = fontSize + 4;
 			this._fontFamily = fontFamily;
-			this._font = makeFont(fontSize, fontFamily);
+			this._font = makeFont(this._fontSize, this._fontFamily, 'bold');
 			this._textWidthCache.reset();
+
+			this._paneHeight = paneHeight;
 		}
 	}
 
@@ -74,7 +78,7 @@ export class SeriesMarkersRenderer extends ScaledRenderer {
 		return null;
 	}
 
-	protected _drawImpl(ctx: CanvasRenderingContext2D, isHovered: boolean, hitTestData?: unknown): void {
+	public draw(ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean, hitTestData?: unknown): void {
 		if (this._data === null || this._data.visibleRange === null) {
 			return;
 		}
@@ -84,26 +88,20 @@ export class SeriesMarkersRenderer extends ScaledRenderer {
 
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; i++) {
 			const item = this._data.items[i];
-			if (item.text !== undefined) {
-				item.text.width = this._textWidthCache.measureText(ctx, item.text.content);
-				item.text.height = this._fontSize;
-			}
-			drawItem(item, ctx);
+
+			item.paneHeight = this._paneHeight;
+			drawItem(item, ctx, pixelRatio);
 		}
 	}
 }
 
-function drawItem(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingContext2D): void {
+function drawItem(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 	ctx.fillStyle = item.color;
 
-	if (item.text !== undefined) {
-		drawText(ctx, item.text.content, item.x - item.text.width / 2, item.text.y);
-	}
-
-	drawShape(item, ctx);
+	drawShape(item, ctx, pixelRatio);
 }
 
-function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingContext2D): void {
+function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 	if (item.size === 0) {
 		return;
 	}
@@ -125,22 +123,23 @@ function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingConte
 			drawCircle(ctx, item.x, item.y, item.size);
 			return;
 		case 'square':
-			drawSquare(ctx, item.x, item.y, item.size);
+			drawSquare(ctx, item, pixelRatio);
 			return;
 	}
 
 	ensureNever(item.shape);
 }
 
-function hitTestItem(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coordinate): boolean {
-	if (item.text !== undefined && hitTestText(item.x, item.text.y, item.text.width, item.text.height, x, y)) {
-		return true;
-	}
+function hitTestItem(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Coordinate): boolean {
+	// TODO: Removing hittest for the text since text is inside shape
+	// if (item.text !== undefined && hitTestText(item.x, item.text.y, item.text.width, item.text.height, x, y)) {
+	//	return true;
+	// }
 
 	return hitTestShape(item, x, y);
 }
 
-function hitTestShape(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coordinate): boolean {
+function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Coordinate): boolean {
 	if (item.size === 0) {
 		return false;
 	}

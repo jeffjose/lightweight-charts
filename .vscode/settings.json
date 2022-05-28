@@ -1,11 +1,24 @@
 {
-    "files.exclude": {
-        "dist/**": true,
-        "lib/**": true,
-        "tests/e2e/graphics/.gendata/**": true,
-        "website/.docusaurus/**": true,
-        "website/build/**": true,
-        "website/docs/api/**": true,
-    },
-    "typescript.tsdk": "node_modules\\typescript\\lib"
+	"files.exclude": {
+		"dist/**": true,
+		"lib/**": true,
+		"tests/e2e/graphics/.gendata/**": true,
+		"website/.docusaurus/**": true,
+		"website/build/**": true,
+		"website/docs/api/**": true
+	},
+	"typescript.tsdk": "node_modules\\typescript\\lib",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": true
+	},
+	"eslint.validate": [
+		"javascript",
+		"typescript",
+		"javascriptreact",
+		"typescriptreact"
+	],
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"[typescript]": {
+		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+	}
 }
