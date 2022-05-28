@@ -18,6 +18,7 @@ import { SeriesLinePaneView } from '../views/pane/line-pane-view';
 import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
 import { SeriesHorizontalBaseLinePaneView } from '../views/pane/series-horizontal-base-line-pane-view';
 import { SeriesLastPriceAnimationPaneView } from '../views/pane/series-last-price-animation-pane-view';
+import { SeriesLollipopsPaneView } from '../views/pane/series-lollipops-pane-view';
 import { SeriesMarkersPaneView } from '../views/pane/series-markers-pane-view';
 import { SeriesPriceLinePaneView } from '../views/pane/series-price-line-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
@@ -39,6 +40,7 @@ import { PriceRangeImpl } from './price-range-impl';
 import { PriceScale } from './price-scale';
 import { SeriesBarColorer } from './series-bar-colorer';
 import { createSeriesPlotList, SeriesPlotList, SeriesPlotRow } from './series-data';
+import { InternalSeriesLollipop, SeriesLollipop } from './series-lollipops';
 import { InternalSeriesMarker, SeriesMarker } from './series-markers';
 import {
 	AreaStyleOptions,
@@ -70,6 +72,13 @@ export interface LastValueDataResultWithData {
 export type LastValueDataResult = LastValueDataResultWithoutData | LastValueDataResultWithData;
 
 export interface MarkerData {
+	price: BarPrice;
+	radius: number;
+	borderColor: string | null;
+	backgroundColor: string;
+}
+
+export interface LollipopData {
 	price: BarPrice;
 	radius: number;
 	borderColor: string | null;
@@ -109,6 +118,9 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private _markers: readonly SeriesMarker<TimePoint>[] = [];
 	private _indexedMarkers: InternalSeriesMarker<TimePointIndex>[] = [];
 	private _markersPaneView!: SeriesMarkersPaneView;
+	private _lollipops: readonly SeriesLollipop<TimePoint>[] = [];
+	private _indexedLollipops: InternalSeriesLollipop<TimePointIndex>[] = [];
+	private _lollipopsPaneView!: SeriesLollipopsPaneView;
 	private _animationTimeoutId: TimerId | null = null;
 
 	public constructor(model: ChartModel, options: SeriesOptionsInternal<T>, seriesType: T) {
@@ -241,9 +253,11 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		this._data.setData(data);
 
 		this._recalculateMarkers();
+		this._recalculateLollipops();
 
 		this._paneView.update('data');
 		this._markersPaneView.update('data');
+		this._lollipopsPaneView.update('data');
 
 		if (this._lastPriceAnimationPaneView !== null) {
 			if (updateInfo && updateInfo.lastBarUpdatedOrNewBarsAddedToTheRight) {
@@ -277,6 +291,25 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 	public indexedMarkers(): InternalSeriesMarker<TimePointIndex>[] {
 		return this._indexedMarkers;
+	}
+
+	public setLollipops(data: readonly SeriesLollipop<TimePoint>[]): void {
+		this._lollipops = data;
+		this._recalculateLollipops();
+		const sourcePane = this.model().paneForSource(this);
+		this._lollipopsPaneView.update('data');
+		this.model().recalculatePane(sourcePane);
+		this.model().updateSource(this);
+		this.model().updateCrosshair();
+		this.model().lightUpdate();
+	}
+
+	public lollipops(): readonly SeriesLollipop<TimePoint>[] {
+		return this._lollipops;
+	}
+
+	public indexedLollipops(): InternalSeriesLollipop<TimePointIndex>[] {
+		return this._indexedLollipops;
 	}
 
 	public createPriceLine(options: PriceLineOptions): CustomPriceLine {
@@ -371,7 +404,8 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		res.push(
 			this._paneView,
 			this._priceLineView,
-			this._markersPaneView
+			this._markersPaneView,
+			this._lollipopsPaneView
 		);
 
 		const priceLineViews = this._customPriceLines.map((line: CustomPriceLine) => line.paneView());
@@ -421,6 +455,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	public updateAllViews(): void {
 		this._paneView.update();
 		this._markersPaneView.update();
+		this._lollipopsPaneView.update();
 
 		for (const priceAxisView of this._priceAxisViews) {
 			priceAxisView.update();
@@ -457,6 +492,24 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return { price, radius, borderColor, backgroundColor };
 	}
 
+	public lollipopDataAtIndex(index: TimePointIndex): LollipopData | null {
+		const getValue = (this._seriesType === 'Line' || this._seriesType === 'Area' || this._seriesType === 'Baseline') &&
+			(this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerVisible;
+
+		if (!getValue) {
+			return null;
+		}
+		const bar = this._data.valueAt(index);
+		if (bar === null) {
+			return null;
+		}
+		const price = bar.value[PlotRowValueIndex.Close] as BarPrice;
+		const radius = this._lollipopRadius();
+		const borderColor = this._lollipopBorderColor();
+		const backgroundColor = this._lollipopBackgroundColor(index);
+		return { price, radius, borderColor, backgroundColor };
+	}
+
 	public title(): string {
 		return this._options.title;
 	}
@@ -489,9 +542,8 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			const base = (this._options as HistogramStyleOptions).base;
 			const rangeWithBase = new PriceRangeImpl(base, base);
 			range = range !== null ? range.merge(rangeWithBase) : rangeWithBase;
-		}
-
-		return new AutoscaleInfoImpl(range,	this._markersPaneView.autoScaleMargins());
+		} // TODO (jeffjose):  No lollipop here
+		return new AutoscaleInfoImpl(range, this._markersPaneView.autoScaleMargins());
 	}
 
 	private _markerRadius(): number {
@@ -521,6 +573,47 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	private _markerBackgroundColor(index: TimePointIndex): string {
+		switch (this._seriesType) {
+			case 'Line':
+			case 'Area':
+			case 'Baseline': {
+				const crosshairMarkerBackgroundColor = (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerBackgroundColor;
+				if (crosshairMarkerBackgroundColor.length !== 0) {
+					return crosshairMarkerBackgroundColor;
+				}
+			}
+		}
+
+		return this.barColorer().barStyle(index).barColor;
+	}
+
+	private _lollipopRadius(): number {
+		switch (this._seriesType) {
+			case 'Line':
+			case 'Area':
+			case 'Baseline':
+				return (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerRadius;
+		}
+
+		return 0;
+	}
+
+	private _lollipopBorderColor(): string | null {
+		switch (this._seriesType) {
+			case 'Line':
+			case 'Area':
+			case 'Baseline': {
+				const crosshairMarkerBorderColor = (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerBorderColor;
+				if (crosshairMarkerBorderColor.length !== 0) {
+					return crosshairMarkerBorderColor;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private _lollipopBackgroundColor(index: TimePointIndex): string {
 		switch (this._seriesType) {
 			case 'Line':
 			case 'Area':
@@ -592,8 +685,41 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		});
 	}
 
+	private _recalculateLollipops(): void {
+		const timeScale = this.model().timeScale();
+		if (timeScale.isEmpty() || this._data.size() === 0) {
+			this._indexedLollipops = [];
+			return;
+		}
+
+		const firstDataIndex = ensureNotNull(this._data.firstIndex());
+
+		this._indexedLollipops = this._lollipops.map<InternalSeriesLollipop<TimePointIndex>>((lollipop: SeriesLollipop<TimePoint>, index: number) => {
+			// the first find index on the time scale (across all series)
+			const timePointIndex = ensureNotNull(timeScale.timeToIndex(lollipop.time, true));
+
+			// and then search that index inside the series data
+			const searchMode = timePointIndex < firstDataIndex ? MismatchDirection.NearestRight : MismatchDirection.NearestLeft;
+			const seriesDataIndex = ensureNotNull(this._data.search(timePointIndex, searchMode)).index;
+			return {
+				time: seriesDataIndex,
+				position: lollipop.position,
+				shape: lollipop.shape,
+				color: lollipop.color,
+				lineWidth: lollipop.lineWidth,
+				lineStyle: lollipop.lineStyle,
+				lineVisible: lollipop.lineVisible,
+				id: lollipop.id,
+				internalId: index,
+				text: lollipop.text,
+				size: lollipop.size,
+			};
+		});
+	}
+
 	private _recreatePaneViews(): void {
 		this._markersPaneView = new SeriesMarkersPaneView(this, this.model());
+		this._lollipopsPaneView = new SeriesLollipopsPaneView(this, this.model());
 
 		switch (this._seriesType) {
 			case 'Bar': {
