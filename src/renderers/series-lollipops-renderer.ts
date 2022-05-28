@@ -8,9 +8,9 @@ import { TextWidthCache } from '../model/text-width-cache';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
 import { ScaledRenderer } from './scaled-renderer';
+import { drawSquare, hitTestSquare } from './series-lollipops-square';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
-import { drawSquare, hitTestSquare } from './series-markers-square';
 import { drawText, hitTestText } from './series-markers-text';
 import { drawTriangle, hitTestTriangle } from './series-markers-triangle';
 
@@ -31,6 +31,7 @@ export interface SeriesLollipopRendererDataItem extends TimedValue {
 	internalId: number;
 	externalId?: string;
 	text?: SeriesLollipopText;
+	paneHeight: number;
 }
 
 export interface SeriesLollipopRendererData {
@@ -44,17 +45,20 @@ export class SeriesLollipopsRenderer extends ScaledRenderer {
 	private _fontSize: number = -1;
 	private _fontFamily: string = '';
 	private _font: string = '';
+	private _paneHeight: number = -1;
 
 	public setData(data: SeriesLollipopRendererData): void {
 		this._data = data;
 	}
 
-	public setParams(fontSize: number, fontFamily: string): void {
+	public setParams(fontSize: number, fontFamily: string, paneHeight: number): void {
 		if (this._fontSize !== fontSize || this._fontFamily !== fontFamily) {
 			this._fontSize = fontSize;
 			this._fontFamily = fontFamily;
 			this._font = makeFont(fontSize, fontFamily);
 			this._textWidthCache.reset();
+
+			this._paneHeight = paneHeight;
 		}
 	}
 
@@ -89,6 +93,7 @@ export class SeriesLollipopsRenderer extends ScaledRenderer {
 			if (item.text !== undefined) {
 				item.text.width = this._textWidthCache.measureText(ctx, item.text.content);
 				item.text.height = this._fontSize;
+				item.paneHeight = this._paneHeight;
 			}
 			drawItem(item, ctx);
 		}
@@ -127,7 +132,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawCircle(ctx, item.x, item.y, item.size);
 			return;
 		case 'square':
-			drawSquare(ctx, item.x, item.y, item.size);
+			drawSquare(ctx, item.x, item.y, item.size, item.paneHeight);
 			return;
 	}
 

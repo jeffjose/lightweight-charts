@@ -1,4 +1,4 @@
-import { ensureNever } from '../../helpers/assertions';
+import { ensureNever, ensureNotNull } from '../../helpers/assertions';
 import { isNumber } from '../../helpers/strict-type-checks';
 
 import { AutoScaleMargins } from '../../model/autoscale-info-impl';
@@ -125,7 +125,8 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 		}
 
 		const layout = this._model.options().layout;
-		this._renderer.setParams(layout.fontSize, layout.fontFamily);
+		const pane = ensureNotNull(this._model.paneForSource(this._series));
+		this._renderer.setParams(layout.fontSize, layout.fontFamily, pane.height());
 		this._renderer.setData(this._data);
 
 		return this._renderer;
@@ -166,6 +167,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				internalId: lollipop.internalId,
 				externalId: lollipop.id,
 				text: undefined,
+				paneHeight: -1,
 			}));
 			this._dataInvalidated = false;
 		}
