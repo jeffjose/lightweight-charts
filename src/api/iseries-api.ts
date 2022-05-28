@@ -5,6 +5,7 @@ import { Coordinate } from '../model/coordinate';
 import { MismatchDirection } from '../model/plot-list';
 import { PriceLineOptions } from '../model/price-line-options';
 import { SeriesMarker } from '../model/series-markers';
+import { SeriesLollipop } from '../model/series-lollipops';
 import {
 	SeriesOptionsMap,
 	SeriesPartialOptionsMap,
@@ -218,6 +219,40 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	 * Returns an array of series markers.
 	 */
 	markers(): SeriesMarker<Time>[];
+
+	/**
+	 * Allows to set/replace all existing series lollipops with new ones.
+	 *
+	 * @param data - An array of series lollipops. This array should be sorted by time. Several lollipops with same time are allowed.
+	 * @example
+	 * ```js
+	 * series.setLollipops([
+	 *     {
+	 *         time: '2019-04-09',
+	 *         color: 'black',
+	 *     },
+	 *     {
+	 *         time: '2019-05-31',
+	 *         color: 'red',
+	 *         id: 'id3',
+	 *     },
+	 *     {
+	 *         time: '2019-05-31',
+	 *         color: 'orange',
+	 *         id: 'id4',
+	 *         text: 'example',
+	 *         size: 2,
+	 *     },
+	 * ]);
+	 *
+	 * ```
+	 */
+	setLollipops(data: SeriesLollipop<Time>[]): void;
+
+	/**
+	 * Returns an array of series markers.
+	 */
+	lollipops(): SeriesLollipop<Time>[];
 
 	/**
 	 * Creates a new price line

@@ -9,6 +9,7 @@ import { MismatchDirection } from '../model/plot-list';
 import { PriceLineOptions } from '../model/price-line-options';
 import { RangeImpl } from '../model/range-impl';
 import { Series } from '../model/series';
+import { SeriesLollipop } from '../model/series-lollipops';
 import { SeriesMarker } from '../model/series-markers';
 import {
 	SeriesOptionsMap,
@@ -150,6 +151,27 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 
 	public markers(): SeriesMarker<Time>[] {
 		return this._series.markers().map<SeriesMarker<Time>>((internalItem: SeriesMarker<TimePoint>) => {
+			const { originalTime, time, ...item } = internalItem;
+			return {
+				time: originalTime as unknown as Time,
+				...item as Omit<SeriesMarker<TimePoint>, 'time' | 'originalTIme'>,
+			};
+		});
+	}
+
+	public setLollipops(data: SeriesLollipop<Time>[]): void {
+		checkItemsAreOrdered(data, true);
+
+		const convertedLollipops = data.map<SeriesLollipop<TimePoint>>((lollipop: SeriesLollipop<Time>) => ({
+			...lollipop,
+			originalTime: lollipop.time as unknown as OriginalTime,
+			time: convertTime(lollipop.time),
+		}));
+		this._series.setLollipops(convertedLollipops);
+	}
+
+	public lollipops(): SeriesLollipop<Time>[] {
+		return this._series.lollipops().map<SeriesLollipop<Time>>((internalItem: SeriesLollipop<TimePoint>) => {
 			const { originalTime, time, ...item } = internalItem;
 			return {
 				time: originalTime as unknown as Time,

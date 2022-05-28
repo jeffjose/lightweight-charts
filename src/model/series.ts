@@ -18,6 +18,7 @@ import { SeriesLinePaneView } from '../views/pane/line-pane-view';
 import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
 import { SeriesHorizontalBaseLinePaneView } from '../views/pane/series-horizontal-base-line-pane-view';
 import { SeriesLastPriceAnimationPaneView } from '../views/pane/series-last-price-animation-pane-view';
+import { SeriesLollipopsPaneView } from '../views/pane/series-lollipops-pane-view';
 import { SeriesMarkersPaneView } from '../views/pane/series-markers-pane-view';
 import { SeriesPriceLinePaneView } from '../views/pane/series-price-line-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
@@ -39,6 +40,7 @@ import { PriceRangeImpl } from './price-range-impl';
 import { PriceScale } from './price-scale';
 import { SeriesBarColorer } from './series-bar-colorer';
 import { createSeriesPlotList, SeriesPlotList, SeriesPlotRow } from './series-data';
+import { InternalSeriesLollipop, SeriesLollipop } from './series-lollipops';
 import { InternalSeriesMarker, SeriesMarker } from './series-markers';
 import {
 	AreaStyleOptions,
@@ -109,6 +111,9 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private _markers: readonly SeriesMarker<TimePoint>[] = [];
 	private _indexedMarkers: InternalSeriesMarker<TimePointIndex>[] = [];
 	private _markersPaneView!: SeriesMarkersPaneView;
+	private _lollipops: readonly SeriesLollipop<TimePoint>[] = [];
+	private _indexedLollipops: InternalSeriesLollipop<TimePointIndex>[] = [];
+	private _lollipopsPaneView!: SeriesLollipopsPaneView;
 	private _animationTimeoutId: TimerId | null = null;
 
 	public constructor(model: ChartModel, options: SeriesOptionsInternal<T>, seriesType: T) {
@@ -277,6 +282,25 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 	public indexedMarkers(): InternalSeriesMarker<TimePointIndex>[] {
 		return this._indexedMarkers;
+	}
+
+	public setLollipops(data: readonly SeriesMarker<TimePoint>[]): void {
+		this._lollipops = data;
+		this._recalculateLollipops();
+		const sourcePane = this.model().paneForSource(this);
+		this._lollipopsPaneView.update('data');
+		this.model().recalculatePane(sourcePane);
+		this.model().updateSource(this);
+		this.model().updateCrosshair();
+		this.model().lightUpdate();
+	}
+
+	public lollipops(): readonly SeriesLollipop<TimePoint>[] {
+		return this._lollipops;
+	}
+
+	public indexedLollipops(): InternalSeriesLollipop<TimePointIndex>[] {
+		return this._indexedLollipops;
 	}
 
 	public createPriceLine(options: PriceLineOptions): CustomPriceLine {
@@ -588,6 +612,35 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 				internalId: index,
 				text: marker.text,
 				size: marker.size,
+			};
+		});
+	}
+
+	private _recalculateLollipops(): void {
+		const timeScale = this.model().timeScale();
+		if (timeScale.isEmpty() || this._data.size() === 0) {
+			this._indexedLollipops = [];
+			return;
+		}
+
+		const firstDataIndex = ensureNotNull(this._data.firstIndex());
+
+		this._indexedLollipops = this._lollipops.map<InternalSeriesLollipop<TimePointIndex>>((lollipop: SeriesLollipop<TimePoint>, index: number) => {
+			// the first find index on the time scale (across all series)
+			const timePointIndex = ensureNotNull(timeScale.timeToIndex(lollipop.time, true));
+
+			// and then search that index inside the series data
+			const searchMode = timePointIndex < firstDataIndex ? MismatchDirection.NearestRight : MismatchDirection.NearestLeft;
+			const seriesDataIndex = ensureNotNull(this._data.search(timePointIndex, searchMode)).index;
+			return {
+				time: seriesDataIndex,
+				position: lollipop.position,
+				shape: lollipop.shape,
+				color: lollipop.color,
+				id: lollipop.id,
+				internalId: index,
+				text: lollipop.text,
+				size: lollipop.size,
 			};
 		});
 	}
