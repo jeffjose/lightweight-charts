@@ -7,32 +7,29 @@ import { SeriesLollipopPosition, SeriesLollipopShape } from '../model/series-lol
 import { TextWidthCache } from '../model/text-width-cache';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
+import { LineStyle, LineWidth } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
 import { drawSquare, hitTestSquare } from './series-lollipops-square';
+// import { hitTestText } from './series-lollipops-text';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
-import { drawText, hitTestText } from './series-markers-text';
 import { drawTriangle, hitTestTriangle } from './series-markers-triangle';
 
 // TODO: Update to lollipop items
-
-export interface SeriesLollipopText {
-	content: string;
-	y: Coordinate;
-	width: number;
-	height: number;
-}
 
 export interface SeriesLollipopRendererDataItem extends TimedValue {
 	y: Coordinate;
 	size: number;
 	shape: SeriesLollipopShape;
 	color: string;
-	internalId: number;
-	externalId?: string;
-	text?: SeriesLollipopText;
+	lineWidth: LineWidth;
+	lineStyle: LineStyle;
+	lineVisible: boolean;
 	paneHeight: number;
 	position: SeriesLollipopPosition;
+	internalId: number;
+	externalId?: string;
+	text: string;
 }
 
 export interface SeriesLollipopRendererData {
@@ -54,9 +51,9 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 
 	public setParams(fontSize: number, fontFamily: string, paneHeight: number): void {
 		if (this._fontSize !== fontSize || this._fontFamily !== fontFamily) {
-			this._fontSize = fontSize;
+			this._fontSize = fontSize + 4;
 			this._fontFamily = fontFamily;
-			this._font = makeFont(fontSize, fontFamily);
+			this._font = makeFont(this._fontSize, this._fontFamily, 'bold');
 			this._textWidthCache.reset();
 
 			this._paneHeight = paneHeight;
@@ -92,11 +89,7 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; i++) {
 			const item = this._data.items[i];
 
-			if (item.text !== undefined) {
-				item.text.width = this._textWidthCache.measureText(ctx, item.text.content);
-				item.text.height = this._fontSize;
-				item.paneHeight = this._paneHeight;
-			}
+			item.paneHeight = this._paneHeight;
 			drawItem(item, ctx, pixelRatio);
 		}
 	}
@@ -105,12 +98,6 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 function drawItem(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 	ctx.fillStyle = item.color;
 
-	const x = Math.round(item.x * pixelRatio);
-
-	if (item.text !== undefined) {
-		drawText(ctx, item.text.content, x - item.text.width / 2, item.text.y);
-	}
-
 	drawShape(item, ctx, pixelRatio);
 }
 
@@ -118,12 +105,6 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 	if (item.size === 0) {
 		return;
 	}
-
-	const x = Math.round(item.x * pixelRatio);
-		// const y = Math.round(item.y * pixelRatio);
-		// const w = Math.ceil(this._data.w * pixelRatio);
-	const h = Math.ceil(item.paneHeight * pixelRatio);
-	const positionTop = item.position === 'top';
 
 	switch (item.shape) {
 		case 'arrowDown':
@@ -142,7 +123,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawCircle(ctx, item.x, item.y, item.size);
 			return;
 		case 'square':
-			drawSquare(positionTop, ctx, x as Coordinate, item.size, h, item.color);
+			drawSquare(ctx, item, pixelRatio);
 			return;
 	}
 
@@ -150,9 +131,10 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 }
 
 function hitTestItem(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Coordinate): boolean {
-	if (item.text !== undefined && hitTestText(item.x, item.text.y, item.text.width, item.text.height, x, y)) {
-		return true;
-	}
+	// TODO: Removing hittest for the text since text is inside shape
+	// if (item.text !== undefined && hitTestText(item.x, item.text.y, item.text.width, item.text.height, x, y)) {
+	//	return true;
+	// }
 
 	return hitTestShape(item, x, y);
 }

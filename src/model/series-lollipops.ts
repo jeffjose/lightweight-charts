@@ -1,3 +1,5 @@
+import { LineStyle, LineWidth } from '../renderers/draw-line';
+
 import { OriginalTime } from './time-data';
 
 /**
@@ -31,6 +33,24 @@ export interface SeriesLollipop<TimeType> {
 	 */
 	color: string;
 	/**
+	 * Lollipop's width in pixels.
+	 *
+	 * @defaultValue `2`
+	 */
+	lineWidth: LineWidth;
+	/**
+	 * Lollipop's style.
+	 *
+	 * @defaultValue {@link LineStyle.LargeDashed}
+	 */
+	lineStyle: LineStyle;
+	/**
+	 * Display line.
+	 *
+	 * @defaultValue `true`
+	 */
+	lineVisible: boolean;
+	/**
 	 * The ID of the Lollipop.
 	 */
 	id?: string;
@@ -41,7 +61,7 @@ export interface SeriesLollipop<TimeType> {
 	/**
 	 * The optional size of the Lollipop.
 	 *
-	 * @defaultValue `4`
+	 * @defaultValue `1`
 	 */
 	size?: number;
 

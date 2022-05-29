@@ -8,6 +8,7 @@ import { Series } from '../../model/series';
 import { InternalSeriesLollipop } from '../../model/series-lollipops';
 import { TimePointIndex, visibleTimedValues } from '../../model/time-data';
 import { TimeScale } from '../../model/time-scale';
+import { LineStyle } from '../../renderers/draw-line';
 import { IPaneRenderer } from '../../renderers/ipane-renderer';
 import {
 	SeriesLollipopRendererData,
@@ -111,9 +112,12 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				size: 0,
 				shape: lollipop.shape,
 				color: lollipop.color,
+				lineWidth: lollipop.lineWidth ?? 1,
+				lineStyle: lollipop.lineStyle ?? LineStyle.LargeDashed,
+				lineVisible: lollipop.lineVisible ?? true,
 				internalId: lollipop.internalId,
 				externalId: lollipop.id,
-				text: undefined,
+				text: lollipop.text ?? '',
 				paneHeight: -1,
 				position: lollipop.position,
 			}));
@@ -144,14 +148,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 
 			const rendererItem = this._data.items[index];
 			rendererItem.x = timeScale.indexToCoordinate(lollipop.time);
-			if (lollipop.text !== undefined && lollipop.text.length > 0) {
-				rendererItem.text = {
-					content: lollipop.text,
-					y: 0 as Coordinate,
-					width: 0,
-					height: 0,
-				};
-			}
+
 			const dataAt = this._series.dataAt(lollipop.time);
 			if (dataAt === null) {
 				continue;
