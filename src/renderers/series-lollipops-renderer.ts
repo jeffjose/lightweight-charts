@@ -3,7 +3,7 @@ import { makeFont } from '../helpers/make-font';
 
 import { HoveredObject } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
-import { SeriesLollipopShape } from '../model/series-lollipops';
+import { SeriesLollipopPosition, SeriesLollipopShape } from '../model/series-lollipops';
 import { TextWidthCache } from '../model/text-width-cache';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
@@ -32,6 +32,7 @@ export interface SeriesLollipopRendererDataItem extends TimedValue {
 	externalId?: string;
 	text?: SeriesLollipopText;
 	paneHeight: number;
+	position: SeriesLollipopPosition;
 }
 
 export interface SeriesLollipopRendererData {
@@ -122,6 +123,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 		// const y = Math.round(item.y * pixelRatio);
 		// const w = Math.ceil(this._data.w * pixelRatio);
 	const h = Math.ceil(item.paneHeight * pixelRatio);
+	const positionTop = item.position === 'top';
 
 	switch (item.shape) {
 		case 'arrowDown':
@@ -140,7 +142,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawCircle(ctx, item.x, item.y, item.size);
 			return;
 		case 'square':
-			drawSquare(ctx, x as Coordinate, item.y, item.size, h);
+			drawSquare(positionTop, ctx, x as Coordinate, item.size, h, item.color);
 			return;
 	}
 

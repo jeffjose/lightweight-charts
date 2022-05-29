@@ -1,11 +1,9 @@
-import { ensureNever, ensureNotNull } from '../../helpers/assertions';
+import { ensureNotNull } from '../../helpers/assertions';
 import { isNumber } from '../../helpers/strict-type-checks';
 
 import { AutoScaleMargins } from '../../model/autoscale-info-impl';
-import { BarPrice, BarPrices } from '../../model/bar';
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
-import { PriceScale } from '../../model/price-scale';
 import { Series } from '../../model/series';
 import { InternalSeriesLollipop } from '../../model/series-lollipops';
 import { TimePointIndex, visibleTimedValues } from '../../model/time-data';
@@ -25,64 +23,14 @@ import {
 
 import { IUpdatablePaneView, UpdateType } from './iupdatable-pane-view';
 
-const enum Constants {
-	TextMargin = 0.1,
-}
-
-interface Offsets {
-	aboveBar: number;
-	belowBar: number;
-}
-
-// eslint-disable-next-line max-params
 function fillSizeAndY(
 	rendererItem: SeriesLollipopRendererDataItem,
 	lollipop: InternalSeriesLollipop<TimePointIndex>,
-	seriesData: BarPrices | BarPrice,
-	offsets: Offsets,
-	textHeight: number,
-	shapeMargin: number,
-	priceScale: PriceScale,
-	timeScale: TimeScale,
-	firstValue: number
+	timeScale: TimeScale
 ): void {
-	const inBarPrice = isNumber(seriesData) ? seriesData : seriesData.close;
-	const highPrice = isNumber(seriesData) ? seriesData : seriesData.high;
-	const lowPrice = isNumber(seriesData) ? seriesData : seriesData.low;
 	const sizeMultiplier = isNumber(lollipop.size) ? Math.max(lollipop.size, 0) : 1;
 	const shapeSize = calculateShapeHeight(timeScale.barSpacing()) * sizeMultiplier;
-	const halfSize = shapeSize / 2;
 	rendererItem.size = shapeSize;
-
-	switch (lollipop.position) {
-		case 'inBar': {
-			rendererItem.y = priceScale.priceToCoordinate(inBarPrice, firstValue);
-			if (rendererItem.text !== undefined) {
-				rendererItem.text.y = rendererItem.y + halfSize + shapeMargin + textHeight * (0.5 + Constants.TextMargin) as Coordinate;
-			}
-			return;
-		}
-		case 'aboveBar': {
-			rendererItem.y = (priceScale.priceToCoordinate(highPrice, firstValue) - halfSize - offsets.aboveBar) as Coordinate;
-			if (rendererItem.text !== undefined) {
-				rendererItem.text.y = rendererItem.y - halfSize - textHeight * (0.5 + Constants.TextMargin) as Coordinate;
-				offsets.aboveBar += textHeight * (1 + 2 * Constants.TextMargin);
-			}
-			offsets.aboveBar += shapeSize + shapeMargin;
-			return;
-		}
-		case 'belowBar': {
-			rendererItem.y = (priceScale.priceToCoordinate(lowPrice, firstValue) + halfSize + offsets.belowBar) as Coordinate;
-			if (rendererItem.text !== undefined) {
-				rendererItem.text.y = rendererItem.y + halfSize + shapeMargin + textHeight * (0.5 + Constants.TextMargin) as Coordinate;
-				offsets.belowBar += textHeight * (1 + 2 * Constants.TextMargin);
-			}
-			offsets.belowBar += shapeSize + shapeMargin;
-			return;
-		}
-	}
-
-	ensureNever(lollipop.position);
 }
 
 export class SeriesLollipopsPaneView implements IUpdatablePaneView {
@@ -153,7 +101,6 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 	}
 
 	protected _makeValid(): void {
-		const priceScale = this._series.priceScale();
 		const timeScale = this._model.timeScale();
 		const seriesLollipops = this._series.indexedLollipops();
 		if (this._dataInvalidated) {
@@ -168,11 +115,10 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				externalId: lollipop.id,
 				text: undefined,
 				paneHeight: -1,
+				position: lollipop.position,
 			}));
 			this._dataInvalidated = false;
 		}
-
-		const layoutOptions = this._model.options().layout;
 
 		this._data.visibleRange = null;
 		const visibleBars = timeScale.visibleStrictRange();
@@ -188,18 +134,11 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 			return;
 		}
 		let prevTimeIndex = NaN;
-		const shapeMargin = calculateShapeMargin(timeScale.barSpacing());
-		const offsets: Offsets = {
-			aboveBar: shapeMargin,
-			belowBar: shapeMargin,
-		};
 		this._data.visibleRange = visibleTimedValues(this._data.items, visibleBars, true);
 		for (let index = this._data.visibleRange.from; index < this._data.visibleRange.to; index++) {
 			const lollipop = seriesLollipops[index];
 			if (lollipop.time !== prevTimeIndex) {
 				// new bar, reset stack counter
-				offsets.aboveBar = shapeMargin;
-				offsets.belowBar = shapeMargin;
 				prevTimeIndex = lollipop.time;
 			}
 
@@ -217,7 +156,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 			if (dataAt === null) {
 				continue;
 			}
-			fillSizeAndY(rendererItem, lollipop, dataAt, offsets, layoutOptions.fontSize, shapeMargin, priceScale, timeScale, firstValue.value);
+			fillSizeAndY(rendererItem, lollipop, timeScale);
 		}
 		this._invalidated = false;
 	}

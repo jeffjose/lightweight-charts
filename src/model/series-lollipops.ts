@@ -3,7 +3,7 @@ import { OriginalTime } from './time-data';
 /**
  * Represents the position of a series Lollipop relative to a bar.
  */
-export type SeriesLollipopPosition = 'aboveBar' | 'belowBar' | 'inBar';
+export type SeriesLollipopPosition = 'top' | 'bottom';
 
 /**
  * Represents the shape of a series Lollipop.
@@ -41,7 +41,7 @@ export interface SeriesLollipop<TimeType> {
 	/**
 	 * The optional size of the Lollipop.
 	 *
-	 * @defaultValue `1`
+	 * @defaultValue `4`
 	 */
 	size?: number;
 
