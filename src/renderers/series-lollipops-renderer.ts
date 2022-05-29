@@ -7,7 +7,7 @@ import { SeriesLollipopShape } from '../model/series-lollipops';
 import { TextWidthCache } from '../model/text-width-cache';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
-import { ScaledRenderer } from './scaled-renderer';
+import { IPaneRenderer } from './ipane-renderer';
 import { drawSquare, hitTestSquare } from './series-lollipops-square';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
@@ -39,7 +39,7 @@ export interface SeriesLollipopRendererData {
 	visibleRange: SeriesItemsIndexesRange | null;
 }
 
-export class SeriesLollipopsRenderer extends ScaledRenderer {
+export class SeriesLollipopsRenderer implements IPaneRenderer {
 	private _data: SeriesLollipopRendererData | null = null;
 	private _textWidthCache: TextWidthCache = new TextWidthCache();
 	private _fontSize: number = -1;
@@ -80,7 +80,7 @@ export class SeriesLollipopsRenderer extends ScaledRenderer {
 		return null;
 	}
 
-	protected _drawImpl(ctx: CanvasRenderingContext2D, isHovered: boolean, hitTestData?: unknown): void {
+	public draw(ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean, hitTestData?: unknown): void {
 		if (this._data === null || this._data.visibleRange === null) {
 			return;
 		}
@@ -90,30 +90,38 @@ export class SeriesLollipopsRenderer extends ScaledRenderer {
 
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; i++) {
 			const item = this._data.items[i];
+
 			if (item.text !== undefined) {
 				item.text.width = this._textWidthCache.measureText(ctx, item.text.content);
 				item.text.height = this._fontSize;
 				item.paneHeight = this._paneHeight;
 			}
-			drawItem(item, ctx);
+			drawItem(item, ctx, pixelRatio);
 		}
 	}
 }
 
-function drawItem(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D): void {
+function drawItem(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 	ctx.fillStyle = item.color;
 
+	const x = Math.round(item.x * pixelRatio);
+
 	if (item.text !== undefined) {
-		drawText(ctx, item.text.content, item.x - item.text.width / 2, item.text.y);
+		drawText(ctx, item.text.content, x - item.text.width / 2, item.text.y);
 	}
 
-	drawShape(item, ctx);
+	drawShape(item, ctx, pixelRatio);
 }
 
-function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D): void {
+function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 	if (item.size === 0) {
 		return;
 	}
+
+	const x = Math.round(item.x * pixelRatio);
+		// const y = Math.round(item.y * pixelRatio);
+		// const w = Math.ceil(this._data.w * pixelRatio);
+	const h = Math.ceil(item.paneHeight * pixelRatio);
 
 	switch (item.shape) {
 		case 'arrowDown':
@@ -132,7 +140,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawCircle(ctx, item.x, item.y, item.size);
 			return;
 		case 'square':
-			drawSquare(ctx, item.x, item.y, item.size, item.paneHeight);
+			drawSquare(ctx, x as Coordinate, item.y, item.size, h);
 			return;
 	}
 
