@@ -1,6 +1,9 @@
+import { EventType } from '../gui/generic-event-handler';
+
 import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { ChartOptions } from '../model/chart-model';
+import { Coordinate } from '../model/coordinate';
 import { Point } from '../model/point';
 import { SeriesMarker } from '../model/series-markers';
 import {
@@ -18,6 +21,52 @@ import { BarData, HistogramData, LineData } from './data-consumer';
 import { IPriceScaleApi } from './iprice-scale-api';
 import { ISeriesApi } from './iseries-api';
 import { ITimeScaleApi } from './itime-scale-api';
+
+/**
+ * Represents a generic event.
+ */
+export interface EventParams {
+	/**
+	 * Time of the data at the location of the mouse event.
+	 *
+	 * The value will be `undefined` if the location of the event in the chart is outside the range of available data.
+	 */
+	time?: Time;
+	/**
+	 * Logical index
+	 */
+	logical?: Logical;
+	/**
+	 * Location of the event in the chart.
+	 *
+	 * The value will be `undefined` if the event is fired outside the chart, for example a mouse leave event.
+	 */
+	point?: Point;
+	/**
+	 * Data of all series at the location of the event in the chart.
+	 *
+	 * Keys of the map are {@link ISeriesApi} instances. Values are prices.
+	 * Values of the map are original data items
+	 */
+	seriesData: Map<ISeriesApi<SeriesType>, BarData | LineData | HistogramData>;
+	/**
+	 * The {@link ISeriesApi} for the series at the point of the mouse event.
+	 */
+	hoveredSeries?: ISeriesApi<SeriesType>;
+	/**
+	 * The ID of the marker at the point of the mouse event.
+	 */
+	hoveredMarkerId?: SeriesMarker<Time>['id'];
+	/**
+	 * EventType
+	 */
+	eventType: EventType;
+}
+
+/**
+ * A custom function use to handle mouse events.
+ */
+export type EventHandler = (param: EventParams) => void;
 
 /**
  * Represents a mouse event.
@@ -192,6 +241,36 @@ export interface IChartApi {
 	unsubscribeClick(handler: MouseEventHandler): void;
 
 	/**
+	 * Subscribe to the all chart events.
+	 *
+	 * @param handler - Handler to be called on mouse click.
+	 * @example
+	 * ```js
+	 * function myEventsHandler(param) {
+	 *     if (!param.point) {
+	 *         return;
+	 *     }
+	 *
+	 *     console.log(`Click at ${param.point.x}, ${param.point.y}. The time is ${param.time}.`);
+	 * }
+	 *
+	 * chart.subscribeEvents(myEventsHandler);
+	 * ```
+	 */
+	subscribeEvents(handler: EventHandler): void;
+
+	/**
+	 * Unsubscribe a handler that was previously subscribed using {@link subscribeEvents}.
+	 *
+	 * @param handler - Previously subscribed handler
+	 * @example
+	 * ```js
+	 * chart.unsubscribeClick(myEventsHandler);
+	 * ```
+	 */
+	unsubscribeEvents(handler: EventHandler): void;
+
+	/**
 	 * Subscribe to the crosshair move event.
 	 *
 	 * @param handler - Handler to be called on crosshair move.
@@ -256,4 +335,16 @@ export interface IChartApi {
 	 * @returns A canvas with the chart drawn on. Any `Canvas` methods like `toDataURL()` or `toBlob()` can be used to serialize the result.
 	 */
 	takeScreenshot(): HTMLCanvasElement;
+
+	/**
+	 * setCrosshair
+	 *
+	 */
+	setCrosshair(x: Coordinate, y: Coordinate): void;
+
+	/**
+	 * unsetCrosshair
+	 *
+	 */
+	unsetCrosshair(x: Coordinate, y: Coordinate): void;
 }

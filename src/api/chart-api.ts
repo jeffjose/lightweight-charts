@@ -1,10 +1,11 @@
-import { ChartWidget, MouseEventParamsImpl, MouseEventParamsImplSupplier } from '../gui/chart-widget';
+import { ChartWidget, EventParamsImpl, EventParamsImplSupplier, MouseEventParamsImpl, MouseEventParamsImplSupplier } from '../gui/chart-widget';
 
 import { assert, ensureDefined } from '../helpers/assertions';
 import { Delegate } from '../helpers/delegate';
 import { clone, DeepPartial, isBoolean, merge } from '../helpers/strict-type-checks';
 
 import { ChartOptions, ChartOptionsInternal } from '../model/chart-model';
+import { Coordinate } from '../model/coordinate';
 import { Series } from '../model/series';
 import { SeriesPlotRow } from '../model/series-data';
 import {
@@ -32,7 +33,7 @@ import { CandlestickSeriesApi } from './candlestick-series-api';
 import { DataUpdatesConsumer, isFulfilledData, SeriesDataItemTypeMap } from './data-consumer';
 import { DataLayer, DataUpdateResponse, SeriesChanges } from './data-layer';
 import { getSeriesDataCreator } from './get-series-data-creator';
-import { IChartApi, MouseEventHandler, MouseEventParams } from './ichart-api';
+import { EventHandler, EventParams, IChartApi, MouseEventHandler, MouseEventParams } from './ichart-api';
 import { IPriceScaleApi } from './iprice-scale-api';
 import { ISeriesApi } from './iseries-api';
 import { ITimeScaleApi } from './itime-scale-api';
@@ -106,6 +107,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	private readonly _seriesMapReversed: Map<Series, SeriesApi<SeriesType>> = new Map();
 
 	private readonly _clickedDelegate: Delegate<MouseEventParams> = new Delegate();
+	private readonly _eventDelegate: Delegate<EventParams> = new Delegate();
 	private readonly _crosshairMovedDelegate: Delegate<MouseEventParams> = new Delegate();
 
 	private readonly _timeScaleApi: TimeScaleApi;
@@ -125,6 +127,16 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			},
 			this
 		);
+
+		this._chartWidget.events().subscribe(
+			(paramSupplier: EventParamsImplSupplier) => {
+				if (this._eventDelegate.hasListeners()) {
+					this._eventDelegate.fire(this._convertEventParams(paramSupplier()));
+				}
+			},
+			this
+		);
+
 		this._chartWidget.crosshairMoved().subscribe(
 			(paramSupplier: MouseEventParamsImplSupplier) => {
 				if (this._crosshairMovedDelegate.hasListeners()) {
@@ -266,6 +278,14 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		this._clickedDelegate.unsubscribe(handler);
 	}
 
+	public subscribeEvents(handler: EventHandler): void {
+		this._eventDelegate.subscribe(handler);
+	}
+
+	public unsubscribeEvents(handler: EventHandler): void {
+		this._eventDelegate.unsubscribe(handler);
+	}
+
 	public subscribeCrosshairMove(handler: MouseEventHandler): void {
 		this._crosshairMovedDelegate.subscribe(handler);
 	}
@@ -292,6 +312,14 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	public takeScreenshot(): HTMLCanvasElement {
 		return this._chartWidget.takeScreenshot();
+	}
+
+	public setCrosshair(x: Coordinate, y: Coordinate): void {
+		this._chartWidget.setCrosshair(x, y);
+	}
+
+	public unsetCrosshair(x: Coordinate, y: Coordinate): void {
+		this._chartWidget.unsetCrosshair();
 	}
 
 	private _sendUpdateToChart(update: DataUpdateResponse): void {
@@ -324,6 +352,27 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			hoveredSeries,
 			hoveredMarkerId: param.hoveredObject,
 			seriesData,
+		};
+	}
+
+	private _convertEventParams(param: EventParamsImpl): EventParams {
+		const seriesData: EventParams['seriesData'] = new Map();
+		param.seriesData.forEach((plotRow: SeriesPlotRow, series: Series) => {
+			const data = getSeriesDataCreator(series.seriesType())(plotRow);
+			assert(isFulfilledData(data));
+			seriesData.set(this._mapSeriesToApi(series), data);
+		});
+
+		const hoveredSeries = param.hoveredSeries === undefined ? undefined : this._mapSeriesToApi(param.hoveredSeries);
+
+		return {
+			time: param.time as Time | undefined,
+			logical: param.index as Logical | undefined,
+			point: param.point,
+			hoveredSeries,
+			hoveredMarkerId: param.hoveredObject,
+			seriesData,
+			eventType: param.eventType,
 		};
 	}
 }

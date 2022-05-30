@@ -2,9 +2,9 @@ import { Binding as CanvasCoordinateSpaceBinding } from 'fancy-canvas/coordinate
 
 import { ensureNotNull } from '../helpers/assertions';
 import { clearRect, clearRectWithGradient, drawScaled } from '../helpers/canvas-helpers';
-import { Delegate } from '../helpers/delegate';
+import { Delegate, Delegate2 } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
-import { ISubscription } from '../helpers/isubscription';
+import { ISubscription, ISubscription2 } from '../helpers/isubscription';
 
 import { ChartModel, HoveredObject, TrackingModeExitMode } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
@@ -19,6 +19,7 @@ import { IPaneView } from '../views/pane/ipane-view';
 
 import { createBoundCanvas, getContext2D, Size } from './canvas-utils';
 import { ChartWidget } from './chart-widget';
+import { EventHandlerEventBase, EventType } from './generic-event-handler';
 import { KineticAnimation } from './kinetic-animation';
 import { MouseEventHandler, MouseEventHandlerEventBase, MouseEventHandlerMouseEvent, MouseEventHandlers, MouseEventHandlerTouchEvent, Position, TouchMouseEvent } from './mouse-event-handler';
 import { PriceAxisWidget, PriceAxisWidgetSide } from './price-axis-widget';
@@ -89,6 +90,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	private _startScrollingPos: StartScrollPosition | null = null;
 	private _isScrolling: boolean = false;
 	private _clicked: Delegate<TimePointIndex | null, Point> = new Delegate();
+	private _events: Delegate2<TimePointIndex | null, Point | null, EventType> = new Delegate2();
 	private _prevPinchScale: number = 0;
 	private _longTap: boolean = false;
 	private _startTrackPoint: Point | null = null;
@@ -249,12 +251,14 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		const y = event.localY;
 
 		this._setCrosshairPosition(x, y);
+		this._fireEventDelegate({ type: EventType.MouseEnter, mouseEvent: event });
 	}
 
 	public mouseDownEvent(event: MouseEventHandlerMouseEvent): void {
 		this._onMouseEvent();
 		this._mouseTouchDownEvent();
 		this._setCrosshairPosition(event.localX, event.localY);
+		this._fireEventDelegate({ type: EventType.MouseDown, mouseEvent: event });
 	}
 
 	public mouseMoveEvent(event: MouseEventHandlerMouseEvent): void {
@@ -269,6 +273,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._setCrosshairPosition(x, y);
 		const hitTest = this.hitTest(x, y);
 		this._model().setHoveredSource(hitTest && { source: hitTest.source, object: hitTest.object });
+		this._fireEventDelegate({ type: EventType.MouseMove, mouseEvent: event });
 	}
 
 	public mouseClickEvent(event: MouseEventHandlerMouseEvent): void {
@@ -277,12 +282,14 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		}
 		this._onMouseEvent();
 		this._fireClickedDelegate(event);
+		this._fireEventDelegate({ type: EventType.MouseClick, mouseEvent: event });
 	}
 
 	public pressedMouseMoveEvent(event: MouseEventHandlerMouseEvent): void {
 		this._onMouseEvent();
 		this._pressedMouseTouchMoveEvent(event);
 		this._setCrosshairPosition(event.localX, event.localY);
+		this._fireEventDelegate({ type: EventType.PressedMouseMove, mouseEvent: event });
 	}
 
 	public mouseUpEvent(event: MouseEventHandlerMouseEvent): void {
@@ -294,6 +301,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._longTap = false;
 
 		this._endScroll(event);
+		this._fireEventDelegate({ type: EventType.MouseUp, mouseEvent: event });
 	}
 
 	public tapEvent(event: MouseEventHandlerTouchEvent): void {
@@ -301,6 +309,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 			return;
 		}
 		this._fireClickedDelegate(event);
+		this._fireEventDelegate({ type: EventType.Tap, mouseEvent: event });
 	}
 
 	public longTapEvent(event: MouseEventHandlerTouchEvent): void {
@@ -310,6 +319,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 			const point: Point = { x: event.localX, y: event.localY };
 			this._startTrackingMode(point, point);
 		}
+		this._fireEventDelegate({ type: EventType.LongTap, mouseEvent: event });
 	}
 
 	public mouseLeaveEvent(event: MouseEventHandlerMouseEvent): void {
@@ -320,10 +330,15 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 		this._state.model().setHoveredSource(null);
 		this._clearCrosshairPosition();
+		this._fireEventDelegate({ type: EventType.MouseLeave, mouseEvent: event });
 	}
 
 	public clicked(): ISubscription<TimePointIndex | null, Point> {
 		return this._clicked;
+	}
+
+	public events(): ISubscription2<TimePointIndex | null, Point | null, EventType> {
+		return this._events;
 	}
 
 	public pinchStartEvent(): void {
@@ -501,6 +516,20 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		return this._rightPriceAxisWidget;
 	}
 
+	public remoteCrosshairStart(x: Coordinate, y: Coordinate): void {
+		// console.log('JJ: Remote Crosshair Start');
+	}
+
+	public remoteCrosshairUpdate(x: Coordinate, y: Coordinate): void {
+		// console.log('JJ: Remote Crosshair Update');
+		this._setCrosshairPosition(x, y);
+	}
+
+	public remoteCrosshairEnd(): void {
+		// console.log('JJ: Remote Crosshair End');
+		this._clearCrosshairPosition();
+	}
+
 	private _onStateDestroyed(): void {
 		if (this._state !== null) {
 			this._state.onDestroyed().unsubscribeAll(this);
@@ -515,6 +544,20 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 		if (this._clicked.hasListeners()) {
 			this._clicked.fire(this._model().timeScale().coordinateToIndex(x), { x, y });
+		}
+	}
+
+	private _fireEventDelegate(event: EventHandlerEventBase): void {
+		if (event.mouseEvent === undefined) {
+			const x = event.x;
+			const y = event.y;
+			this._events.fire(null, { x, y }, event.type);
+		} else {
+			const x = event.mouseEvent.localX;
+			const y = event.mouseEvent.localY;
+			if (this._events.hasListeners()) {
+				this._events.fire(this._model().timeScale().coordinateToIndex(x), { x, y }, event.type);
+			}
 		}
 	}
 
@@ -651,12 +694,21 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		return Math.max(0, Math.min(y, this._size.h - 1)) as Coordinate;
 	}
 
-	private _setCrosshairPosition(x: Coordinate, y: Coordinate): void {
+	private _setCrosshairPosition(x: Coordinate, y: Coordinate, remote: boolean = false): void {
+		// console.log(`JJ: MUST CALL THIS _setCrosshairPosition ${x} ${y}, ${this._correctXCoord(x)}, ${this._correctYCoord(y)}`);
 		this._model().setAndSaveCurrentPosition(this._correctXCoord(x), this._correctYCoord(y), ensureNotNull(this._state));
+
+		if (remote === false) {
+			this._fireEventDelegate({ x: x, y: y, type: EventType.CrosshairUpdate });
+		}
 	}
 
-	private _clearCrosshairPosition(): void {
+	private _clearCrosshairPosition(remote: boolean = false): void {
 		this._model().clearCurrentPosition();
+
+		if (remote === false) { // (0, 0) is magic
+			this._fireEventDelegate({ x: 0 as Coordinate, y: 0 as Coordinate, type: EventType.CrosshairUpdateEnd });
+		}
 	}
 
 	private _tryExitTrackingMode(): void {

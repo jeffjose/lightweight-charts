@@ -20,9 +20,20 @@ import { SeriesPlotRow } from '../model/series-data';
 import { OriginalTime, TimePointIndex } from '../model/time-data';
 
 import { createPreconfiguredCanvas, getCanvasDevicePixelRatio, getContext2D, Size } from './canvas-utils';
+import { EventType } from './generic-event-handler';
 // import { PaneSeparator, SEPARATOR_HEIGHT } from './pane-separator';
 import { PaneWidget } from './pane-widget';
 import { TimeAxisWidget } from './time-axis-widget';
+
+export interface EventParamsImpl {
+	time?: OriginalTime;
+	index?: TimePointIndex;
+	point?: Point;
+	seriesData: Map<Series, SeriesPlotRow>;
+	hoveredSeries?: Series;
+	hoveredObject?: string;
+	eventType: EventType;
+}
 
 export interface MouseEventParamsImpl {
 	time?: OriginalTime;
@@ -33,6 +44,7 @@ export interface MouseEventParamsImpl {
 	hoveredObject?: string;
 }
 
+export type EventParamsImplSupplier = () => EventParamsImpl;
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
 
 export class ChartWidget implements IDestroyable {
@@ -51,6 +63,7 @@ export class ChartWidget implements IDestroyable {
 	private _invalidateMask: InvalidateMask | null = null;
 	private _drawPlanned: boolean = false;
 	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();
+	private _events: Delegate<EventParamsImplSupplier> = new Delegate();
 	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();
 	private _onWheelBound: (event: WheelEvent) => void;
 
@@ -112,6 +125,24 @@ export class ChartWidget implements IDestroyable {
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
 	}
 
+	public setCrosshair(x: Coordinate, y: Coordinate): void {
+		// console.log(`JJ: setCrosshair: ${x}`);
+		if (this._paneWidgets.length === 0) {
+			return;
+		}
+
+		this._paneWidgets[0].remoteCrosshairUpdate(x, y);
+	}
+
+	public unsetCrosshair(): void {
+		// console.log(`JJ: unsetCrosshair`);
+		if (this._paneWidgets.length === 0) {
+			return;
+		}
+
+		this._paneWidgets[0].remoteCrosshairEnd();
+	}
+
 	public model(): ChartModel {
 		return this._model;
 	}
@@ -142,6 +173,7 @@ export class ChartWidget implements IDestroyable {
 		for (const paneWidget of this._paneWidgets) {
 			this._tableElement.removeChild(paneWidget.getElement());
 			paneWidget.clicked().unsubscribeAll(this);
+			paneWidget.events().unsubscribeAll(this);
 			paneWidget.destroy();
 		}
 		this._paneWidgets = [];
@@ -214,6 +246,10 @@ export class ChartWidget implements IDestroyable {
 
 	public clicked(): ISubscription<MouseEventParamsImplSupplier> {
 		return this._clicked;
+	}
+
+	public events(): ISubscription<EventParamsImplSupplier> {
+		return this._events;
 	}
 
 	public crosshairMoved(): ISubscription<MouseEventParamsImplSupplier> {
@@ -575,6 +611,7 @@ export class ChartWidget implements IDestroyable {
 		for (let i = actualPaneWidgetsCount; i < targetPaneWidgetsCount; i++) {
 			const paneWidget = new PaneWidget(this, panes[i]);
 			paneWidget.clicked().subscribe(this._onPaneWidgetClicked.bind(this), this);
+			paneWidget.events().subscribe(this._onPaneWidgetEvent.bind(this), this);
 
 			this._paneWidgets.push(paneWidget);
 
@@ -601,6 +638,47 @@ export class ChartWidget implements IDestroyable {
 
 		this._updateTimeAxisVisibility();
 		this._adjustSizeImpl();
+	}
+
+	private _getEventParamsImpl(index: TimePointIndex | null, point: Point | null, eventType: EventType): EventParamsImpl {
+		const seriesData = new Map<Series, SeriesPlotRow>();
+		if (index !== null) {
+			const serieses = this._model.serieses();
+			serieses.forEach((s: Series) => {
+				// TODO: replace with search left
+				const data = s.bars().search(index);
+				if (data !== null) {
+					seriesData.set(s, data);
+				}
+			});
+		}
+		let clientTime: OriginalTime | undefined;
+		if (index !== null) {
+			const timePoint = this._model.timeScale().indexToTimeScalePoint(index)?.originalTime;
+			if (timePoint !== undefined) {
+				clientTime = timePoint;
+			}
+		}
+
+		const hoveredSource = this.model().hoveredSource();
+
+		const hoveredSeries = hoveredSource !== null && hoveredSource.source instanceof Series
+			? hoveredSource.source
+			: undefined;
+
+		const hoveredObject = hoveredSource !== null && hoveredSource.object !== undefined
+			? hoveredSource.object.externalId
+			: undefined;
+
+		return {
+			time: clientTime,
+			index: index ?? undefined,
+			point: point ?? undefined,
+			hoveredSeries,
+			seriesData,
+			hoveredObject,
+			eventType,
+		};
 	}
 
 	private _getMouseEventParamsImpl(index: TimePointIndex | null, point: Point | null): MouseEventParamsImpl {
@@ -645,6 +723,10 @@ export class ChartWidget implements IDestroyable {
 
 	private _onPaneWidgetClicked(time: TimePointIndex | null, point: Point): void {
 		this._clicked.fire(() => this._getMouseEventParamsImpl(time, point));
+	}
+
+	private _onPaneWidgetEvent(time: TimePointIndex | null, point: Point | null, eventType: EventType): void {
+		this._events.fire(() => this._getEventParamsImpl(time, point, eventType));
 	}
 
 	private _onPaneWidgetCrosshairMoved(time: TimePointIndex | null, point: Point | null): void {

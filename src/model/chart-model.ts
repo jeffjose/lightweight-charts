@@ -1,4 +1,4 @@
-/// <reference types="_build-time-constants" />
+// <reference types="_build-time-constants" />
 
 import { assert, ensureNotNull } from '../helpers/assertions';
 import { gradientColorAtPercent } from '../helpers/color';
@@ -626,6 +626,7 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public setAndSaveCurrentPosition(x: Coordinate, y: Coordinate, pane: Pane): void {
+		// console.log(`JJ: setAndSaveCurrentPosition`);
 		this._crosshair.saveOriginCoord(x, y);
 		let price = NaN;
 		let index = this._timeScale.coordinateToIndex(x);
@@ -656,6 +657,7 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public updateCrosshair(): void {
+		// console.log(`JJ: updateCrosshair`);
 		// apply magnet
 		const pane = this._crosshair.pane();
 		if (pane !== null) {
@@ -665,6 +667,20 @@ export class ChartModel implements IDestroyable {
 		}
 
 		this._crosshair.updateAllViews();
+	}
+
+	public remoteUpdateCrosshair(x: Coordinate): void {
+		// apply magnet
+		// 10 is fake
+		return;
+		// this.setAndSaveCurrentPosition(x, 10 as Coordinate, ensureNotNull(this.panes))
+		// this._crosshair.saveOriginCoord(x, 10 as Coordinate);
+		// const pane = this._crosshair.pane();
+		// console.log(`JJ: 1. remoteUpdateCrosshair`, pane);
+		// if (pane !== null) {
+		//	console.log(`JJ: 2. remoteUpdateCrosshair`, pane);
+		//	this.setAndSaveCurrentPosition(x, 10 as Coordinate, pane);
+		// }
 	}
 
 	public updateTimeScale(newBaseIndex: TimePointIndex | null, newPoints?: readonly TimeScalePoint[], firstChangedPointIndex?: number): void {
