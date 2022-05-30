@@ -1,24 +1,34 @@
 // <reference types="_build-time-constants" />
-import { WatermarkOptions } from './watermark';
+import { ChartApi } from '../api/chart-api';
+
+/**
+ * Represents the type of the last price animation for series such as area or line.
+ */
+export const enum SyncModeHorizontalCrosshairDisplay {/**
+	 * Show on active chart (follow cursor)
+	 */
+	Active,
+	/**
+	 * Show on all charts
+	 */
+	Always,
+}
 
 /**
  * Structure describing options of the chart. Series options are to be set separately
  */
 export interface SyncChartOptions {
-	// TODO: JJ This is a placeholder. Update as needed
 	/**
-	 * Width of the chart in pixels
+	 * Display timescale for the following charts
 	 *
-	 * @defaultValue If `0` (default) or none value provided, then a size of the widget will be calculated based its container's size.
 	 */
-	width: number;
+	timeScaleHide: ChartApi[];
 
 	/**
-	 * Height of the chart in pixels
+	 * Display timescale for the following charts
 	 *
-	 * @defaultValue If `0` (default) or none value provided, then a size of the widget will be calculated based its container's size.
 	 */
-	height: number;
+	crossHairHorizLineDisplayMode: SyncModeHorizontalCrosshairDisplay;
 
 	/**
 	 * Watermark options.
@@ -28,6 +38,6 @@ export interface SyncChartOptions {
 	 * Please make sure you enable it and set an appropriate font color and size to make your watermark visible in the background of the chart.
 	 * We recommend a semi-transparent color and a large font. Also note that watermark position can be aligned vertically and horizontally.
 	 */
-	watermark: WatermarkOptions;
+	// watermark: WatermarkOptions;
 
 }
