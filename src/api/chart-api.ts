@@ -3,6 +3,7 @@ import { ChartWidget, EventParamsImpl, EventParamsImplSupplier, MouseEventParams
 import { assert, ensureDefined } from '../helpers/assertions';
 import { Delegate } from '../helpers/delegate';
 import { clone, DeepPartial, isBoolean, merge } from '../helpers/strict-type-checks';
+import { uuid } from '../helpers/uuid';
 
 import { ChartOptions, ChartOptionsInternal } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
@@ -111,6 +112,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	private readonly _crosshairMovedDelegate: Delegate<MouseEventParams> = new Delegate();
 
 	private readonly _timeScaleApi: TimeScaleApi;
+	private readonly _uuid: string = uuid();
 
 	public constructor(container: HTMLElement, options?: DeepPartial<ChartOptions>) {
 		const internalOptions = (options === undefined) ?
@@ -300,6 +302,10 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	public timeScale(): ITimeScaleApi {
 		return this._timeScaleApi;
+	}
+
+	public uuid(): string {
+		return this._uuid;
 	}
 
 	public applyOptions(options: DeepPartial<ChartOptions>): void {

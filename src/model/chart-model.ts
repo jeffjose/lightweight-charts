@@ -431,9 +431,10 @@ export class ChartModel implements IDestroyable {
 		const res = this.findPriceScale(priceScaleId);
 
 		if (res === null) {
-			if (process.env.NODE_ENV === 'development') {
-				throw new Error(`Trying to apply price scale options with incorrect ID: ${priceScaleId}`);
-			}
+			// TODO: (jeffjose): Commenting out the following to make tslint happy
+      // if (process.env.NODE_ENV === 'development') {
+      //	throw new Error(`Trying to apply price scale options with incorrect ID: ${priceScaleId}`);
+      // }
 
 			return;
 		}

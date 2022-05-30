@@ -522,12 +522,12 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 	public remoteCrosshairUpdate(x: Coordinate, y: Coordinate): void {
 		// console.log('JJ: Remote Crosshair Update');
-		this._setCrosshairPosition(x, y);
+		this._setCrosshairPosition(x, y, true);
 	}
 
 	public remoteCrosshairEnd(): void {
 		// console.log('JJ: Remote Crosshair End');
-		this._clearCrosshairPosition();
+		this._clearCrosshairPosition(true);
 	}
 
 	private _onStateDestroyed(): void {
