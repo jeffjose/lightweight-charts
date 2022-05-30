@@ -61,6 +61,11 @@ export interface EventParams {
 	 * EventType
 	 */
 	eventType: EventType;
+
+	/**
+	 * Mouse Wheel Event
+	 */
+	wheelEvent?: WheelEvent;
 }
 
 /**
@@ -340,11 +345,11 @@ export interface IChartApi {
 	 * setCrosshair
 	 *
 	 */
-	setCrosshair(x: Coordinate, y: Coordinate): void;
+	remoteSetCrosshair(x: Coordinate, y: Coordinate): void;
 
 	/**
 	 * unsetCrosshair
 	 *
 	 */
-	unsetCrosshair(x: Coordinate, y: Coordinate): void;
+	remoteUnsetCrosshair(x: Coordinate, y: Coordinate): void;
 }

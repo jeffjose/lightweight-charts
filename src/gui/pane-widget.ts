@@ -2,9 +2,9 @@ import { Binding as CanvasCoordinateSpaceBinding } from 'fancy-canvas/coordinate
 
 import { ensureNotNull } from '../helpers/assertions';
 import { clearRect, clearRectWithGradient, drawScaled } from '../helpers/canvas-helpers';
-import { Delegate, Delegate2 } from '../helpers/delegate';
+import { Delegate, Delegate4 } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
-import { ISubscription, ISubscription2 } from '../helpers/isubscription';
+import { ISubscription, ISubscription4 } from '../helpers/isubscription';
 
 import { ChartModel, HoveredObject, TrackingModeExitMode } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
@@ -90,7 +90,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	private _startScrollingPos: StartScrollPosition | null = null;
 	private _isScrolling: boolean = false;
 	private _clicked: Delegate<TimePointIndex | null, Point> = new Delegate();
-	private _events: Delegate2<TimePointIndex | null, Point | null, EventType> = new Delegate2();
+	private _events: Delegate4<TimePointIndex | null, Point | null, EventType, WheelEvent | null> = new Delegate4();
 	private _prevPinchScale: number = 0;
 	private _longTap: boolean = false;
 	private _startTrackPoint: Point | null = null;
@@ -337,7 +337,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		return this._clicked;
 	}
 
-	public events(): ISubscription2<TimePointIndex | null, Point | null, EventType> {
+	public events(): ISubscription4<TimePointIndex | null, Point | null, EventType, WheelEvent | null> {
 		return this._events;
 	}
 
@@ -516,17 +516,13 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		return this._rightPriceAxisWidget;
 	}
 
-	public remoteCrosshairStart(x: Coordinate, y: Coordinate): void {
-		// console.log('JJ: Remote Crosshair Start');
-	}
-
 	public remoteCrosshairUpdate(x: Coordinate, y: Coordinate): void {
-		// console.log('JJ: Remote Crosshair Update');
+		// Called by chart-widget `remoteSetCrosshair`
 		this._setCrosshairPosition(x, y, true);
 	}
 
 	public remoteCrosshairEnd(): void {
-		// console.log('JJ: Remote Crosshair End');
+		// Called by chart-widget `remoteUnsetCrosshair`
 		this._clearCrosshairPosition(true);
 	}
 
@@ -548,15 +544,15 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	}
 
 	private _fireEventDelegate(event: EventHandlerEventBase): void {
-		if (event.mouseEvent === undefined) {
+		if (event.mouseEvent === undefined && event.wheelEvent === undefined) {
 			const x = event.x;
 			const y = event.y;
-			this._events.fire(null, { x, y }, event.type);
-		} else {
+			this._events.fire(null, { x, y }, event.type, null);
+		} else if (event.mouseEvent !== undefined) {
 			const x = event.mouseEvent.localX;
 			const y = event.mouseEvent.localY;
 			if (this._events.hasListeners()) {
-				this._events.fire(this._model().timeScale().coordinateToIndex(x), { x, y }, event.type);
+				this._events.fire(this._model().timeScale().coordinateToIndex(x), { x, y }, event.type, null);
 			}
 		}
 	}

@@ -65,9 +65,16 @@ class SyncCharts {
 			// console.log(`ZZ: JJ: src: ${chart.uuid()}`);
 
 			switch (param.eventType) {
+				case EventType.MouseWheel:
+					this._charts.filter((c: ChartApi) => c.uuid() !== chart.uuid()).forEach((c: ChartApi) => {
+						if (param.wheelEvent !== undefined) {
+							c.remoteMouseWheel(param.wheelEvent);
+						}
+					});
+					return;
 				case EventType.CrosshairUpdate:
 					this._charts.filter((c: ChartApi) => c.uuid() !== chart.uuid()).forEach((c: ChartApi) => {
-						c.setCrosshair(ensureDefined(param.point).x, ensureDefined(param.point).y);
+						c.remoteSetCrosshair(ensureDefined(param.point).x, ensureDefined(param.point).y);
 
 						if (this._options.crossHairHorizLineDisplayMode === SyncModeHorizontalCrosshairDisplay.Active) {
 							this._hideHorizCrosshair(c);
@@ -77,7 +84,7 @@ class SyncCharts {
 					return;
 				case EventType.CrosshairUpdateEnd:
 					this._charts.filter((c: ChartApi) => c.uuid() !== chart.uuid()).forEach((c: ChartApi) => {
-						c.unsetCrosshair(ensureDefined(param.point).x, ensureDefined(param.point).y);
+						c.remoteUnsetCrosshair(ensureDefined(param.point).x, ensureDefined(param.point).y);
 
 						// Reset crosshair options
 						// TODO: We blindly make cross hair visible assuming that's what user originally set.
@@ -107,7 +114,7 @@ function test(param: EventParams): void {
 }
 
 function isChartSyncEvent(param: EventParams): boolean {
-	return param.eventType === EventType.CrosshairUpdate || param.eventType === EventType.CrosshairUpdateEnd;
+	return param.eventType === EventType.CrosshairUpdate || param.eventType === EventType.CrosshairUpdateEnd || param.eventType === EventType.MouseWheel;
 }
 
 interface SyncParams extends EventParams {

@@ -320,12 +320,16 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		return this._chartWidget.takeScreenshot();
 	}
 
-	public setCrosshair(x: Coordinate, y: Coordinate): void {
-		this._chartWidget.setCrosshair(x, y);
+	public remoteMouseWheel(event: WheelEvent): void {
+		this._chartWidget.remoteMouseWheel(event);
 	}
 
-	public unsetCrosshair(x: Coordinate, y: Coordinate): void {
-		this._chartWidget.unsetCrosshair();
+	public remoteSetCrosshair(x: Coordinate, y: Coordinate): void {
+		this._chartWidget.remoteSetCrosshair(x, y);
+	}
+
+	public remoteUnsetCrosshair(x: Coordinate, y: Coordinate): void {
+		this._chartWidget.remoteUnsetCrosshair();
 	}
 
 	private _sendUpdateToChart(update: DataUpdateResponse): void {
@@ -379,6 +383,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			hoveredMarkerId: param.hoveredObject,
 			seriesData,
 			eventType: param.eventType,
+			wheelEvent: param.wheelEvent,
 		};
 	}
 }

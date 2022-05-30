@@ -49,6 +49,11 @@ export const enum EventType {
 	 * CrosshairUpdateEnd
 	 */
   CrosshairUpdateEnd = 'CrosshairUpdateEnd',
+
+	/**
+	 * MouseWheel
+	 */
+  MouseWheel = 'MouseWheel',
 }
 interface EventHandlerMouseEventBase {
 
@@ -56,14 +61,25 @@ interface EventHandlerMouseEventBase {
 	readonly mouseEvent: MouseEventHandlerEventBase;
 	readonly x?: never;
 	readonly y?: never;
+	readonly wheelEvent?: never;
 }
 
-interface EventHandlerRegularEventBase {
+interface EventHandlerCrosshairEventBase {
 
 	readonly type: EventType;
 	readonly x: Coordinate;
 	readonly y: Coordinate;
 	readonly mouseEvent?: never;
+	readonly wheelEvent?: never;
 }
 
-export type EventHandlerEventBase = EventHandlerMouseEventBase | EventHandlerRegularEventBase;
+interface EventHandlerWheelEventBase {
+
+	readonly type: EventType;
+	readonly x?: never;
+	readonly y?: never;
+	readonly mouseEvent?: never;
+	readonly wheelEvent: WheelEvent;
+}
+
+export type EventHandlerEventBase = EventHandlerMouseEventBase | EventHandlerCrosshairEventBase | EventHandlerWheelEventBase;

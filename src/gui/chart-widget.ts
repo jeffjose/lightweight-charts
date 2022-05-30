@@ -1,8 +1,8 @@
 import { ensureDefined, ensureNotNull } from '../helpers/assertions';
 import { drawScaled } from '../helpers/canvas-helpers';
-import { Delegate } from '../helpers/delegate';
+import { Delegate, Delegate4 } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
-import { ISubscription } from '../helpers/isubscription';
+import { ISubscription, ISubscription4 } from '../helpers/isubscription';
 import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { ChartModel, ChartOptionsInternal } from '../model/chart-model';
@@ -33,6 +33,7 @@ export interface EventParamsImpl {
 	hoveredSeries?: Series;
 	hoveredObject?: string;
 	eventType: EventType;
+	wheelEvent?: WheelEvent;
 }
 
 export interface MouseEventParamsImpl {
@@ -63,7 +64,7 @@ export class ChartWidget implements IDestroyable {
 	private _invalidateMask: InvalidateMask | null = null;
 	private _drawPlanned: boolean = false;
 	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();
-	private _events: Delegate<EventParamsImplSupplier> = new Delegate();
+	private _events: Delegate4<EventParamsImplSupplier> = new Delegate4();
 	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();
 	private _onWheelBound: (event: WheelEvent) => void;
 
@@ -125,8 +126,13 @@ export class ChartWidget implements IDestroyable {
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
 	}
 
-	public setCrosshair(x: Coordinate, y: Coordinate): void {
-		// console.log(`JJ: setCrosshair: ${x}`);
+	public remoteMouseWheel(event: WheelEvent): void {
+		// console.log('JJ: remoteMouseWheel');
+		this._onMousewheel(event, true);
+	}
+
+	public remoteSetCrosshair(x: Coordinate, y: Coordinate): void {
+		// Public facing function for remote calls
 		if (this._paneWidgets.length === 0) {
 			return;
 		}
@@ -134,13 +140,19 @@ export class ChartWidget implements IDestroyable {
 		this._paneWidgets[0].remoteCrosshairUpdate(x, y);
 	}
 
-	public unsetCrosshair(): void {
-		// console.log(`JJ: unsetCrosshair`);
+	public remoteUnsetCrosshair(): void {
+		// Public facing function for remote calls
 		if (this._paneWidgets.length === 0) {
 			return;
 		}
 
 		this._paneWidgets[0].remoteCrosshairEnd();
+	}
+
+	public remoteMouseWheelUpdate(scrollPosition: Coordinate, zoomScale: Coordinate, deltaX: Coordinate): void {
+		// Public facing function for remote calls
+		this.model().zoomTime(scrollPosition, zoomScale);
+		this.model().scrollChart(deltaX);
 	}
 
 	public model(): ChartModel {
@@ -248,7 +260,7 @@ export class ChartWidget implements IDestroyable {
 		return this._clicked;
 	}
 
-	public events(): ISubscription<EventParamsImplSupplier> {
+	public events(): ISubscription4<EventParamsImplSupplier> {
 		return this._events;
 	}
 
@@ -442,7 +454,8 @@ export class ChartWidget implements IDestroyable {
 		}
 	}
 
-	private _onMousewheel(event: WheelEvent): void {
+	private _onMousewheel(event: WheelEvent, remote: boolean = false): void {
+		// console.log(`JJ: XX: mousewheel ${remote}`);
 		let deltaX = event.deltaX / 100;
 		let deltaY = -(event.deltaY / 100);
 
@@ -473,10 +486,16 @@ export class ChartWidget implements IDestroyable {
 			const zoomScale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY));
 			const scrollPosition = event.clientX - this._element.getBoundingClientRect().left;
 			this.model().zoomTime(scrollPosition as Coordinate, zoomScale);
+			// 0 is fake/dummy number
 		}
 
 		if (deltaX !== 0 && this._options.handleScroll.mouseWheel) {
 			this.model().scrollChart(deltaX * -80 as Coordinate); // 80 is a made up coefficient, and minus is for the "natural" scroll
+			// this._events.fire();
+		}
+
+		if (remote === false) {
+			this._events.fire(() => this._getEventParamsImpl(null, null, EventType.MouseWheel, event));
 		}
 	}
 
@@ -640,7 +659,7 @@ export class ChartWidget implements IDestroyable {
 		this._adjustSizeImpl();
 	}
 
-	private _getEventParamsImpl(index: TimePointIndex | null, point: Point | null, eventType: EventType): EventParamsImpl {
+	private _getEventParamsImpl(index: TimePointIndex | null, point: Point | null, eventType: EventType, wheelEvent: WheelEvent | null): EventParamsImpl {
 		const seriesData = new Map<Series, SeriesPlotRow>();
 		if (index !== null) {
 			const serieses = this._model.serieses();
@@ -678,6 +697,7 @@ export class ChartWidget implements IDestroyable {
 			seriesData,
 			hoveredObject,
 			eventType,
+			wheelEvent: wheelEvent ?? undefined,
 		};
 	}
 
@@ -725,8 +745,8 @@ export class ChartWidget implements IDestroyable {
 		this._clicked.fire(() => this._getMouseEventParamsImpl(time, point));
 	}
 
-	private _onPaneWidgetEvent(time: TimePointIndex | null, point: Point | null, eventType: EventType): void {
-		this._events.fire(() => this._getEventParamsImpl(time, point, eventType));
+	private _onPaneWidgetEvent(time: TimePointIndex | null, point: Point | null, eventType: EventType, wheelEvent: WheelEvent | null): void {
+		this._events.fire(() => this._getEventParamsImpl(time, point, eventType, wheelEvent));
 	}
 
 	private _onPaneWidgetCrosshairMoved(time: TimePointIndex | null, point: Point | null): void {
