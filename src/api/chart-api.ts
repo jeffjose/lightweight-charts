@@ -384,6 +384,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			seriesData,
 			eventType: param.eventType,
 			wheelEvent: param.wheelEvent,
+			event: param.event,
 		};
 	}
 }

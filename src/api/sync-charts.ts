@@ -61,6 +61,7 @@ class SyncCharts {
 	}
 
 	public eventHandler(chart: ChartApi, param: EventParams): void {
+		// console.log('JJ: sync-charts - eventHandler ', param.eventType, param);
 		if (isChartSyncEvent(param)) {
 			// console.log(`ZZ: JJ: src: ${chart.uuid()}`);
 
