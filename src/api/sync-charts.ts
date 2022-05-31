@@ -91,7 +91,9 @@ class SyncCharts {
 					});
 					return;
 
-				case EventType.PressedMouseMove:
+				case EventType.ScrollTimeStart:
+				case EventType.ScrollTimeUpdate:
+				case EventType.ScrollTimeEnd:
 					this._charts.filter((c: ChartApi) => c.uuid() !== chart.uuid()).forEach((c: ChartApi) => {
 						// console.log('JJ: ZZ: remote pan', param.point);
 						c.remotePressedMouseMove(ensureDefined(param.point).x);

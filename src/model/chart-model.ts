@@ -621,6 +621,7 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public endScrollTime(): void {
+		console.log('JJ: YY: endScrollTime')
 		this._timeScale.endScroll();
 		this.lightUpdate();
 

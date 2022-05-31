@@ -287,6 +287,9 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._onMouseEvent();
 		this._fireClickedDelegate(event);
 		this._fireEventDelegate({ type: EventType.MouseClick, mouseEvent: event, event: event });
+
+		console.log('click');
+		this._model().scrollChart(1 as Coordinate);
 	}
 
 	public pressedMouseMoveEvent(event: MouseEventHandlerMouseEvent): void {
@@ -909,6 +912,8 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 				model.startScrollPrice(this._state, priceScale, event.localY);
 			}
 
+			// console.log('JJ: YY: startScollTime: ', event.localX);
+			this._fireEventDelegate({ type: EventType.ScrollTimeStart, x: event.localX, mouseEvent: event, event: event });
 			model.startScrollTime(event.localX);
 			this._isScrolling = true;
 		}
@@ -919,9 +924,9 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 				model.scrollPriceTo(this._state, priceScale, event.localY);
 			}
 
+			// console.log('JJ: YY: scrollTimeTo: ', event.localX);
+			this._fireEventDelegate({ type: EventType.ScrollTimeUpdate, x: event.localX, mouseEvent: event, event: event });
 			model.scrollTimeTo(event.localX);
-
-			this._fireEventDelegate({ type: EventType.PressedMouseMove, x: event.localX, mouseEvent: event, event: event });
 
 			// console.log('JJ: scrollTimeTo', event.localX, 'scrollPriceTo', event.localY);
 		}

@@ -54,6 +54,21 @@ export const enum EventType {
 	 * MouseWheel
 	 */
   MouseWheel = 'MouseWheel',
+
+	/**
+	 * StartScrollStart
+	 */
+  ScrollTimeStart = 'ScrollTimeStart',
+
+	/**
+	 * ScrollTimeUpdate
+	 */
+  ScrollTimeUpdate = 'ScrollTimeUpdate',
+
+	/**
+	 * ScrollTimeEnd
+	 */
+  ScrollTimeEnd = 'ScrollTimeEnd',
 }
 interface EventHandlerMouseEventBase {
 
@@ -85,13 +100,13 @@ interface EventHandlerWheelEventBase {
 	readonly event?: never;
 }
 
-interface EventHandlerPressedMouseMoveEventBase {
+interface EventHandlerScrollTimeEventBase {
 
-	readonly type: EventType.PressedMouseMove;
+	readonly type: EventType.ScrollTimeStart | EventType.ScrollTimeUpdate | EventType.ScrollTimeEnd;
 	readonly x: Coordinate;
 	readonly y?: never;
 	readonly mouseEvent: MouseEventHandlerEventBase;
 	readonly wheelEvent?: never;
 	readonly event: TouchMouseEvent;
 }
-export type EventHandlerEventBase = EventHandlerMouseEventBase | EventHandlerCrosshairEventBase | EventHandlerWheelEventBase | EventHandlerPressedMouseMoveEventBase;
+export type EventHandlerEventBase = EventHandlerMouseEventBase | EventHandlerCrosshairEventBase | EventHandlerWheelEventBase | EventHandlerScrollTimeEventBase;
