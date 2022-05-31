@@ -128,6 +128,11 @@ export class ChartWidget implements IDestroyable {
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
 	}
 
+	public remotePressedMouseMove(scrollToX: Coordinate): void {
+		// console.log('JJ: ZZ remotePressedMouseMove', event);
+		this._paneWidgets[0].remotePressedMouseMove(scrollToX);
+	}
+
 	public remoteMouseWheel(event: WheelEvent): void {
 		// console.log('JJ: remoteMouseWheel');
 		this._onMousewheel(event, true);

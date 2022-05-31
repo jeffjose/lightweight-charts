@@ -61,16 +61,13 @@ class SyncCharts {
 	}
 
 	public eventHandler(chart: ChartApi, param: EventParams): void {
-		// console.log('JJ: sync-charts - eventHandler ', param.eventType, param);
 		if (isChartSyncEvent(param)) {
 			// console.log(`ZZ: JJ: src: ${chart.uuid()}`);
 
 			switch (param.eventType) {
 				case EventType.MouseWheel:
 					this._charts.filter((c: ChartApi) => c.uuid() !== chart.uuid()).forEach((c: ChartApi) => {
-						if (param.wheelEvent !== undefined) {
-							c.remoteMouseWheel(param.wheelEvent);
-						}
+						c.remoteMouseWheel(ensureDefined(param.wheelEvent));
 					});
 					return;
 				case EventType.CrosshairUpdate:
@@ -93,7 +90,15 @@ class SyncCharts {
 						this._showHorizCrosshair(c);
 					});
 					return;
+
+				case EventType.PressedMouseMove:
+					this._charts.filter((c: ChartApi) => c.uuid() !== chart.uuid()).forEach((c: ChartApi) => {
+						// console.log('JJ: ZZ: remote pan', param.point);
+						c.remotePressedMouseMove(ensureDefined(param.point).x);
+					});
 			}
+		} else {
+			// console.log('JJ: YY: sync-charts - eventHandler ', param.eventType);
 		}
 	}
 
@@ -115,7 +120,14 @@ function test(param: EventParams): void {
 }
 
 function isChartSyncEvent(param: EventParams): boolean {
-	return param.eventType === EventType.CrosshairUpdate || param.eventType === EventType.CrosshairUpdateEnd || param.eventType === EventType.MouseWheel;
+	switch (param.eventType) {
+		case EventType.CrosshairUpdate:
+		case EventType.CrosshairUpdateEnd:
+		case EventType.MouseWheel:
+		case EventType.PressedMouseMove:
+			return true;
+	}
+	return false;
 }
 
 interface SyncParams extends EventParams {

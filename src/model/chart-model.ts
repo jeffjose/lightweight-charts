@@ -569,6 +569,7 @@ export class ChartModel implements IDestroyable {
 	 * @param scale - Zoom value. Negative value means zoom out, positive - zoom in.
 	 */
 	public zoomTime(pointX: Coordinate, scale: number): void {
+		// console.log(`JJ: ZZ: zoomTime. pointX: ${pointX} scale: ${scale}`);
 		const timeScale = this.timeScale();
 		if (timeScale.isEmpty() || scale === 0) {
 			return;
@@ -583,12 +584,14 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public scrollChart(x: Coordinate): void {
+		// console.log('JJ: ZZ: scrollChart', x);
 		this.startScrollTime(0 as Coordinate);
 		this.scrollTimeTo(x);
 		this.endScrollTime();
 	}
 
 	public scaleTimeTo(x: Coordinate): void {
+		// console.log('JJ: ZZ: scaleTimeTo', x);
 		this._timeScale.scaleTo(x);
 		this.recalculateAllPanes();
 	}
@@ -604,6 +607,7 @@ export class ChartModel implements IDestroyable {
 	}
 
 	public scrollTimeTo(x: Coordinate): boolean {
+		// console.log('JJ: ZZ: model.scrollTimeTo', x);
 		let res = false;
 		if (this._initialTimeScrollPos !== null && Math.abs(x - this._initialTimeScrollPos) > 20) {
 			this._initialTimeScrollPos = null;
@@ -612,6 +616,7 @@ export class ChartModel implements IDestroyable {
 
 		this._timeScale.scrollTo(x);
 		this.recalculateAllPanes();
+
 		return res;
 	}
 

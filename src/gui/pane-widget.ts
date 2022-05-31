@@ -1,6 +1,6 @@
 import { Binding as CanvasCoordinateSpaceBinding } from 'fancy-canvas/coordinate-space';
 
-import { ensureNotNull } from '../helpers/assertions';
+import { ensureDefined, ensureNotNull } from '../helpers/assertions';
 import { clearRect, clearRectWithGradient, drawScaled } from '../helpers/canvas-helpers';
 import { Delegate, DelegateMulti } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
@@ -241,7 +241,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		}
 	}
 
-	public mouseEnterEvent(event: MouseEventHandlerMouseEvent): void {
+	public mouseEnterEvent(event: MouseEventHandlerMouseEvent, remote: boolean = false): void {
 		if (!this._state) {
 			return;
 		}
@@ -251,7 +251,9 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		const y = event.localY;
 
 		this._setCrosshairPosition(x, y);
-		this._fireEventDelegate({ type: EventType.MouseEnter, mouseEvent: event, event: event });
+		if (remote === false) {
+			this._fireEventDelegate({ type: EventType.MouseEnter, mouseEvent: event, event: event });
+		}
 	}
 
 	public mouseDownEvent(event: MouseEventHandlerMouseEvent): void {
@@ -261,7 +263,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._fireEventDelegate({ type: EventType.MouseDown, mouseEvent: event, event: event });
 	}
 
-	public mouseMoveEvent(event: MouseEventHandlerMouseEvent): void {
+	public mouseMoveEvent(event: MouseEventHandlerMouseEvent, remote: boolean = false): void {
 		if (!this._state) {
 			return;
 		}
@@ -273,7 +275,9 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._setCrosshairPosition(x, y);
 		const hitTest = this.hitTest(x, y);
 		this._model().setHoveredSource(hitTest && { source: hitTest.source, object: hitTest.object });
-		this._fireEventDelegate({ type: EventType.MouseMove, mouseEvent: event, event: event });
+		if (remote === false) {
+			this._fireEventDelegate({ type: EventType.MouseMove, mouseEvent: event, event: event });
+		}
 	}
 
 	public mouseClickEvent(event: MouseEventHandlerMouseEvent): void {
@@ -289,7 +293,6 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._onMouseEvent();
 		this._pressedMouseTouchMoveEvent(event);
 		this._setCrosshairPosition(event.localX, event.localY);
-		this._fireEventDelegate({ type: EventType.PressedMouseMove, mouseEvent: event, event: event });
 	}
 
 	public mouseUpEvent(event: MouseEventHandlerMouseEvent): void {
@@ -516,6 +519,12 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		return this._rightPriceAxisWidget;
 	}
 
+	public remotePressedMouseMove(scrollToX: Coordinate): void {
+		const model = this._model();
+		// console.log('JJ: ZZ: incoming -> remotePressedMouseMove', scrollToX);
+		model.scrollTimeTo(scrollToX);
+	}
+
 	public remoteCrosshairUpdate(x: Coordinate, y: Coordinate): void {
 		// Called by chart-widget `remoteSetCrosshair`
 		this._setCrosshairPosition(x, y, true);
@@ -551,6 +560,17 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 			const y = event.y;
 			// console.log('JJ: firing crosshair');
 			this._events.fire(null, { x, y }, event.type, null, null);
+		} else if (event.type === EventType.PressedMouseMove) {
+			// console.log('JJ: zz: fireeventdelegate', event);
+			const x: Coordinate = ensureDefined(event.x);
+			// y = 0 is fake
+			this._events.fire(
+    null,
+    { x: x, y: 0 as Coordinate },
+    event.type,
+    null,
+    ensureDefined(event.event)
+  );
 		} else if (event.mouseEvent !== undefined) {
 			// Regular touch/mouse events
 			const x = event.mouseEvent.localX;
@@ -894,12 +914,16 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		}
 
 		if (this._isScrolling) {
-			// this allows scrolling not default price scales
+    // this allows scrolling not default price scales
 			if (!priceScale.isEmpty()) {
 				model.scrollPriceTo(this._state, priceScale, event.localY);
 			}
 
 			model.scrollTimeTo(event.localX);
+
+			this._fireEventDelegate({ type: EventType.PressedMouseMove, x: event.localX, mouseEvent: event, event: event });
+
+			// console.log('JJ: scrollTimeTo', event.localX, 'scrollPriceTo', event.localY);
 		}
 	}
 

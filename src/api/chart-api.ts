@@ -320,6 +320,10 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		return this._chartWidget.takeScreenshot();
 	}
 
+	public remotePressedMouseMove(scrollToX: Coordinate): void {
+		this._chartWidget.remotePressedMouseMove(scrollToX);
+	}
+
 	public remoteMouseWheel(event: WheelEvent): void {
 		this._chartWidget.remoteMouseWheel(event);
 	}

@@ -85,4 +85,13 @@ interface EventHandlerWheelEventBase {
 	readonly event?: never;
 }
 
-export type EventHandlerEventBase = EventHandlerMouseEventBase | EventHandlerCrosshairEventBase | EventHandlerWheelEventBase;
+interface EventHandlerPressedMouseMoveEventBase {
+
+	readonly type: EventType.PressedMouseMove;
+	readonly x: Coordinate;
+	readonly y?: never;
+	readonly mouseEvent: MouseEventHandlerEventBase;
+	readonly wheelEvent?: never;
+	readonly event: TouchMouseEvent;
+}
+export type EventHandlerEventBase = EventHandlerMouseEventBase | EventHandlerCrosshairEventBase | EventHandlerWheelEventBase | EventHandlerPressedMouseMoveEventBase;
