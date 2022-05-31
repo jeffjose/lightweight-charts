@@ -1,6 +1,6 @@
 import { Coordinate } from '../model/coordinate';
 
-import { MouseEventHandlerEventBase } from './mouse-event-handler';
+import { MouseEventHandlerEventBase, TouchMouseEvent } from './mouse-event-handler';
 
 export const enum EventType {
 	/**
@@ -62,6 +62,7 @@ interface EventHandlerMouseEventBase {
 	readonly x?: never;
 	readonly y?: never;
 	readonly wheelEvent?: never;
+	readonly event: TouchMouseEvent;
 }
 
 interface EventHandlerCrosshairEventBase {
@@ -71,6 +72,7 @@ interface EventHandlerCrosshairEventBase {
 	readonly y: Coordinate;
 	readonly mouseEvent?: never;
 	readonly wheelEvent?: never;
+	readonly event?: never;
 }
 
 interface EventHandlerWheelEventBase {
@@ -80,6 +82,7 @@ interface EventHandlerWheelEventBase {
 	readonly y?: never;
 	readonly mouseEvent?: never;
 	readonly wheelEvent: WheelEvent;
+	readonly event?: never;
 }
 
 export type EventHandlerEventBase = EventHandlerMouseEventBase | EventHandlerCrosshairEventBase | EventHandlerWheelEventBase;

@@ -1,4 +1,5 @@
 import { EventType } from '../gui/generic-event-handler';
+import { TouchMouseEvent } from '../gui/mouse-event-handler';
 
 import { DeepPartial } from '../helpers/strict-type-checks';
 
@@ -66,6 +67,11 @@ export interface EventParams {
 	 * Mouse Wheel Event
 	 */
 	wheelEvent?: WheelEvent;
+
+	/**
+	 * Mouse Event
+	 */
+	event?: TouchMouseEvent;
 }
 
 /**

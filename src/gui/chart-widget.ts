@@ -1,8 +1,8 @@
 import { ensureDefined, ensureNotNull } from '../helpers/assertions';
 import { drawScaled } from '../helpers/canvas-helpers';
-import { Delegate, Delegate4 } from '../helpers/delegate';
+import { Delegate, DelegateMulti } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
-import { ISubscription, ISubscription4 } from '../helpers/isubscription';
+import { ISubscription, ISubscriptionMulti } from '../helpers/isubscription';
 import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { ChartModel, ChartOptionsInternal } from '../model/chart-model';
@@ -21,6 +21,7 @@ import { OriginalTime, TimePointIndex } from '../model/time-data';
 
 import { createPreconfiguredCanvas, getCanvasDevicePixelRatio, getContext2D, Size } from './canvas-utils';
 import { EventType } from './generic-event-handler';
+import { TouchMouseEvent } from './mouse-event-handler';
 // import { PaneSeparator, SEPARATOR_HEIGHT } from './pane-separator';
 import { PaneWidget } from './pane-widget';
 import { TimeAxisWidget } from './time-axis-widget';
@@ -34,6 +35,7 @@ export interface EventParamsImpl {
 	hoveredObject?: string;
 	eventType: EventType;
 	wheelEvent?: WheelEvent;
+	event?: TouchMouseEvent;
 }
 
 export interface MouseEventParamsImpl {
@@ -64,7 +66,7 @@ export class ChartWidget implements IDestroyable {
 	private _invalidateMask: InvalidateMask | null = null;
 	private _drawPlanned: boolean = false;
 	private _clicked: Delegate<MouseEventParamsImplSupplier> = new Delegate();
-	private _events: Delegate4<EventParamsImplSupplier> = new Delegate4();
+	private _events: DelegateMulti<EventParamsImplSupplier> = new DelegateMulti();
 	private _crosshairMoved: Delegate<MouseEventParamsImplSupplier> = new Delegate();
 	private _onWheelBound: (event: WheelEvent) => void;
 
@@ -260,7 +262,7 @@ export class ChartWidget implements IDestroyable {
 		return this._clicked;
 	}
 
-	public events(): ISubscription4<EventParamsImplSupplier> {
+	public events(): ISubscriptionMulti<EventParamsImplSupplier> {
 		return this._events;
 	}
 
@@ -486,16 +488,14 @@ export class ChartWidget implements IDestroyable {
 			const zoomScale = Math.sign(deltaY) * Math.min(1, Math.abs(deltaY));
 			const scrollPosition = event.clientX - this._element.getBoundingClientRect().left;
 			this.model().zoomTime(scrollPosition as Coordinate, zoomScale);
-			// 0 is fake/dummy number
 		}
 
 		if (deltaX !== 0 && this._options.handleScroll.mouseWheel) {
 			this.model().scrollChart(deltaX * -80 as Coordinate); // 80 is a made up coefficient, and minus is for the "natural" scroll
-			// this._events.fire();
 		}
 
 		if (remote === false) {
-			this._events.fire(() => this._getEventParamsImpl(null, null, EventType.MouseWheel, event));
+			this._events.fire(() => this._getEventParamsImpl(null, null, EventType.MouseWheel, event, null));
 		}
 	}
 
@@ -659,7 +659,7 @@ export class ChartWidget implements IDestroyable {
 		this._adjustSizeImpl();
 	}
 
-	private _getEventParamsImpl(index: TimePointIndex | null, point: Point | null, eventType: EventType, wheelEvent: WheelEvent | null): EventParamsImpl {
+	private _getEventParamsImpl(index: TimePointIndex | null, point: Point | null, eventType: EventType, wheelEvent: WheelEvent | null, event: TouchMouseEvent | null): EventParamsImpl {
 		const seriesData = new Map<Series, SeriesPlotRow>();
 		if (index !== null) {
 			const serieses = this._model.serieses();
@@ -698,6 +698,7 @@ export class ChartWidget implements IDestroyable {
 			hoveredObject,
 			eventType,
 			wheelEvent: wheelEvent ?? undefined,
+			event: event ?? undefined,
 		};
 	}
 
@@ -745,8 +746,8 @@ export class ChartWidget implements IDestroyable {
 		this._clicked.fire(() => this._getMouseEventParamsImpl(time, point));
 	}
 
-	private _onPaneWidgetEvent(time: TimePointIndex | null, point: Point | null, eventType: EventType, wheelEvent: WheelEvent | null): void {
-		this._events.fire(() => this._getEventParamsImpl(time, point, eventType, wheelEvent));
+	private _onPaneWidgetEvent(time: TimePointIndex | null, point: Point | null, eventType: EventType, wheelEvent: WheelEvent | null, event: TouchMouseEvent | null): void {
+		this._events.fire(() => this._getEventParamsImpl(time, point, eventType, wheelEvent, event));
 	}
 
 	private _onPaneWidgetCrosshairMoved(time: TimePointIndex | null, point: Point | null): void {
