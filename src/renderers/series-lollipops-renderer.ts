@@ -9,6 +9,7 @@ import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
 import { LineStyle, LineWidth } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
+import { drawFingerpost } from './series-lollipops-fingerpost';
 import { drawSquare, hitTestSquare } from './series-lollipops-square';
 // import { hitTestText } from './series-lollipops-text';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
@@ -125,6 +126,12 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 		case 'square':
 			drawSquare(ctx, item, pixelRatio);
 			return;
+		case 'fingerpostUp':
+			drawFingerpost(true, ctx, item, pixelRatio);
+			return;
+		case 'fingerpostDown':
+			drawFingerpost(false, ctx, item, pixelRatio);
+			return;
 	}
 
 	ensureNever(item.shape);
@@ -156,6 +163,10 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 		case 'circle':
 			return hitTestCircle(item.x, item.y, item.size, x, y);
 		case 'square':
+			return hitTestSquare(item.x, item.y, item.size, x, y);
+		case 'fingerpostUp':
+			return hitTestSquare(item.x, item.y, item.size, x, y);
+		case 'fingerpostDown':
 			return hitTestSquare(item.x, item.y, item.size, x, y);
 	}
 }

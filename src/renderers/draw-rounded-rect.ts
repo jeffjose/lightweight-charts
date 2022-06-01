@@ -1,16 +1,20 @@
 import { LineStyle, LineWidth, setLineStyle } from './draw-line';
 
-export interface RoundedRectData {
-	topLeftRadius: number;
-	topRightRadius: number;
-	lowerLeftRadius: number;
-	lowerRightRadius: number;
+export interface CanvasObjectData {
 	fill: boolean;
 	fillColor: string;
 	stroke: boolean;
 	strokeColor: string;
 	lineWidth: LineWidth;
 	lineStyle: LineStyle;
+
+}
+
+export interface RoundedRectData extends CanvasObjectData {
+	topLeftRadius: number;
+	topRightRadius: number;
+	lowerLeftRadius: number;
+	lowerRightRadius: number;
 }
 
 export function drawRoundedRect(ctx: CanvasRenderingContext2D, topLeftX: number, topLeftY: number, width: number, height: number, params: RoundedRectData): void {

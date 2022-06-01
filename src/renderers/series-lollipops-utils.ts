@@ -1,6 +1,6 @@
 import { ceiledEven, ceiledOdd } from '../helpers/mathex';
 
-import { SeriesMarkerShape } from '../model/series-markers';
+import { SeriesLollipopShape } from '../model/series-lollipops';
 
 const enum Constants {
 	MinShapeSize = 40,
@@ -13,7 +13,7 @@ function size(barSpacing: number, coeff: number): number {
 	return ceiledOdd(result);
 }
 
-export function shapeSize(shape: SeriesMarkerShape, originalSize: number): number {
+export function shapeSize(shape: SeriesLollipopShape, originalSize: number): number {
 	switch (shape) {
 		case 'arrowDown':
 		case 'arrowUp':
@@ -24,6 +24,9 @@ export function shapeSize(shape: SeriesMarkerShape, originalSize: number): numbe
 		case 'circle':
 			return size(originalSize, 0.8);
 		case 'square':
+			return size(originalSize, 0.55);
+		case 'fingerpostUp':
+		case 'fingerpostDown':
 			return size(originalSize, 0.55);
 	}
 }

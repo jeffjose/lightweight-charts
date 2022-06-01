@@ -10,7 +10,7 @@ export type SeriesLollipopPosition = 'top' | 'bottom';
 /**
  * Represents the shape of a series Lollipop.
  */
-export type SeriesLollipopShape = 'circle' | 'square' | 'arrowUp' | 'arrowDown' | 'triangleUp' | 'triangleDown';
+export type SeriesLollipopShape = 'circle' | 'square' | 'arrowUp' | 'arrowDown' | 'triangleUp' | 'triangleDown' | 'fingerpostUp' | 'fingerpostDown';
 
 /**
  * Represents a series Lollipop.
