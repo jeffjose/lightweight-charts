@@ -62,22 +62,32 @@ export function drawFingerpost(
 	// ctx.closePath();
 	// ctx.stroke();
 
+	// ctx.beginPath();
+	// ctx.lineWidth = 2;
+
+	// setLineStyle(ctx, LineStyle.Solid);
+	// ctx.moveTo(centerX - halfBaseSize, top + 21);
+	// ctx.lineTo(centerX + halfBaseSize, top + 21);
+	// ctx.lineTo(centerX + halfBaseSize, top + 7);
+	// ctx.lineTo(centerX, top);
+	// ctx.lineTo(centerX - halfBaseSize, top + 7);
+	// ctx.lineTo(centerX - halfBaseSize, top + 21);
+	// ctx.closePath();
+
+	// ctx.strokeStyle = item.color;
+	// ctx.stroke();
+	// ctx.fillStyle = 'rgba(0, 0,0, 0)';
+	// ctx.fill();
+
 	ctx.beginPath();
 	ctx.lineWidth = 2;
-
-	setLineStyle(ctx, LineStyle.Solid);
-	ctx.moveTo(centerX - halfBaseSize, top + 21);
-	ctx.lineTo(centerX + halfBaseSize, top + 21);
-	ctx.lineTo(centerX + halfBaseSize, top + 7);
-	ctx.lineTo(centerX, top);
-	ctx.lineTo(centerX - halfBaseSize, top + 7);
-	ctx.lineTo(centerX - halfBaseSize, top + 21);
-	ctx.closePath();
-
-	ctx.strokeStyle = item.color;
-	ctx.stroke();
-	ctx.fillStyle = 'rgba(0, 0,0, 0)';
-	ctx.fill();
+	roundPoly(ctx, [{ x: centerX - halfBaseSize, y: top + 21 },
+	{ x: centerX + halfBaseSize, y: top + 21 },
+	{ x: centerX + halfBaseSize, y: top + 7 },
+	{ x: centerX, y: top },
+	{ x: centerX - halfBaseSize, y: top + 7 },
+	{ x: centerX - halfBaseSize, y: top + 21 }],
+           2);
 
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
@@ -99,4 +109,50 @@ export function hitTestSquare(
 
 	return x >= left && x <= left + squareSize &&
 		y >= top && y <= top + squareSize;
+}
+
+function roundPoly(ctx: CanvasRenderingContext2D, points: Record<string, number>[], radius: number): void {
+	const distance = (p1: Record<string, number>, p2: Record<string, number>) => Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+
+	const lerp = (a: number, b: number, x: number) => a + (b - a) * x;
+
+	const lerp2D = (p1: Record<string, number>, p2: Record<string, number>, t: number) => ({
+		x: lerp(p1.x, p2.x, t),
+		y: lerp(p1.y, p2.y, t),
+	});
+
+	const numPoints = points.length;
+
+	const corners = [];
+	for (let i = 0; i < numPoints; i++) {
+		const lastPoint = points[i];
+		const thisPoint = points[(i + 1) % numPoints];
+		const nextPoint = points[(i + 2) % numPoints];
+
+		const lastEdgeLength = distance(lastPoint, thisPoint);
+		const lastOffsetDistance = Math.min(lastEdgeLength / 2, radius);
+		const start = lerp2D(
+            thisPoint,
+            lastPoint,
+            lastOffsetDistance / lastEdgeLength
+        );
+
+		const nextEdgeLength = distance(nextPoint, thisPoint);
+		const nextOffsetDistance = Math.min(nextEdgeLength / 2, radius);
+		const end = lerp2D(
+            thisPoint,
+            nextPoint,
+            nextOffsetDistance / nextEdgeLength
+        );
+
+		corners.push([start, thisPoint, end]);
+	}
+
+	ctx.moveTo(corners[0][0].x, corners[0][0].y);
+	for (const [start, ctrl, end] of corners) {
+		ctx.lineTo(start.x, start.y);
+		ctx.quadraticCurveTo(ctrl.x, ctrl.y, end.x, end.y);
+	}
+
+	ctx.closePath();
 }
