@@ -35,8 +35,8 @@ export function drawFingerpost(
 		centerY = topLeftY + halfSize + 2; // 2 is a magic number to position the text in the middle
 	} 	else {
 		topLeftX = centerX - halfSize;
-		topLeftY = height - fingerpostSize - strokeWidth + 6;
-		centerY = topLeftY + halfSize + 3; // 4 is a magic number to position the text in the middle
+		topLeftY = height - fingerpostSize - strokeWidth - 3; // 3 is a magic number
+		centerY = topLeftY + halfSize + 5; // 5 is a magic number to position the text in the middle
 	}
 
 	if (item.lineVisible) {
@@ -59,17 +59,17 @@ export function drawFingerpost(
 	ctx.translate(topLeftX, topLeftY);
 
 	ctx.beginPath();
-	ctx.moveTo(19.9167, 24.5);
-	ctx.lineTo(3, 24.5);
-	ctx.bezierCurveTo(1.61929, 24.5, 0.5, 23.3807, 0.5, 22);
-	ctx.lineTo(0.500001, 9.86427);
-	ctx.bezierCurveTo(0.500001, 9.06291, 0.884161, 8.31011, 1.53306, 7.83989);
-	ctx.lineTo(10.0266, 1.68512);
-	ctx.bezierCurveTo(10.9044, 1.04909, 12.092, 1.05114, 12.9675, 1.69021);
-	ctx.lineTo(21.3906, 7.83845);
-	ctx.bezierCurveTo(22.0354, 8.30911, 22.4167, 9.05942, 22.4167, 9.85773);
-	ctx.lineTo(22.4167, 22);
-	ctx.bezierCurveTo(22.4167, 23.3807, 21.2974, 24.5, 19.9167, 24.5);
+	ctx.moveTo(1.53924, 7.42787);
+	ctx.lineTo(9.53924, 1.66787);
+	ctx.bezierCurveTo(10.4118, 1.03965, 11.5882, 1.03965, 12.4608, 1.66787);
+	ctx.lineTo(20.4608, 7.42787);
+	ctx.bezierCurveTo(21.1133, 7.89768, 21.5, 8.65265, 21.5, 9.4567);
+	ctx.lineTo(21.5, 21.75);
+	ctx.bezierCurveTo(21.5, 23.1307, 20.3807, 24.25, 19, 24.25);
+	ctx.lineTo(3, 24.25);
+	ctx.bezierCurveTo(1.61929, 24.25, 0.5, 23.1307, 0.5, 21.75);
+	ctx.lineTo(0.5, 9.4567);
+	ctx.bezierCurveTo(0.5, 8.65265, 0.886725, 7.89768, 1.53924, 7.42787);
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
