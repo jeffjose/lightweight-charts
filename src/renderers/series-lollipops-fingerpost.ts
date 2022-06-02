@@ -2,7 +2,6 @@
 import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
-import { CanvasObjectData } from './draw-rounded-rect';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { shapeSize } from './series-lollipops-utils';
 
@@ -12,8 +11,11 @@ export function drawFingerpost(
 	item: SeriesLollipopRendererDataItem,
 	pixelRatio: number
 ): void {
-	const fingerpostSize = shapeSize('fingerpostUp', item.size);
-	const halfBaseSize = (fingerpostSize - 1) / 2;
+	const fingerpostSize = shapeSize('fingerpostUp', item.size); // This should be 25
+
+	const halfSize = (fingerpostSize - 1) / 2;
+
+	const strokeWidth = 2;
 
 	const centerX = Math.round(item.x * pixelRatio);
 	// const y = Math.round(item.y * pixelRatio);
@@ -21,27 +23,20 @@ export function drawFingerpost(
 	const height = Math.ceil(item.paneHeight * pixelRatio);
 	const positionTop = item.position === 'top';
 
-	// const radius = 3;
-	const roundedRectParams: CanvasObjectData = { stroke: true, fill: true, lineWidth: 2, lineStyle: LineStyle.Solid, strokeColor: item.color, fillColor: 'rgba(0, 0, 0, 0)' };
-
-	// let left;
-	let top;
-
-	// let bottom;
-	// let midPointY;
+	let topLeftX;
+	let topLeftY;
 	let centerY;
+
+	// console.log(`FINGERPOST: fingerpostSize: ${fingerpostSize}`);
+	// console.log(`FINGERPOST: halfSize: ${halfSize}`);
 	if (positionTop) {
-		// left = centerX - halfSize;
-		top = 0 + (roundedRectParams.lineWidth - 2);
-		// bottom = fingerpostSize / 28;
-		// midPointY = (10 * fingerpostSize) / 28;
-		centerY = top + halfBaseSize + 2; // 2 is a magic number to position the text in the middle
+		topLeftX = centerX - halfSize;
+		topLeftY = 0;
+		centerY = topLeftY + halfSize + 2; // 2 is a magic number to position the text in the middle
 	} 	else {
-		// left = centerX - halfSize;
-		top = height - fingerpostSize - (roundedRectParams.lineWidth - 1);
-		// bottom = top + fingerpostSize / 28;
-		// midPointY = top + (10 * fingerpostSize) / 28;
-		centerY = top + halfBaseSize + 2; // 2 is a magic number to position the text in the middle
+		topLeftX = centerX - halfSize;
+		topLeftY = height - fingerpostSize - strokeWidth + 6;
+		centerY = topLeftY + halfSize + 3; // 4 is a magic number to position the text in the middle
 	}
 
 	if (item.lineVisible) {
@@ -52,42 +47,34 @@ export function drawFingerpost(
 		drawVerticalLine(ctx, centerX, 0, height);
 	}
 
-	// ctx.beginPath();
-	// ctx.moveTo(0, 28);
-	// ctx.lineTo(24, 28);
-	// ctx.lineTo(24, 10);
-	// ctx.lineTo(12, 1);
-	// ctx.lineTo(0, 10);
-	// ctx.lineTo(0, 28);
-	// ctx.closePath();
-	// ctx.stroke();
+	ctx.strokeStyle = item.color;
+	ctx.lineJoin = 'round';
+	ctx.lineWidth = strokeWidth;
+	ctx.fillStyle = 'rgba(0,0,0,0)';
+	setLineStyle(ctx, LineStyle.Solid);
 
-	// ctx.beginPath();
-	// ctx.lineWidth = 2;
+	// Export SVG of stroke=1 + inside from figma
 
-	// setLineStyle(ctx, LineStyle.Solid);
-	// ctx.moveTo(centerX - halfBaseSize, top + 21);
-	// ctx.lineTo(centerX + halfBaseSize, top + 21);
-	// ctx.lineTo(centerX + halfBaseSize, top + 7);
-	// ctx.lineTo(centerX, top);
-	// ctx.lineTo(centerX - halfBaseSize, top + 7);
-	// ctx.lineTo(centerX - halfBaseSize, top + 21);
-	// ctx.closePath();
-
-	// ctx.strokeStyle = item.color;
-	// ctx.stroke();
-	// ctx.fillStyle = 'rgba(0, 0,0, 0)';
-	// ctx.fill();
+	ctx.save();
+	ctx.translate(topLeftX, topLeftY);
 
 	ctx.beginPath();
-	ctx.lineWidth = 2;
-	roundPoly(ctx, [{ x: centerX - halfBaseSize, y: top + 21 },
-	{ x: centerX + halfBaseSize, y: top + 21 },
-	{ x: centerX + halfBaseSize, y: top + 7 },
-	{ x: centerX, y: top },
-	{ x: centerX - halfBaseSize, y: top + 7 },
-	{ x: centerX - halfBaseSize, y: top + 21 }],
-           2);
+	ctx.moveTo(19.9167, 24.5);
+	ctx.lineTo(3, 24.5);
+	ctx.bezierCurveTo(1.61929, 24.5, 0.5, 23.3807, 0.5, 22);
+	ctx.lineTo(0.500001, 9.86427);
+	ctx.bezierCurveTo(0.500001, 9.06291, 0.884161, 8.31011, 1.53306, 7.83989);
+	ctx.lineTo(10.0266, 1.68512);
+	ctx.bezierCurveTo(10.9044, 1.04909, 12.092, 1.05114, 12.9675, 1.69021);
+	ctx.lineTo(21.3906, 7.83845);
+	ctx.bezierCurveTo(22.0354, 8.30911, 22.4167, 9.05942, 22.4167, 9.85773);
+	ctx.lineTo(22.4167, 22);
+	ctx.bezierCurveTo(22.4167, 23.3807, 21.2974, 24.5, 19.9167, 24.5);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+
+	ctx.restore();
 
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
@@ -109,50 +96,4 @@ export function hitTestSquare(
 
 	return x >= left && x <= left + squareSize &&
 		y >= top && y <= top + squareSize;
-}
-
-function roundPoly(ctx: CanvasRenderingContext2D, points: Record<string, number>[], radius: number): void {
-	const distance = (p1: Record<string, number>, p2: Record<string, number>) => Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-
-	const lerp = (a: number, b: number, x: number) => a + (b - a) * x;
-
-	const lerp2D = (p1: Record<string, number>, p2: Record<string, number>, t: number) => ({
-		x: lerp(p1.x, p2.x, t),
-		y: lerp(p1.y, p2.y, t),
-	});
-
-	const numPoints = points.length;
-
-	const corners = [];
-	for (let i = 0; i < numPoints; i++) {
-		const lastPoint = points[i];
-		const thisPoint = points[(i + 1) % numPoints];
-		const nextPoint = points[(i + 2) % numPoints];
-
-		const lastEdgeLength = distance(lastPoint, thisPoint);
-		const lastOffsetDistance = Math.min(lastEdgeLength / 2, radius);
-		const start = lerp2D(
-            thisPoint,
-            lastPoint,
-            lastOffsetDistance / lastEdgeLength
-        );
-
-		const nextEdgeLength = distance(nextPoint, thisPoint);
-		const nextOffsetDistance = Math.min(nextEdgeLength / 2, radius);
-		const end = lerp2D(
-            thisPoint,
-            nextPoint,
-            nextOffsetDistance / nextEdgeLength
-        );
-
-		corners.push([start, thisPoint, end]);
-	}
-
-	ctx.moveTo(corners[0][0].x, corners[0][0].y);
-	for (const [start, ctrl, end] of corners) {
-		ctx.lineTo(start.x, start.y);
-		ctx.quadraticCurveTo(ctrl.x, ctrl.y, end.x, end.y);
-	}
-
-	ctx.closePath();
 }
