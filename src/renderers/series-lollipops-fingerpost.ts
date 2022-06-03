@@ -59,17 +59,17 @@ export function drawFingerpost(
 	ctx.translate(topLeftX, topLeftY);
 
 	ctx.beginPath();
-	ctx.moveTo(1.53924, 7.42787);
-	ctx.lineTo(9.53924, 1.66787);
-	ctx.bezierCurveTo(10.4118, 1.03965, 11.5882, 1.03965, 12.4608, 1.66787);
-	ctx.lineTo(20.4608, 7.42787);
-	ctx.bezierCurveTo(21.1133, 7.89768, 21.5, 8.65265, 21.5, 9.4567);
-	ctx.lineTo(21.5, 21.75);
-	ctx.bezierCurveTo(21.5, 23.1307, 20.3807, 24.25, 19, 24.25);
-	ctx.lineTo(3, 24.25);
-	ctx.bezierCurveTo(1.61929, 24.25, 0.5, 23.1307, 0.5, 21.75);
-	ctx.lineTo(0.5, 9.4567);
-	ctx.bezierCurveTo(0.5, 8.65265, 0.886725, 7.89768, 1.53924, 7.42787);
+	ctx.moveTo(1.49833, 8.13969);
+	ctx.lineTo(9.99833, 1.7536);
+	ctx.lineTo(11, 1);
+	ctx.lineTo(21.5017, 8.13969);
+	ctx.bezierCurveTo(22.1302, 8.61191, 22.5, 9.35228, 22.5, 10.1384);
+	ctx.lineTo(22.5, 24);
+	ctx.bezierCurveTo(22.5, 25.3807, 21.3807, 26.5, 20, 26.5);
+	ctx.lineTo(3, 26.5);
+	ctx.bezierCurveTo(1.61929, 26.5, 0.5, 25.3807, 0.5, 24);
+	ctx.lineTo(0.5, 10.1384);
+	ctx.bezierCurveTo(0.5, 9.35228, 0.869798, 8.61191, 1.49833, 8.13969);
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();

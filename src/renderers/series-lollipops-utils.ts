@@ -24,10 +24,10 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 		case 'circle':
 			return size(originalSize, 0.8);
 		case 'square':
-			return size(originalSize, 0.55);
+			return size(originalSize, 0.60);
 		case 'fingerpostUp':
 		case 'fingerpostDown':
-			return size(originalSize, 0.55);
+			return size(originalSize, 0.60);
 	}
 }
 
