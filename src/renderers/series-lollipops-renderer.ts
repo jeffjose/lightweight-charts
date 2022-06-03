@@ -126,11 +126,8 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 		case 'square':
 			drawSquare(ctx, item, pixelRatio);
 			return;
-		case 'fingerpostUp':
+		case 'fingerpost':
 			drawFingerpost(true, ctx, item, pixelRatio);
-			return;
-		case 'fingerpostDown':
-			drawFingerpost(false, ctx, item, pixelRatio);
 			return;
 	}
 
@@ -164,9 +161,7 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 			return hitTestCircle(item.x, item.y, item.size, x, y);
 		case 'square':
 			return hitTestSquare(item.x, item.y, item.size, x, y);
-		case 'fingerpostUp':
-			return hitTestSquare(item.x, item.y, item.size, x, y);
-		case 'fingerpostDown':
+		case 'fingerpost':
 			return hitTestSquare(item.x, item.y, item.size, x, y);
 	}
 }

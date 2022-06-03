@@ -15,14 +15,6 @@ export function drawSquare(
 	const height = Math.ceil(item.paneHeight * pixelRatio);
 	const positionTop = item.position === 'top';
 
-	if (item.lineVisible) {
-		ctx.lineCap = 'butt';
-		ctx.strokeStyle = item.color;
-		ctx.lineWidth = item.lineWidth;
-		setLineStyle(ctx, LineStyle.LargeDashed);
-		drawVerticalLine(ctx, centerX, 0, height);
-	}
-
 	const squareSize = shapeSize('square', item.size); // This should be 25
 	const halfSize = (squareSize - 1) / 2;
 
@@ -31,24 +23,22 @@ export function drawSquare(
 	let topLeftX;
 	let topLeftY;
 	let centerY;
-	// console.log(`SQUARE: squareSize: ${squareSize}`);
-	// console.log(`SQUARE: halfSize: ${halfSize}`);
+	let verticalLineTopY;
+	let verticalLineBottomY;
 	if (positionTop) {
 		topLeftX = centerX - halfSize;
 		topLeftY = 1; // 1 is a magic number
 		centerY = topLeftY + halfSize + 2; // 2 is a magic number to position the text in the middle
+
+		verticalLineTopY = squareSize + strokeWidth;
+		verticalLineBottomY = height;
 	} 	else {
 		topLeftX = centerX - halfSize;
 		topLeftY = height - squareSize - 1;
 		centerY = topLeftY + halfSize + 2;
-	}
 
-	if (item.lineVisible) {
-		ctx.lineCap = 'butt';
-		ctx.strokeStyle = item.color;
-		ctx.lineWidth = item.lineWidth;
-		setLineStyle(ctx, LineStyle.LargeDashed);
-		drawVerticalLine(ctx, centerX, 0, height);
+		verticalLineTopY = 0;
+		verticalLineBottomY = height - squareSize - strokeWidth;
 	}
 
 	ctx.strokeStyle = item.color;
@@ -77,6 +67,14 @@ export function drawSquare(
 	ctx.stroke();
 
 	ctx.restore();
+
+	if (item.lineVisible) {
+		ctx.lineCap = 'butt';
+		ctx.strokeStyle = item.color;
+		ctx.lineWidth = item.lineWidth;
+		setLineStyle(ctx, LineStyle.LargeDashed);
+		drawVerticalLine(ctx, centerX, verticalLineTopY, verticalLineBottomY);
+	}
 
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';

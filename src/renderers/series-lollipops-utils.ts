@@ -25,8 +25,7 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 			return size(originalSize, 0.8);
 		case 'square':
 			return size(originalSize, 0.60);
-		case 'fingerpostUp':
-		case 'fingerpostDown':
+		case 'fingerpost':
 			return size(originalSize, 0.60);
 	}
 }
