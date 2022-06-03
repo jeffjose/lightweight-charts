@@ -712,6 +712,8 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 				position: lollipop.position,
 				shape: lollipop.shape,
 				color: lollipop.color,
+				fillColor: lollipop.fillColor,
+				hoverColor: lollipop.hoverColor,
 				lineWidth: lollipop.lineWidth,
 				lineStyle: lollipop.lineStyle,
 				lineVisible: lollipop.lineVisible,

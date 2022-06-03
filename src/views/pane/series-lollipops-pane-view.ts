@@ -1,3 +1,4 @@
+import { applyAlpha } from '../../helpers/color';
 import { isNumber } from '../../helpers/strict-type-checks';
 
 import { AutoScaleMargins } from '../../model/autoscale-info-impl';
@@ -109,6 +110,9 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				size: 0,
 				shape: lollipop.shape,
 				color: lollipop.color,
+				// For default, if the lollipop is in the top, get backgroundTopColor else backgroundBottomColor
+				fillColor: lollipop.fillColor ?? (lollipop.position === 'top' ? this._model.backgroundTopColor() : this._model.backgroundBottomColor()),
+				hoverColor: lollipop.hoverColor ?? applyAlpha(lollipop.color, 0.2),
 				lineWidth: lollipop.lineWidth ?? 1,
 				lineStyle: lollipop.lineStyle ?? LineStyle.LargeDashed,
 				lineVisible: lollipop.lineVisible ?? true,
@@ -117,6 +121,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				text: lollipop.text ?? '',
 				paneHeight: -1,
 				position: lollipop.position,
+				centerX: 0 as Coordinate,
 			}));
 			this._dataInvalidated = false;
 		}

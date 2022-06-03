@@ -9,7 +9,7 @@ import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
 import { LineStyle, LineWidth } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
-import { drawFingerpost } from './series-lollipops-fingerpost';
+import { drawFingerpost, hitTestFingerpost } from './series-lollipops-fingerpost';
 import { drawSquare, hitTestSquare } from './series-lollipops-square';
 // import { hitTestText } from './series-lollipops-text';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
@@ -23,10 +23,13 @@ export interface SeriesLollipopRendererDataItem extends TimedValue {
 	size: number;
 	shape: SeriesLollipopShape;
 	color: string;
+	fillColor: string;
+	hoverColor: string;
 	lineWidth: LineWidth;
 	lineStyle: LineStyle;
 	lineVisible: boolean;
 	paneHeight: number;
+	centerX: number;
 	position: SeriesLollipopPosition;
 	internalId: number;
 	externalId?: string;
@@ -90,7 +93,8 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; i++) {
 			const item = this._data.items[i];
 
-			item.paneHeight = this._paneHeight;
+			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
+			item.centerX = Math.round(item.x * pixelRatio);
 			drawItem(item, ctx, pixelRatio);
 		}
 	}
@@ -124,7 +128,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawCircle(ctx, item.x, item.y, item.size);
 			return;
 		case 'square':
-			drawSquare(ctx, item, pixelRatio);
+			drawSquare(ctx, item);
 			return;
 		case 'fingerpost':
 			drawFingerpost(true, ctx, item, pixelRatio);
@@ -162,6 +166,6 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 		case 'square':
 			return hitTestSquare(item.x, item.y, item.size, x, y);
 		case 'fingerpost':
-			return hitTestSquare(item.x, item.y, item.size, x, y);
+			return hitTestFingerpost(item.x, item.y, item.size, x, y);
 	}
 }

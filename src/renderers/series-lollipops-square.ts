@@ -2,20 +2,18 @@ import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { shapeSize } from './series-lollipops-utils';
+import { outlineScale, shapeSize } from './series-lollipops-utils';
 
 export function drawSquare(
 	ctx: CanvasRenderingContext2D,
-	item: SeriesLollipopRendererDataItem,
-	pixelRatio: number
+	item: SeriesLollipopRendererDataItem
 ): void {
-	const centerX = Math.round(item.x * pixelRatio);
-	// const y = Math.round(item.y * pixelRatio);
-	// const w = Math.ceil(this._data.w * pixelRatio);
-	const height = Math.ceil(item.paneHeight * pixelRatio);
+	const centerX = item.centerX;
+	const height = item.paneHeight;
 	const positionTop = item.position === 'top';
 
 	const squareSize = shapeSize('square', item.size); // This should be 25
+	const squareOutlineSize = outlineScale('square');
 	const halfSize = (squareSize - 1) / 2;
 
 	const strokeWidth = 2;
@@ -44,7 +42,7 @@ export function drawSquare(
 	ctx.strokeStyle = item.color;
 	ctx.lineJoin = 'round';
 	ctx.lineWidth = strokeWidth;
-	ctx.fillStyle = 'rgba(0,0,0,0)';
+	ctx.fillStyle = item.fillColor;
 	setLineStyle(ctx, LineStyle.Solid);
 
 	// Export SVG of stroke=1 + inside from figma
@@ -52,19 +50,16 @@ export function drawSquare(
 	ctx.save();
 	ctx.translate(topLeftX, topLeftY);
 
-	ctx.beginPath();
-	ctx.moveTo(3, 0.5);
-	ctx.lineTo(20, 0.5);
-	ctx.bezierCurveTo(21.380711874576985, 0.5, 22.5, 1.619288125423016, 22.5, 3);
-	ctx.lineTo(22.5, 20);
-	ctx.bezierCurveTo(22.5, 21.380711874576985, 21.380711874576985, 22.5, 20, 22.5);
-	ctx.lineTo(3, 22.5);
-	ctx.bezierCurveTo(1.619288125423016, 22.5, 0.5, 21.380711874576985, 0.5, 20);
-	ctx.lineTo(0.5, 3);
-	ctx.bezierCurveTo(0.5, 1.619288125423016, 1.619288125423016, 0.5, 3, 0.5);
-	ctx.closePath();
-	ctx.fill();
-	ctx.stroke();
+	ctx.save();
+	ctx.strokeStyle = item.fillColor;
+	ctx.translate(halfSize, halfSize);
+	ctx.scale(squareOutlineSize.x, squareOutlineSize.y);
+	ctx.translate(-halfSize, -halfSize);
+	drawSquarePath(ctx);
+	ctx.restore();
+
+		// Main / Visible object
+	drawSquarePath(ctx);
 
 	ctx.restore();
 
@@ -96,4 +91,20 @@ export function hitTestSquare(
 
 	return x >= left && x <= left + squareSize &&
 		y >= top && y <= top + squareSize;
+}
+
+function drawSquarePath(ctx: CanvasRenderingContext2D): void {
+	ctx.beginPath();
+	ctx.moveTo(3, 0.5);
+	ctx.lineTo(20, 0.5);
+	ctx.bezierCurveTo(21.380711874576985, 0.5, 22.5, 1.619288125423016, 22.5, 3);
+	ctx.lineTo(22.5, 20);
+	ctx.bezierCurveTo(22.5, 21.380711874576985, 21.380711874576985, 22.5, 20, 22.5);
+	ctx.lineTo(3, 22.5);
+	ctx.bezierCurveTo(1.619288125423016, 22.5, 0.5, 21.380711874576985, 0.5, 20);
+	ctx.lineTo(0.5, 3);
+	ctx.bezierCurveTo(0.5, 1.619288125423016, 1.619288125423016, 0.5, 3, 0.5);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
 }

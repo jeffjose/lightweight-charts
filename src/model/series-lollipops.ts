@@ -33,6 +33,14 @@ export interface SeriesLollipop<TimeType> {
 	 */
 	color: string;
 	/**
+	 * The fill color of the Lollipop.
+	 */
+	fillColor: string;
+	/**
+	 * The hover color of the Lollipop.
+	 */
+	hoverColor: string;
+	/**
 	 * Lollipop's width in pixels.
 	 *
 	 * @defaultValue `2`

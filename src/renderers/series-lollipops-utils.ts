@@ -8,6 +8,11 @@ const enum Constants {
 	MinShapeMargin = 3,
 }
 
+interface ShapeOutlineScaleData {
+	x: number;
+	y: number;
+}
+
 function size(barSpacing: number, coeff: number): number {
 	const result = Math.min(Math.max(barSpacing, Constants.MinShapeSize), Constants.MaxShapeSize) * coeff;
 	return ceiledOdd(result);
@@ -27,6 +32,23 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 			return size(originalSize, 0.60);
 		case 'fingerpost':
 			return size(originalSize, 0.60);
+	}
+}
+
+export function outlineScale(shape: SeriesLollipopShape): ShapeOutlineScaleData {
+	switch (shape) {
+		case 'arrowDown':
+		case 'arrowUp':
+			return { x: 1, y: 1 };
+		case 'triangleDown':
+		case 'triangleUp':
+			return { x: 1, y: 1 };
+		case 'circle':
+			return { x: 1, y: 1 };
+		case 'square':
+			return { x: 1.1, y: 1.1 };
+		case 'fingerpost':
+			return { x: 1.1, y: 1.1 };
 	}
 }
 
