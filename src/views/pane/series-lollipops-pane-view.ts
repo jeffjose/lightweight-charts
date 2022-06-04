@@ -116,7 +116,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				hoverColor: lollipop.hoverColor ?? applyAlpha(lollipop.color, 0.15),
 				lineWidth: lollipop.lineWidth ?? 1,
 				lineStyle: lollipop.lineStyle ?? LineStyle.LargeDashed,
-				lineVisible: lollipop.lineVisible ?? true,
+				lineVisible: lollipop.lineVisible ?? false,
 				internalId: lollipop.internalId,
 				externalId: lollipop.id,
 				text: lollipop.text ?? '',

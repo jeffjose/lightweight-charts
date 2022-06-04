@@ -61,7 +61,7 @@ export function drawSquare(
 
 	ctx.restore();
 
-	if (item.lineVisible) {
+	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
 		ctx.strokeStyle = item.color;
 		ctx.lineWidth = item.lineWidth;
