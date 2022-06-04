@@ -11,7 +11,6 @@ export function drawFingerpost(
 	pixelRatio: number,
 	isHovered: boolean
 ): void {
-	// console.log(item);
 	const fingerpostSize = shapeSize('fingerpost', item.size); // This should be 25
 	const fingerpostOutlineScale = outlineScale('fingerpost');
 
@@ -21,19 +20,16 @@ export function drawFingerpost(
 
 	const centerX = Math.round(item.x * pixelRatio);
 	const height = item.paneHeight;
-	const positionTop = item.position === 'top';
 
 	let topLeftX;
-	let topLeftY;
 	let centerY;
 
-	if (positionTop) {
+	const topLeftY = getTopLeftY(item, fingerpostSize);
+	if (item.position === 'top') {
 		topLeftX = centerX - halfSize;
-		topLeftY = 0;
 		centerY = topLeftY + halfSize + 2; // 2 is a magic number to position the text in the middle
 	} 	else {
 		topLeftX = centerX - halfSize;
-		topLeftY = height - fingerpostSize - strokeWidth - 3; // 3 is a magic number
 		centerY = topLeftY + halfSize + 5; // 5 is a magic number to position the text in the middle
 	}
 
@@ -51,7 +47,7 @@ export function drawFingerpost(
 	let verticalLineTopY;
 	let verticalLineBottomY;
 
-	if (positionTop) {
+	if (item.position === 'top') {
 		verticalLineTopY = fingerpostSize + strokeWidth;
 		verticalLineBottomY = height;
 
@@ -89,7 +85,7 @@ export function drawFingerpost(
 
 	ctx.restore();
 
-	if (item.lineVisible) {
+	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
 		ctx.strokeStyle = item.color;
 		ctx.lineWidth = item.lineWidth;
@@ -100,23 +96,6 @@ export function drawFingerpost(
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
 	ctx.fillText(item.text, centerX, centerY);
-}
-
-export function hitTestFingerpost(
-	centerX: Coordinate,
-	centerY: Coordinate,
-	size: number,
-	x: Coordinate,
-	y: Coordinate
-): boolean {
-	const squareSize = shapeSize('square', size);
-	const halfSize = (squareSize - 1) / 2;
-	const left = centerX - halfSize;
-	const top = centerY - halfSize;
-
-	return x >= left && x <= left + squareSize &&
-		y >= top && y <= top + squareSize;
-	// console.log(`FINGERPOST: ${t}`);
 }
 
 function drawFingerpostUpPath(ctx: CanvasRenderingContext2D): void {
@@ -153,4 +132,28 @@ function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
+}
+
+function getTopLeftY(item: SeriesLollipopRendererDataItem, fingerpostSize: number): number {
+	const strokeWidth = 2;
+	if (item.position === 'top') {
+		return 0;
+	} 	else {
+		return item.paneHeight - fingerpostSize - strokeWidth - 3; // 3 is a magic number. 2 is strokeWidth
+	}
+}
+
+export function hitTestFingerpost(
+	item: SeriesLollipopRendererDataItem,
+	x: Coordinate,
+	y: Coordinate
+): boolean {
+	const fingerpostSize = 25; // This was arrived by looking at the actual coordinates of the shape we're drawing.
+	// We do not use getLeftTopX here since drawing coordinates and actual mouse coordinates are different
+	const halfSize = (fingerpostSize - 1) / 2;
+	const left = item.x - halfSize;
+	const top = getTopLeftY(item, fingerpostSize);
+
+	return x >= left && x <= left + fingerpostSize &&
+		y >= top && y <= top + fingerpostSize;
 }
