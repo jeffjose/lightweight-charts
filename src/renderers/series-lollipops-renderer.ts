@@ -1,7 +1,7 @@
 import { ensureNever } from '../helpers/assertions';
 import { makeFont } from '../helpers/make-font';
 
-import { HoveredObject } from '../model/chart-model';
+import { ChartModel, HoveredObject } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
 import { SeriesLollipopPosition, SeriesLollipopShape } from '../model/series-lollipops';
 import { TextWidthCache } from '../model/text-width-cache';
@@ -42,6 +42,7 @@ export interface SeriesLollipopRendererData {
 }
 
 export class SeriesLollipopsRenderer implements IPaneRenderer {
+	private _model: ChartModel | null = null;
 	private _data: SeriesLollipopRendererData | null = null;
 	private _textWidthCache: TextWidthCache = new TextWidthCache();
 	private _fontSize: number = -1;
@@ -51,6 +52,9 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 
 	public setData(data: SeriesLollipopRendererData): void {
 		this._data = data;
+	}
+	public setModel(model: ChartModel): void {
+		this._model = model;
 	}
 
 	public setParams(fontSize: number, fontFamily: string, paneHeight: number): void {
@@ -110,6 +114,14 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
 			item.centerX = Math.round(item.x * pixelRatio);
 			drawItem(item, ctx, pixelRatio, isHovered);
+		}
+
+		if (this._model !== null) {
+			if (isHovered) {
+				this._model.setMouseCursor();
+			} else {
+				this._model.resetMouseCursor();
+			}
 		}
 	}
 }

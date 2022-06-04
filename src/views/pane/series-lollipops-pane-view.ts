@@ -75,6 +75,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 		const layout = this._model.options().layout;
 		this._renderer.setParams(layout.fontSize, layout.fontFamily, pane.height());
 		this._renderer.setData(this._data);
+		this._renderer.setModel(this._model);
 
 		return this._renderer;
 	}

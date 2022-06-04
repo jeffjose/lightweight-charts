@@ -75,7 +75,8 @@ export class ChartWidget implements IDestroyable {
 
 		this._model = new ChartModel(
 			this._invalidateHandler.bind(this),
-			this._options
+			this._options,
+			this
 		);
 		this.model().crosshairMoved().subscribe(this._onPaneWidgetCrosshairMoved.bind(this), this);
 
@@ -124,6 +125,9 @@ export class ChartWidget implements IDestroyable {
 
 	public paneWidgets(): PaneWidget[] {
 		return this._paneWidgets;
+	}
+	public element(): HTMLElement {
+		return this._element;
 	}
 
 	public timeAxisWidget(): TimeAxisWidget {

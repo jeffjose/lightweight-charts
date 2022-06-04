@@ -1,5 +1,7 @@
 /// <reference types="_build-time-constants" />
 
+import { ChartWidget } from '../gui/chart-widget';
+
 import { assert, ensureNotNull } from '../helpers/assertions';
 import { gradientColorAtPercent } from '../helpers/color';
 import { Delegate } from '../helpers/delegate';
@@ -318,6 +320,7 @@ interface GradientColorsCache {
 export class ChartModel implements IDestroyable {
 	private readonly _options: ChartOptionsInternal;
 	private readonly _invalidateHandler: InvalidateHandler;
+	private readonly _widget: ChartWidget;
 
 	private readonly _rendererOptionsProvider: PriceAxisRendererOptionsProvider;
 
@@ -342,9 +345,10 @@ export class ChartModel implements IDestroyable {
 	private _backgroundBottomColor: string;
 	private _gradientColorsCache: GradientColorsCache | null = null;
 
-	public constructor(invalidateHandler: InvalidateHandler, options: ChartOptionsInternal) {
+	public constructor(invalidateHandler: InvalidateHandler, options: ChartOptionsInternal, chartWidget: ChartWidget) {
 		this._invalidateHandler = invalidateHandler;
 		this._options = options;
+		this._widget = chartWidget;
 
 		this._rendererOptionsProvider = new PriceAxisRendererOptionsProvider(this);
 
@@ -390,6 +394,14 @@ export class ChartModel implements IDestroyable {
 		if (source !== null) {
 			this.updateSource(source.source);
 		}
+	}
+
+	public setMouseCursor(): void {
+		this._widget.element().style.cursor = 'pointer';
+	}
+
+	public resetMouseCursor(): void {
+		this._widget.element().style.cursor = 'default';
 	}
 
 	public options(): Readonly<ChartOptionsInternal> {
