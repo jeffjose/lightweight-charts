@@ -104,7 +104,8 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 		const timeScale = this._model.timeScale();
 		const seriesLollipops = this._series.indexedLollipops();
 		if (this._dataInvalidated) {
-			this._data.items = seriesLollipops.map<SeriesLollipopRendererDataItem>((lollipop: InternalSeriesLollipop<TimePointIndex>) => ({
+			this._data.items = seriesLollipops.map<SeriesLollipopRendererDataItem>((lollipop: InternalSeriesLollipop<TimePointIndex>, index: number) => ({
+				object: this._series.lollipops()[index],
 				time: lollipop.time,
 				x: 0 as Coordinate,
 				y: 0 as Coordinate,

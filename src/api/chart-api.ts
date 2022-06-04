@@ -336,7 +336,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 			point: param.point,
 			paneIndex: param.paneIndex,
 			hoveredSeries,
-			hoveredMarkerId: param.hoveredObject,
+			target: param.hoveredObject,
 			seriesData,
 		};
 	}

@@ -3,9 +3,9 @@ import { makeFont } from '../helpers/make-font';
 
 import { ChartModel, HoveredObject } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
-import { SeriesLollipopPosition, SeriesLollipopShape } from '../model/series-lollipops';
+import { SeriesLollipop, SeriesLollipopPosition, SeriesLollipopShape } from '../model/series-lollipops';
 import { TextWidthCache } from '../model/text-width-cache';
-import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
+import { SeriesItemsIndexesRange, TimedValue, TimePoint } from '../model/time-data';
 
 import { LineStyle, LineWidth } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
@@ -17,6 +17,7 @@ import { drawCircle, hitTestCircle } from './series-markers-circle';
 import { drawTriangle, hitTestTriangle } from './series-markers-triangle';
 
 export interface SeriesLollipopRendererDataItem extends TimedValue {
+	object: SeriesLollipop<TimePoint>;
 	y: Coordinate;
 	size: number;
 	shape: SeriesLollipopShape;
@@ -77,7 +78,7 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 			if (hitTestItem(item, x, y)) {
 				return {
 					hitTestData: item.internalId,
-					externalId: item.externalId,
+					object: item.object,
 				};
 			}
 		}

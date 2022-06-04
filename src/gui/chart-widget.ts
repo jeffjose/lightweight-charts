@@ -18,7 +18,9 @@ import { PaneInfo } from '../model/pane';
 import { Point } from '../model/point';
 import { Series } from '../model/series';
 import { SeriesPlotRow } from '../model/series-data';
-import { OriginalTime, TimePointIndex } from '../model/time-data';
+import { SeriesLollipop } from '../model/series-lollipops';
+import { SeriesMarker } from '../model/series-markers';
+import { OriginalTime, TimePoint, TimePointIndex } from '../model/time-data';
 
 import { createPreconfiguredCanvas, getCanvasDevicePixelRatio, getContext2D, Size } from './canvas-utils';
 import { PaneSeparator, SEPARATOR_HEIGHT } from './pane-separator';
@@ -32,7 +34,7 @@ export interface MouseEventParamsImpl extends PaneInfo {
 	seriesData: Map<Series, SeriesPlotRow>;
 	paneIndex?: number;
 	hoveredSeries?: Series;
-	hoveredObject?: string;
+	hoveredObject?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint>;
 }
 
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
@@ -658,7 +660,7 @@ export class ChartWidget implements IDestroyable {
 			: undefined;
 
 		const hoveredObject = hoveredSource !== null && hoveredSource.object !== undefined
-			? hoveredSource.object.externalId
+			? hoveredSource.object.object
 			: undefined;
 
 		return {

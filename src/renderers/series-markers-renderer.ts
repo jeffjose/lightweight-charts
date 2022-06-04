@@ -3,9 +3,9 @@ import { makeFont } from '../helpers/make-font';
 
 import { HoveredObject } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
-import { SeriesMarkerShape } from '../model/series-markers';
+import { SeriesMarker, SeriesMarkerShape } from '../model/series-markers';
 import { TextWidthCache } from '../model/text-width-cache';
-import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
+import { SeriesItemsIndexesRange, TimedValue, TimePoint } from '../model/time-data';
 
 import { ScaledRenderer } from './scaled-renderer';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
@@ -22,6 +22,7 @@ export interface SeriesMarkerText {
 }
 
 export interface SeriesMarkerRendererDataItem extends TimedValue {
+	object: SeriesMarker<TimePoint>;
 	y: Coordinate;
 	size: number;
 	shape: SeriesMarkerShape;
@@ -66,7 +67,7 @@ export class SeriesMarkersRenderer extends ScaledRenderer {
 			if (hitTestItem(item, x, y)) {
 				return {
 					hitTestData: item.internalId,
-					externalId: item.externalId,
+					object: item.object,
 				};
 			}
 		}

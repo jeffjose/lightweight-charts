@@ -25,8 +25,10 @@ import { DEFAULT_STRETCH_FACTOR, Pane, PaneInfo } from './pane';
 import { Point } from './point';
 import { PriceScale, PriceScaleOptions } from './price-scale';
 import { Series, SeriesOptionsInternal } from './series';
+import { SeriesLollipop } from './series-lollipops';
+import { SeriesMarker } from './series-markers';
 import { SeriesOptionsMap, SeriesType } from './series-options';
-import { LogicalRange, TimePointIndex, TimeScalePoint } from './time-data';
+import { LogicalRange, TimePoint, TimePointIndex, TimeScalePoint } from './time-data';
 import { TimeScale, TimeScaleOptions } from './time-scale';
 import { Watermark, WatermarkOptions } from './watermark';
 
@@ -145,7 +147,7 @@ export interface AxisPressedMouseMoveOptions {
 
 export interface HoveredObject {
 	hitTestData?: unknown;
-	externalId?: string;
+	object?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint>;
 }
 
 export interface HoveredSource {

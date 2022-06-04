@@ -2,6 +2,7 @@ import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { ChartOptions } from '../model/chart-model';
 import { Point } from '../model/point';
+import { SeriesLollipop } from '../model/series-lollipops';
 import { SeriesMarker } from '../model/series-markers';
 import {
 	AreaSeriesPartialOptions,
@@ -12,7 +13,7 @@ import {
 	LineSeriesPartialOptions,
 	SeriesType,
 } from '../model/series-options';
-import { Logical, Time } from '../model/time-data';
+import { Logical, Time, TimePoint } from '../model/time-data';
 
 import { BarData, HistogramData, LineData } from './data-consumer';
 import { IPriceScaleApi } from './iprice-scale-api';
@@ -55,9 +56,9 @@ export interface MouseEventParams {
 	 */
 	hoveredSeries?: ISeriesApi<SeriesType>;
 	/**
-	 * The ID of the marker at the point of the mouse event.
+	 * The object at the point of the mouse event.
 	 */
-	hoveredMarkerId?: SeriesMarker<Time>['id'];
+	target?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint>;
 }
 
 /**
