@@ -87,26 +87,38 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 			return;
 		}
 
+		// console.log(`isHovered ${isHovered}`);
+
 		ctx.textBaseline = 'middle';
 		ctx.font = this._font;
 
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; i++) {
+			// Skip the one that is hovered, so that we can draw it at the end on top of everything
+			if (i === hitTestData) {
+				continue;
+			}
 			const item = this._data.items[i];
 
 			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
 			item.centerX = Math.round(item.x * pixelRatio);
-			drawItem(item, ctx, pixelRatio);
+			// isHovered is true for every item, so also check against the index
+			drawItem(item, ctx, pixelRatio, isHovered && hitTestData === i);
+		}
+
+		if (isHovered && typeof hitTestData === 'number') {
+			const item: SeriesLollipopRendererDataItem = this._data.items[hitTestData];
+			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
+			item.centerX = Math.round(item.x * pixelRatio);
+			drawItem(item, ctx, pixelRatio, isHovered);
 		}
 	}
 }
 
-function drawItem(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number): void {
-	ctx.fillStyle = item.color;
-
-	drawShape(item, ctx, pixelRatio);
+function drawItem(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean): void {
+	drawShape(item, ctx, pixelRatio, isHovered);
 }
 
-function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number): void {
+function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean): void {
 	if (item.size === 0) {
 		return;
 	}
@@ -131,7 +143,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawSquare(ctx, item);
 			return;
 		case 'fingerpost':
-			drawFingerpost(true, ctx, item, pixelRatio);
+			drawFingerpost(ctx, item, pixelRatio, isHovered);
 			return;
 	}
 

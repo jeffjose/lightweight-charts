@@ -112,7 +112,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				color: lollipop.color,
 				// For default, if the lollipop is in the top, get backgroundTopColor else backgroundBottomColor
 				fillColor: lollipop.fillColor ?? (lollipop.position === 'top' ? this._model.backgroundTopColor() : this._model.backgroundBottomColor()),
-				hoverColor: lollipop.hoverColor ?? applyAlpha(lollipop.color, 0.2),
+				hoverColor: lollipop.hoverColor ?? applyAlpha(lollipop.color, 0.15),
 				lineWidth: lollipop.lineWidth ?? 1,
 				lineStyle: lollipop.lineStyle ?? LineStyle.LargeDashed,
 				lineVisible: lollipop.lineVisible ?? true,

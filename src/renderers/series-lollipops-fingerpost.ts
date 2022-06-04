@@ -6,10 +6,10 @@ import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { outlineScale, shapeSize } from './series-lollipops-utils';
 
 export function drawFingerpost(
-	up: boolean,
 	ctx: CanvasRenderingContext2D,
 	item: SeriesLollipopRendererDataItem,
-	pixelRatio: number
+	pixelRatio: number,
+	isHovered: boolean
 ): void {
 	const fingerpostSize = shapeSize('fingerpost', item.size); // This should be 25
 	const fingerpostOutlineScale = outlineScale('fingerpost');
@@ -49,6 +49,7 @@ export function drawFingerpost(
 
 	let verticalLineTopY;
 	let verticalLineBottomY;
+
 	if (positionTop) {
 		verticalLineTopY = fingerpostSize + strokeWidth;
 		verticalLineBottomY = height;
@@ -62,6 +63,9 @@ export function drawFingerpost(
 		ctx.restore();
 
 		// Main / Visible object
+		if (isHovered) {
+			ctx.fillStyle = item.hoverColor;
+		}
 		drawFingerpostUpPath(ctx);
 	} else {
 		verticalLineTopY = 0;
@@ -76,6 +80,9 @@ export function drawFingerpost(
 		ctx.restore();
 
 		// Main / Visible object
+		if (isHovered) {
+			ctx.fillStyle = item.hoverColor;
+		}
 		drawFingerpostDownPath(ctx);
 	}
 
@@ -108,6 +115,7 @@ export function hitTestFingerpost(
 
 	return x >= left && x <= left + squareSize &&
 		y >= top && y <= top + squareSize;
+	// console.log(`FINGERPOST: ${t}`);
 }
 
 function drawFingerpostUpPath(ctx: CanvasRenderingContext2D): void {
