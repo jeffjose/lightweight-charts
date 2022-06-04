@@ -6,37 +6,32 @@ import { outlineScale, shapeSize } from './series-lollipops-utils';
 
 export function drawSquare(
 	ctx: CanvasRenderingContext2D,
-	item: SeriesLollipopRendererDataItem
+	item: SeriesLollipopRendererDataItem,
+	isHovered: boolean
 ): void {
-	const centerX = item.centerX;
-	const height = item.paneHeight;
-	const positionTop = item.position === 'top';
-
-	const squareSize = shapeSize('square', item.size); // This should be 25
 	const squareOutlineSize = outlineScale('square');
+	const squareSize = shapeSize('square', item.size); // This should be 25
 	const halfSize = (squareSize - 1) / 2;
 
 	const strokeWidth = 2;
 
-	let topLeftX;
-	let topLeftY;
 	let centerY;
 	let verticalLineTopY;
 	let verticalLineBottomY;
-	if (positionTop) {
-		topLeftX = centerX - halfSize;
-		topLeftY = 1; // 1 is a magic number
+
+	const topLeftX = getTopLeftX(item, halfSize);
+	const topLeftY = getTopLeftY(item, squareSize);
+
+	if (item.position === 'top') {
 		centerY = topLeftY + halfSize + 2; // 2 is a magic number to position the text in the middle
 
 		verticalLineTopY = squareSize + strokeWidth;
-		verticalLineBottomY = height;
+		verticalLineBottomY = item.paneHeight;
 	} 	else {
-		topLeftX = centerX - halfSize;
-		topLeftY = height - squareSize - 1;
 		centerY = topLeftY + halfSize + 2;
 
 		verticalLineTopY = 0;
-		verticalLineBottomY = height - squareSize - strokeWidth;
+		verticalLineBottomY = item.paneHeight - squareSize - strokeWidth;
 	}
 
 	ctx.strokeStyle = item.color;
@@ -58,7 +53,10 @@ export function drawSquare(
 	drawSquarePath(ctx);
 	ctx.restore();
 
-		// Main / Visible object
+	// Main / Visible object
+	if (isHovered) {
+		ctx.fillStyle = item.hoverColor;
+	}
 	drawSquarePath(ctx);
 
 	ctx.restore();
@@ -68,29 +66,13 @@ export function drawSquare(
 		ctx.strokeStyle = item.color;
 		ctx.lineWidth = item.lineWidth;
 		setLineStyle(ctx, LineStyle.LargeDashed);
-		drawVerticalLine(ctx, centerX, verticalLineTopY, verticalLineBottomY);
+		drawVerticalLine(ctx, item.centerX, verticalLineTopY, verticalLineBottomY);
 	}
 
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(item.text, centerX, centerY);
-}
-
-export function hitTestSquare(
-	centerX: Coordinate,
-	centerY: Coordinate,
-	size: number,
-	x: Coordinate,
-	y: Coordinate
-): boolean {
-	const squareSize = shapeSize('square', size);
-	const halfSize = (squareSize - 1) / 2;
-	const left = centerX - halfSize;
-	const top = centerY - halfSize;
-
-	return x >= left && x <= left + squareSize &&
-		y >= top && y <= top + squareSize;
+	ctx.fillText(item.text, item.centerX, centerY);
 }
 
 function drawSquarePath(ctx: CanvasRenderingContext2D): void {
@@ -107,4 +89,35 @@ function drawSquarePath(ctx: CanvasRenderingContext2D): void {
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
+}
+
+function getTopLeftX(item: SeriesLollipopRendererDataItem, halfSize: number): number {
+	if (item.position === 'top') {
+		return item.centerX - halfSize;
+	} 	else {
+		return item.centerX - halfSize;
+	}
+}
+
+function getTopLeftY(item: SeriesLollipopRendererDataItem, squareSize: number): number {
+	if (item.position === 'top') {
+		return 1; // 1 is a magic number
+	} 	else {
+		return item.paneHeight - squareSize - 1;
+	}
+}
+
+export function hitTestSquare(
+	item: SeriesLollipopRendererDataItem,
+	x: Coordinate,
+	y: Coordinate
+): boolean {
+	const squareSize = 22; // This was arrived by looking at the actual coordinates of the shape we're drawing.
+	// We do not use getLeftTopX here since drawing coordinates and actual mouse coordinates are different
+	const halfSize = (squareSize - 1) / 2;
+	const left = item.x - halfSize;
+	const top = getTopLeftY(item, squareSize) - 1; // 1 is a magic number comes from `getTopLeftY`
+
+	return x >= left && x <= left + squareSize &&
+		y >= top && y <= top + squareSize;
 }

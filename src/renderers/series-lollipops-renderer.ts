@@ -16,8 +16,6 @@ import { drawArrow, hitTestArrow } from './series-markers-arrow';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
 import { drawTriangle, hitTestTriangle } from './series-markers-triangle';
 
-// TODO: Update to lollipop items
-
 export interface SeriesLollipopRendererDataItem extends TimedValue {
 	y: Coordinate;
 	size: number;
@@ -30,6 +28,8 @@ export interface SeriesLollipopRendererDataItem extends TimedValue {
 	lineVisible: boolean;
 	paneHeight: number;
 	centerX: number;
+	topLeftX: number;
+	topLeftY: number;
 	position: SeriesLollipopPosition;
 	internalId: number;
 	externalId?: string;
@@ -109,6 +109,7 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 			drawItem(item, ctx, pixelRatio, isHovered && hitTestData === i);
 		}
 
+		// Now draw the hovered object
 		if (isHovered && typeof hitTestData === 'number') {
 			const item: SeriesLollipopRendererDataItem = this._data.items[hitTestData];
 			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
@@ -152,7 +153,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawCircle(ctx, item.x, item.y, item.size);
 			return;
 		case 'square':
-			drawSquare(ctx, item);
+			drawSquare(ctx, item, isHovered);
 			return;
 		case 'fingerpost':
 			drawFingerpost(ctx, item, pixelRatio, isHovered);
@@ -188,7 +189,7 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 		case 'circle':
 			return hitTestCircle(item.x, item.y, item.size, x, y);
 		case 'square':
-			return hitTestSquare(item.x, item.y, item.size, x, y);
+			return hitTestSquare(item, x, y);
 		case 'fingerpost':
 			return hitTestFingerpost(item.x, item.y, item.size, x, y);
 	}

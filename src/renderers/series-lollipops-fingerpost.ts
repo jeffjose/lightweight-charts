@@ -11,6 +11,7 @@ export function drawFingerpost(
 	pixelRatio: number,
 	isHovered: boolean
 ): void {
+	// console.log(item);
 	const fingerpostSize = shapeSize('fingerpost', item.size); // This should be 25
 	const fingerpostOutlineScale = outlineScale('fingerpost');
 
