@@ -69,6 +69,7 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 	}
 
 	public hitTest(x: Coordinate, y: Coordinate): HoveredObject | null {
+		console.time('hitTest');
 		if (this._data === null || this._data.visibleRange === null) {
 			return null;
 		}
@@ -82,6 +83,7 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 				};
 			}
 		}
+		console.timeEnd('hitTest');
 
 		return null;
 	}
@@ -177,6 +179,12 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 		return false;
 	}
 
+	// This is an optimization
+	// If cursor is not at the top or bottom (40px), then we're probably not on any lollipop
+	if (y > 40 && y < (item.paneHeight - 40)) {
+		return false;
+	}
+
 	switch (item.shape) {
 		case 'arrowDown':
 			return hitTestArrow(true, item.x, item.y, item.size, x, y);
@@ -191,6 +199,6 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 		case 'square':
 			return hitTestSquare(item, x, y);
 		case 'fingerpost':
-			return hitTestFingerpost(item.x, item.y, item.size, x, y);
+			return hitTestFingerpost(item, x, y);
 	}
 }
