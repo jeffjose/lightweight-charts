@@ -123,8 +123,7 @@ export class SeriesLollipopsPaneView implements IUpdatablePaneView {
 				paneHeight: -1,
 				position: lollipop.position,
 				centerX: 0 as Coordinate,
-				topLeftX: 0 as Coordinate,
-				topLeftY: 0 as Coordinate,
+				pixelRatio: 1 as Coordinate,
 			}));
 			this._dataInvalidated = false;
 		}

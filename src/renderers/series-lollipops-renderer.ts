@@ -28,8 +28,7 @@ export interface SeriesLollipopRendererDataItem extends TimedValue {
 	lineVisible: boolean;
 	paneHeight: number;
 	centerX: number;
-	topLeftX: number;
-	topLeftY: number;
+	pixelRatio: number;
 	position: SeriesLollipopPosition;
 	internalId: number;
 	externalId?: string;
@@ -69,7 +68,6 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 	}
 
 	public hitTest(x: Coordinate, y: Coordinate): HoveredObject | null {
-		console.time('hitTest');
 		if (this._data === null || this._data.visibleRange === null) {
 			return null;
 		}
@@ -83,7 +81,6 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 				};
 			}
 		}
-		console.timeEnd('hitTest');
 
 		return null;
 	}
@@ -92,8 +89,6 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 		if (this._data === null || this._data.visibleRange === null) {
 			return;
 		}
-
-		// console.log(`isHovered ${isHovered}`);
 
 		ctx.textBaseline = 'middle';
 		ctx.font = this._font;
@@ -107,6 +102,7 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 
 			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
 			item.centerX = Math.round(item.x * pixelRatio);
+			item.pixelRatio = pixelRatio;
 			// isHovered is true for every item, so also check against the index
 			drawItem(item, ctx, pixelRatio, isHovered && hitTestData === i);
 		}
@@ -116,6 +112,7 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 			const item: SeriesLollipopRendererDataItem = this._data.items[hitTestData];
 			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
 			item.centerX = Math.round(item.x * pixelRatio);
+			item.pixelRatio = pixelRatio;
 			drawItem(item, ctx, pixelRatio, isHovered);
 		}
 
@@ -181,7 +178,7 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 
 	// This is an optimization
 	// If cursor is not at the top or bottom (40px), then we're probably not on any lollipop
-	if (y > 40 && y < (item.paneHeight - 40)) {
+	if (y * item.pixelRatio > 40 && y * item.pixelRatio < (item.paneHeight - 40)) {
 		return false;
 	}
 

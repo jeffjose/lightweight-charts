@@ -119,5 +119,5 @@ export function hitTestSquare(
 	const top = getTopLeftY(item, squareSize) - 1; // 1 is a magic number comes from `getTopLeftY`
 
 	return x >= left && x <= left + squareSize &&
-		y >= top && y <= top + squareSize;
+		y * item.pixelRatio >= top && y * item.pixelRatio <= top + squareSize;
 }

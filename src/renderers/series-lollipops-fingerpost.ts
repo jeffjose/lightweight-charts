@@ -155,5 +155,5 @@ export function hitTestFingerpost(
 	const top = getTopLeftY(item, fingerpostSize);
 
 	return x >= left && x <= left + fingerpostSize &&
-		y >= top && y <= top + fingerpostSize;
+		y * item.pixelRatio >= top && y * item.pixelRatio <= top + fingerpostSize;
 }
