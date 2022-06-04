@@ -496,6 +496,10 @@ export class ChartModel implements IDestroyable {
 		this.recalculateAllPanes();
 	}
 
+	public width(): number {
+		return this._width;
+	}
+
 	public setWidth(width: number): void {
 		this._width = width;
 		this._timeScale.setWidth(this._width);

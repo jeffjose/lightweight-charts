@@ -353,6 +353,7 @@ export class ChartWidget implements IDestroyable {
 		const width = this._width;
 		const height = this._height;
 
+		const paneOrigWidth = this._model.width();
 		const paneWidth = Math.max(width - leftPriceAxisWidth - rightPriceAxisWidth, 0);
 
 		const separatorCount = this._paneSeparators.length;
@@ -377,6 +378,8 @@ export class ChartWidget implements IDestroyable {
 			const paneWidget = this._paneWidgets[paneIndex];
 			paneWidget.setState(this._model.panes()[paneIndex]);
 
+			const paneOrigSize = paneWidget.getSize();
+
 			let paneHeight = 0;
 			let calculatePaneHeight = 0;
 
@@ -390,7 +393,10 @@ export class ChartWidget implements IDestroyable {
 
 			accumulatedHeight += paneHeight;
 
-			paneWidget.setSize(new Size(paneWidth, paneHeight));
+			// perf optimization (jeffjose)
+			if (paneWidth !== paneOrigSize.w || paneHeight !== paneOrigSize.h) {
+				paneWidget.setSize(new Size(paneWidth, paneHeight));
+			}
 			if (this._isLeftAxisVisible()) {
 				paneWidget.setPriceAxisSize(leftPriceAxisWidth, 'left');
 			}
@@ -398,18 +404,28 @@ export class ChartWidget implements IDestroyable {
 				paneWidget.setPriceAxisSize(rightPriceAxisWidth, 'right');
 			}
 
-			if (paneWidget.state()) {
+			// perf optimization (jeffjose)
+			if (paneWidget.state() && paneHeight !== paneOrigSize.h) {
 				this._model.setPaneHeight(paneWidget.state(), paneHeight);
 			}
 		}
 
-		this._timeAxisWidget.setSizes(
+		const timeAxisOrigSize = this._timeAxisWidget.getSize();
+
+		if (timeAxisOrigSize.h !== timeAxisHeight || timeAxisOrigSize.w !== paneWidth) {
+			// perf optimization (jeffjose)
+			this._timeAxisWidget.setSizes(
 			new Size(timeAxisVisible ? paneWidth : 0, timeAxisHeight),
 			timeAxisVisible ? leftPriceAxisWidth : 0,
 			timeAxisVisible ? rightPriceAxisWidth : 0
 		);
+		}
 
-		this._model.setWidth(paneWidth);
+		// perf optimization (jeffjose)
+		if (paneWidth !== paneOrigWidth) {
+			this._model.setWidth(paneWidth);
+		}
+
 		if (this._leftPriceAxisWidth !== leftPriceAxisWidth) {
 			this._leftPriceAxisWidth = leftPriceAxisWidth;
 		}
