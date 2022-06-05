@@ -11,10 +11,7 @@ import { LineStyle, LineWidth } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
 import { drawFingerpost, hitTestFingerpost } from './series-lollipops-fingerpost';
 import { drawSquare, hitTestSquare } from './series-lollipops-square';
-// import { hitTestText } from './series-lollipops-text';
-import { drawArrow, hitTestArrow } from './series-markers-arrow';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
-import { drawTriangle, hitTestTriangle } from './series-markers-triangle';
 
 export interface SeriesLollipopRendererDataItem extends TimedValue {
 	object: SeriesLollipop<TimePoint>;
@@ -137,18 +134,6 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 	}
 
 	switch (item.shape) {
-		case 'arrowDown':
-			drawArrow(false, ctx, item);
-			return;
-		case 'arrowUp':
-			drawArrow(true, ctx, item);
-			return;
-		case 'triangleDown':
-			drawTriangle(false, ctx, item.x, item.y, item.size);
-			return;
-		case 'triangleUp':
-			drawTriangle(true, ctx, item.x, item.y, item.size);
-			return;
 		case 'circle':
 			drawCircle(ctx, item, false);
 			return;
@@ -184,14 +169,6 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 	}
 
 	switch (item.shape) {
-		case 'arrowDown':
-			return hitTestArrow(true, item.x, item.y, item.size, x, y);
-		case 'arrowUp':
-			return hitTestArrow(false, item.x, item.y, item.size, x, y);
-		case 'triangleDown':
-			return hitTestTriangle(true, item.x, item.y, item.size, x, y);
-		case 'triangleUp':
-			return hitTestTriangle(false, item.x, item.y, item.size, x, y);
 		case 'circle':
 			return hitTestCircle(item, x, y, false);
 		case 'square':

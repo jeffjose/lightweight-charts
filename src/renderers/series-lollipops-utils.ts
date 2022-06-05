@@ -25,12 +25,6 @@ function size(barSpacing: number, coeff: number): number {
 
 export function shapeSize(shape: SeriesLollipopShape, originalSize: number): number {
 	switch (shape) {
-		case 'arrowDown':
-		case 'arrowUp':
-			return size(originalSize, 1);
-		case 'triangleDown':
-		case 'triangleUp':
-			return size(originalSize, 0.8);
 		case 'circle':
 			return size(originalSize, 0.8);
 		case 'square':
@@ -42,12 +36,6 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 
 export function outlineScale(shape: SeriesLollipopShape): ShapeOutlineScaleData {
 	switch (shape) {
-		case 'arrowDown':
-		case 'arrowUp':
-			return { x: 1, y: 1 };
-		case 'triangleDown':
-		case 'triangleUp':
-			return { x: 1, y: 1 };
 		case 'circle':
 			return { x: 1, y: 1 };
 		case 'square':
