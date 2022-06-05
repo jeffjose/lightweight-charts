@@ -498,24 +498,6 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return { price, radius, borderColor, backgroundColor };
 	}
 
-	public lollipopDataAtIndex(index: TimePointIndex): LollipopData | null {
-		const getValue = (this._seriesType === 'Line' || this._seriesType === 'Area' || this._seriesType === 'Baseline') &&
-			(this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerVisible;
-
-		if (!getValue) {
-			return null;
-		}
-		const bar = this._data.valueAt(index);
-		if (bar === null) {
-			return null;
-		}
-		const price = bar.value[PlotRowValueIndex.Close] as BarPrice;
-		const radius = this._lollipopRadius();
-		const borderColor = this._lollipopBorderColor();
-		const backgroundColor = this._lollipopBackgroundColor(index);
-		return { price, radius, borderColor, backgroundColor };
-	}
-
 	public title(): string {
 		return this._options.title;
 	}
@@ -579,47 +561,6 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	private _markerBackgroundColor(index: TimePointIndex): string {
-		switch (this._seriesType) {
-			case 'Line':
-			case 'Area':
-			case 'Baseline': {
-				const crosshairMarkerBackgroundColor = (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerBackgroundColor;
-				if (crosshairMarkerBackgroundColor.length !== 0) {
-					return crosshairMarkerBackgroundColor;
-				}
-			}
-		}
-
-		return this.barColorer().barStyle(index).barColor;
-	}
-
-	private _lollipopRadius(): number {
-		switch (this._seriesType) {
-			case 'Line':
-			case 'Area':
-			case 'Baseline':
-				return (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerRadius;
-		}
-
-		return 0;
-	}
-
-	private _lollipopBorderColor(): string | null {
-		switch (this._seriesType) {
-			case 'Line':
-			case 'Area':
-			case 'Baseline': {
-				const crosshairMarkerBorderColor = (this._options as (LineStyleOptions | AreaStyleOptions | BaselineStyleOptions)).crosshairMarkerBorderColor;
-				if (crosshairMarkerBorderColor.length !== 0) {
-					return crosshairMarkerBorderColor;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	private _lollipopBackgroundColor(index: TimePointIndex): string {
 		switch (this._seriesType) {
 			case 'Line':
 			case 'Area':
