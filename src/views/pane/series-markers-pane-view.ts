@@ -25,7 +25,7 @@ import {
 import { IUpdatablePaneView, UpdateType } from './iupdatable-pane-view';
 
 const enum Constants {
-	TextMargin = 0.1,
+	TextMargin = 0.5,
 }
 
 interface Offsets {
@@ -196,8 +196,8 @@ export class SeriesMarkersPaneView implements IUpdatablePaneView {
 			const marker = seriesMarkers[index];
 			if (marker.time !== prevTimeIndex) {
 				// new bar, reset stack counter
-				offsets.aboveBar = shapeMargin;
-				offsets.belowBar = shapeMargin;
+				offsets.aboveBar = shapeMargin * 3;
+				offsets.belowBar = shapeMargin * 3;
 				prevTimeIndex = marker.time;
 			}
 
