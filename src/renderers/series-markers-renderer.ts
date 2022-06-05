@@ -9,6 +9,7 @@ import { SeriesItemsIndexesRange, TimedValue, TimePoint } from '../model/time-da
 
 import { ScaledRenderer } from './scaled-renderer';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
+import { drawChevronDouble, hitTestChevronDouble } from './series-markers-chevron-double';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
 import { drawSquare, hitTestSquare } from './series-markers-square';
 import { drawText, hitTestText } from './series-markers-text';
@@ -131,6 +132,12 @@ function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingConte
 		case 'square':
 			drawSquare(ctx, item.x, item.y, item.size);
 			return;
+		case 'chevronDoubleUp':
+			drawChevronDouble(true, ctx, item);
+			return;
+		case 'chevronDoubleDown':
+			drawChevronDouble(false, ctx, item);
+			return;
 	}
 
 	ensureNever(item.shape);
@@ -150,10 +157,9 @@ function hitTestShape(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coor
 	}
 
 	switch (item.shape) {
-		case 'arrowDown':
-			return hitTestArrow(true, item.x, item.y, item.size, x, y);
 		case 'arrowUp':
-			return hitTestArrow(false, item.x, item.y, item.size, x, y);
+		case 'arrowDown':
+			return hitTestArrow(item.x, item.y, x, y);
 		case 'triangleDown':
 			return hitTestTriangle(true, item.x, item.y, item.size, x, y);
 		case 'triangleUp':
@@ -164,5 +170,8 @@ function hitTestShape(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coor
 			return hitTestCircle(item, x, y, true);
 		case 'square':
 			return hitTestSquare(item.x, item.y, item.size, x, y);
+		case 'chevronDoubleUp':
+		case 'chevronDoubleDown':
+			return hitTestChevronDouble(item.x, item.y, x, y);
 	}
 }

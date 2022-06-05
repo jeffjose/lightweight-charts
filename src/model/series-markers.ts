@@ -8,7 +8,7 @@ export type SeriesMarkerPosition = 'aboveBar' | 'belowBar' | 'inBar';
 /**
  * Represents the shape of a series marker.
  */
-export type SeriesMarkerShape = 'circle' | 'spotlightcircle' | 'square' | 'arrowUp' | 'arrowDown' | 'triangleUp' | 'triangleDown';
+export type SeriesMarkerShape = 'circle' | 'spotlightcircle' | 'square' | 'arrowUp' | 'arrowDown' | 'triangleUp' | 'triangleDown' | 'chevronDoubleUp' | 'chevronDoubleDown';
 
 /**
  * Represents a series marker.
