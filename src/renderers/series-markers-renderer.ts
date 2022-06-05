@@ -9,6 +9,7 @@ import { SeriesItemsIndexesRange, TimedValue, TimePoint } from '../model/time-da
 
 import { ScaledRenderer } from './scaled-renderer';
 import { drawArrow, hitTestArrow } from './series-markers-arrow';
+import { drawBadgeCheck, hitTestBadgeCheck } from './series-markers-badge-check';
 import { drawChevronDouble, hitTestChevronDouble } from './series-markers-chevron-double';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
 import { drawSquare, hitTestSquare } from './series-markers-square';
@@ -138,6 +139,9 @@ function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingConte
 		case 'chevronDoubleDown':
 			drawChevronDouble(false, ctx, item);
 			return;
+		case 'badgeCheck':
+			drawBadgeCheck(ctx, item);
+			return;
 	}
 
 	ensureNever(item.shape);
@@ -173,5 +177,7 @@ function hitTestShape(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coor
 		case 'chevronDoubleUp':
 		case 'chevronDoubleDown':
 			return hitTestChevronDouble(item.x, item.y, x, y);
+		case 'badgeCheck':
+			return hitTestBadgeCheck(item.x, item.y, x, y);
 	}
 }

@@ -30,6 +30,8 @@ export function shapeSize(shape: SeriesMarkerShape, originalSize: number): numbe
 		case 'chevronDoubleUp':
 		case 'chevronDoubleDown':
 			return size(originalSize, 1);
+		case 'badgeCheck':
+			return size(originalSize, 1);
 	}
 }
 
