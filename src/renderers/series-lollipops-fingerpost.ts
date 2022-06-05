@@ -3,7 +3,10 @@ import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { outlineScale, shapeSize } from './series-lollipops-utils';
+import { getStrokeWidth, outlineScale, shapeSize } from './series-lollipops-utils';
+
+const CENTER_X = 12;
+const CENTER_Y = 13;
 
 export function drawFingerpost(
 	ctx: CanvasRenderingContext2D,
@@ -16,10 +19,10 @@ export function drawFingerpost(
 
 	const halfSize = (fingerpostSize - 1) / 2;
 
-	const strokeWidth = 2;
-
 	const centerX = Math.round(item.x * pixelRatio);
 	const height = item.paneHeight;
+
+	const strokeWidth = getStrokeWidth();
 
 	let topLeftX;
 	let centerY;
@@ -53,9 +56,9 @@ export function drawFingerpost(
 
 		ctx.save();
 		ctx.strokeStyle = item.fillColor;
-		ctx.translate(12, 13);
+		ctx.translate(CENTER_X, CENTER_Y);
 		ctx.scale(fingerpostOutlineScale.x, fingerpostOutlineScale.y);
-		ctx.translate(-12, -13);
+		ctx.translate(-CENTER_X, -CENTER_Y);
 		drawFingerpostUpPath(ctx);
 		ctx.restore();
 
@@ -70,9 +73,9 @@ export function drawFingerpost(
 
 		ctx.save();
 		ctx.strokeStyle = item.fillColor;
-		ctx.translate(12, 13);
+		ctx.translate(CENTER_X, CENTER_Y);
 		ctx.scale(1.11, 1.11);
-		ctx.translate(-12, -13);
+		ctx.translate(-CENTER_X, -CENTER_Y);
 		drawFingerpostDownPath(ctx);
 		ctx.restore();
 
@@ -135,11 +138,10 @@ function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
 }
 
 function getTopLeftY(item: SeriesLollipopRendererDataItem, fingerpostSize: number): number {
-	const strokeWidth = 2;
 	if (item.position === 'top') {
 		return 0;
 	} 	else {
-		return item.paneHeight - fingerpostSize - strokeWidth - 3; // 3 is a magic number. 2 is strokeWidth
+		return item.paneHeight - fingerpostSize - getStrokeWidth() - 3; // 3 is a magic number.
 	}
 }
 

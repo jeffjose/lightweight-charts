@@ -6,11 +6,16 @@ const enum Constants {
 	MinShapeSize = 40,
 	MaxShapeSize = 60,
 	MinShapeMargin = 3,
+	StrokeWidth = 2,
 }
 
 interface ShapeOutlineScaleData {
 	x: number;
 	y: number;
+}
+
+export function getStrokeWidth(): number {
+	return Constants.StrokeWidth;
 }
 
 function size(barSpacing: number, coeff: number): number {

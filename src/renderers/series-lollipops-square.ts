@@ -2,7 +2,7 @@ import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { outlineScale, shapeSize } from './series-lollipops-utils';
+import { getStrokeWidth, outlineScale, shapeSize } from './series-lollipops-utils';
 
 export function drawSquare(
 	ctx: CanvasRenderingContext2D,
@@ -13,7 +13,7 @@ export function drawSquare(
 	const squareSize = shapeSize('square', item.size); // This should be 25
 	const halfSize = (squareSize - 1) / 2;
 
-	const strokeWidth = 2;
+	const strokeWidth = getStrokeWidth();
 
 	let centerY;
 	let verticalLineTopY;
