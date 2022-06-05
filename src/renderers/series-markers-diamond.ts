@@ -25,6 +25,7 @@ export function drawDiamond(
 	} 	else {
 		diamondSize = shapeSize('diamond', item.size);
 	}
+
 	const scaleMultipler = diamondSize / DIAMOND_W;
 	setScale(ctx, scaleMultipler, centerX, centerY);
 

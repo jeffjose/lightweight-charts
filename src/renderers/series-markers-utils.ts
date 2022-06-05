@@ -18,7 +18,7 @@ export function shapeSize(shape: SeriesMarkerShape, originalSize: number): numbe
 	switch (shape) {
 		case 'arrowDown':
 		case 'arrowUp':
-			return size(originalSize, 1);
+			return size(originalSize, 0.8);
 		case 'triangleDown':
 		case 'triangleUp':
 			return size(originalSize, 0.8);
@@ -32,7 +32,7 @@ export function shapeSize(shape: SeriesMarkerShape, originalSize: number): numbe
 			return size(originalSize, 0.7);
 		case 'chevronDoubleUp':
 		case 'chevronDoubleDown':
-			return size(originalSize, 1);
+			return size(originalSize, 0.8);
 		case 'badgeCheck':
 			return size(originalSize, 1);
 	}

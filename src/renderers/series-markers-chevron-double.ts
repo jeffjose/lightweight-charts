@@ -4,6 +4,7 @@ import { Coordinate } from '../model/coordinate';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { SeriesMarkerRendererDataItem } from './series-markers-renderer';
 import { hitTestSquare } from './series-markers-square';
+import { resetScale, setScale, shapeSize } from './series-markers-utils';
 
 const CHEVRONDOUBLE_W = 9;
 const HALFSIZE = (CHEVRONDOUBLE_W - 1) / 2;
@@ -17,7 +18,10 @@ export function drawChevronDouble(
 	const centerX = item.x;
 	const centerY = item.y;
 
-	ctx.save();
+	const chevronDoubleSize = shapeSize('chevronDoubleUp', item.size);
+	const scaleMultipler = chevronDoubleSize / CHEVRONDOUBLE_W;
+	setScale(ctx, scaleMultipler, centerX, centerY);
+
 	ctx.beginPath();
 
 	const strokeWidth = 2;
@@ -28,7 +32,7 @@ export function drawChevronDouble(
 	ctx.strokeStyle = item.color;
 	ctx.miterLimit = 4;
 
-	ctx.translate(centerX - HALFSIZE - (strokeWidth / 2), centerY - HALFSIZE - 2);
+	ctx.translate(centerX - HALFSIZE - (strokeWidth - 1) * scaleMultipler / 2, centerY - HALFSIZE - 2);
 	if (up) {
 		ctx.beginPath();
 		ctx.moveTo(1, 5.5);
@@ -49,7 +53,7 @@ export function drawChevronDouble(
 		ctx.stroke();
 	}
 
-	ctx.restore();
+	resetScale(ctx);
 }
 
 export function hitTestChevronDouble(
