@@ -111,10 +111,10 @@ function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingConte
 
 	switch (item.shape) {
 		case 'arrowDown':
-			drawArrow(false, ctx, item.x, item.y, item.size);
+			drawArrow(false, ctx, item);
 			return;
 		case 'arrowUp':
-			drawArrow(true, ctx, item.x, item.y, item.size);
+			drawArrow(true, ctx, item);
 			return;
 		case 'triangleDown':
 			drawTriangle(false, ctx, item.x, item.y, item.size);

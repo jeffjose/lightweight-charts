@@ -1,42 +1,53 @@
-import { ceiledOdd } from '../helpers/mathex';
 
 import { Coordinate } from '../model/coordinate';
 
+import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
+import { SeriesMarkerRendererDataItem } from './series-markers-renderer';
 import { hitTestSquare } from './series-markers-square';
-import { shapeSize } from './series-markers-utils';
+
+const ARROWSIZE = 8;
+const HALFSIZE = ARROWSIZE / 2;
 
 export function drawArrow(
 	up: boolean,
 	ctx: CanvasRenderingContext2D,
-	centerX: Coordinate,
-	centerY: Coordinate,
-	size: number
-): void {
-	const arrowSize = shapeSize('arrowUp', size);
-	const halfArrowSize = (arrowSize - 1) / 2;
-	const baseSize = ceiledOdd(size / 2);
-	const halfBaseSize = (baseSize - 1) / 2;
+	item: SeriesMarkerRendererDataItem | SeriesLollipopRendererDataItem
 
+): void {
+	const centerX = item.x;
+	const centerY = item.y;
+
+	ctx.save();
 	ctx.beginPath();
+
+	ctx.lineCap = 'round';
+	ctx.lineJoin = 'round';
+	ctx.lineWidth = 2;
+	ctx.strokeStyle = item.color;
+	ctx.translate(centerX - HALFSIZE, centerY - HALFSIZE - 2);
 	if (up) {
-		ctx.moveTo(centerX - halfArrowSize, centerY);
-		ctx.lineTo(centerX, centerY - halfArrowSize);
-		ctx.lineTo(centerX + halfArrowSize, centerY);
-		ctx.lineTo(centerX + halfBaseSize, centerY);
-		ctx.lineTo(centerX + halfBaseSize, centerY + halfArrowSize);
-		ctx.lineTo(centerX - halfBaseSize, centerY + halfArrowSize);
-		ctx.lineTo(centerX - halfBaseSize, centerY);
+		ctx.beginPath();
+		ctx.moveTo(5, 9);
+		ctx.lineTo(5, 1);
+		ctx.fill();
+		ctx.moveTo(1, 5);
+		ctx.lineTo(5, 1);
+		ctx.lineTo(9, 5);
+		ctx.fill();
+		ctx.stroke();
 	} else {
-		ctx.moveTo(centerX - halfArrowSize, centerY);
-		ctx.lineTo(centerX, centerY + halfArrowSize);
-		ctx.lineTo(centerX + halfArrowSize, centerY);
-		ctx.lineTo(centerX + halfBaseSize, centerY);
-		ctx.lineTo(centerX + halfBaseSize, centerY - halfArrowSize);
-		ctx.lineTo(centerX - halfBaseSize, centerY - halfArrowSize);
-		ctx.lineTo(centerX - halfBaseSize, centerY);
+		ctx.beginPath();
+		ctx.moveTo(5, 1);
+		ctx.lineTo(5, 9);
+		ctx.fill();
+		ctx.moveTo(9, 5);
+		ctx.lineTo(5, 9);
+		ctx.lineTo(1, 5);
+		ctx.fill();
+		ctx.stroke();
 	}
 
-	ctx.fill();
+	ctx.restore();
 }
 
 export function hitTestArrow(
@@ -48,5 +59,5 @@ export function hitTestArrow(
 	y: Coordinate
 ): boolean {
 	// TODO: implement arrow hit test
-	return hitTestSquare(centerX, centerY, size, x, y);
+	return hitTestSquare(centerX, centerY, ARROWSIZE, x, y);
 }
