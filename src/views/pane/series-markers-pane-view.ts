@@ -25,7 +25,7 @@ import {
 import { IUpdatablePaneView, UpdateType } from './iupdatable-pane-view';
 
 const enum Constants {
-	TextMargin = 0.5,
+	TextMargin = 0.7,
 }
 
 interface Offsets {
