@@ -12,6 +12,7 @@ import { drawArrow, hitTestArrow } from './series-markers-arrow';
 import { drawBadgeCheck, hitTestBadgeCheck } from './series-markers-badge-check';
 import { drawChevronDouble, hitTestChevronDouble } from './series-markers-chevron-double';
 import { drawCircle, hitTestCircle } from './series-markers-circle';
+import { drawDiamond, hitTestDiamond } from './series-markers-diamond';
 import { drawSquare, hitTestSquare } from './series-markers-square';
 import { drawText, hitTestText } from './series-markers-text';
 import { drawTriangle, hitTestTriangle } from './series-markers-triangle';
@@ -106,6 +107,7 @@ function drawItem(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingContex
 	drawShape(item, ctx);
 }
 
+// eslint-disable-next-line complexity
 function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingContext2D): void {
 	if (item.size === 0) {
 		return;
@@ -129,6 +131,12 @@ function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingConte
 			return;
 		case 'spotlightcircle':
 			drawCircle(ctx, item, true);
+			return;
+		case 'diamond':
+			drawDiamond(ctx, item, false);
+			return;
+		case 'spotlightdiamond':
+			drawDiamond(ctx, item, true);
 			return;
 		case 'square':
 			drawSquare(ctx, item.x, item.y, item.size);
@@ -155,6 +163,7 @@ function hitTestItem(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coord
 	return hitTestShape(item, x, y);
 }
 
+// eslint-disable-next-line complexity
 function hitTestShape(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coordinate): boolean {
 	if (item.size === 0) {
 		return false;
@@ -172,6 +181,10 @@ function hitTestShape(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coor
 			return hitTestCircle(item, x, y, false);
 		case 'spotlightcircle':
 			return hitTestCircle(item, x, y, true);
+		case 'diamond':
+			return hitTestDiamond(item, x, y, false);
+		case 'spotlightdiamond':
+			return hitTestDiamond(item, x, y, true);
 		case 'square':
 			return hitTestSquare(item.x, item.y, item.size, x, y);
 		case 'chevronDoubleUp':

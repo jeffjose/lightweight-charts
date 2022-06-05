@@ -6,6 +6,7 @@ const enum Constants {
 	MinShapeSize = 12,
 	MaxShapeSize = 30,
 	MinShapeMargin = 3,
+	SpotlightMultipler = 2.4,
 }
 
 function size(barSpacing: number, coeff: number): number {
@@ -22,9 +23,11 @@ export function shapeSize(shape: SeriesMarkerShape, originalSize: number): numbe
 		case 'triangleUp':
 			return size(originalSize, 0.8);
 		case 'circle':
+		case 'diamond':
 			return size(originalSize, 0.8);
 		case 'spotlightcircle':
-			return size(originalSize, 1.4);
+		case 'spotlightdiamond':
+			return size(originalSize, 1.3);
 		case 'square':
 			return size(originalSize, 0.7);
 		case 'chevronDoubleUp':
@@ -41,4 +44,19 @@ export function calculateShapeHeight(barSpacing: number): number {
 
 export function shapeMargin(barSpacing: number): number {
 	return Math.max(size(barSpacing, 0.1), Constants.MinShapeMargin);
+}
+
+export function setScale(ctx: CanvasRenderingContext2D, scaleMultiplier: number, centerX: number, centerY: number): void {
+	ctx.save();
+	ctx.translate(centerX, centerY);
+	ctx.scale(scaleMultiplier, scaleMultiplier);
+	ctx.translate(-centerX, -centerY);
+}
+
+export function resetScale(ctx: CanvasRenderingContext2D): void {
+	ctx.restore();
+}
+
+export function getSpotlightMultipler(): number {
+	return Constants.SpotlightMultipler;
 }

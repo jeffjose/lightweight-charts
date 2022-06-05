@@ -4,7 +4,7 @@ import { Coordinate } from '../model/coordinate';
 
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { SeriesMarkerRendererDataItem } from './series-markers-renderer';
-import { shapeSize } from './series-markers-utils';
+import { getSpotlightMultipler, resetScale, setScale, shapeSize } from './series-markers-utils';
 
 export function drawCircle(
 	ctx: CanvasRenderingContext2D,
@@ -14,25 +14,26 @@ export function drawCircle(
 	const centerX = item.x;
 	const centerY = item.y;
 
-	// If we're in spotlight mode, increase the inner size a bit
-	const size = spotlight ? item.size * 2 : item.size;
+	let circleSize;
+	if (spotlight) {
+		circleSize = shapeSize('spotlightcircle', item.size);
+	} 	else {
+		circleSize = shapeSize('circle', item.size);
+	}
 
-	const circleSize = shapeSize('circle', size);
 	const halfSize = (circleSize - 1) / 2;
 
-	ctx.beginPath();
-	ctx.arc(centerX, centerY, halfSize, 0, 2 * Math.PI, false);
-
-	ctx.fill();
+		// Draw inner filled circle
+	drawCircleShape(ctx, centerX, centerY, halfSize);
 
 	if (spotlight) {
+		// Draw outer liter circle
 		ctx.fillStyle = applyAlpha(item.color, 0.20);
-		ctx.beginPath();
-		// use the original item.size and not size
-		const spotlightSize = shapeSize('spotlightcircle', item.size);
-		ctx.arc(centerX, centerY, spotlightSize, 0, 2 * Math.PI, false);
 
-		ctx.fill();
+		setScale(ctx, getSpotlightMultipler(), centerX, centerY);
+		drawCircleShape(ctx, centerX, centerY, halfSize);
+
+		resetScale(ctx);
 	}
 }
 
@@ -55,4 +56,11 @@ export function hitTestCircle(
 	const dist = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
 
 	return dist <= tolerance;
+}
+
+function drawCircleShape(ctx: CanvasRenderingContext2D, centerX: number, centerY: number, radius: number): void {
+	ctx.beginPath();
+	ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+
+	ctx.fill();
 }
