@@ -150,7 +150,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawTriangle(true, ctx, item.x, item.y, item.size);
 			return;
 		case 'circle':
-			drawCircle(ctx, item.x, item.y, item.size);
+			drawCircle(ctx, item, false);
 			return;
 		case 'square':
 			drawSquare(ctx, item, isHovered);
@@ -193,7 +193,7 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 		case 'triangleUp':
 			return hitTestTriangle(false, item.x, item.y, item.size, x, y);
 		case 'circle':
-			return hitTestCircle(item.x, item.y, item.size, x, y);
+			return hitTestCircle(item, x, y, false);
 		case 'square':
 			return hitTestSquare(item, x, y);
 		case 'fingerpost':

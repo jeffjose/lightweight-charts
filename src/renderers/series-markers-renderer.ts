@@ -123,7 +123,10 @@ function drawShape(item: SeriesMarkerRendererDataItem, ctx: CanvasRenderingConte
 			drawTriangle(true, ctx, item.x, item.y, item.size);
 			return;
 		case 'circle':
-			drawCircle(ctx, item.x, item.y, item.size);
+			drawCircle(ctx, item, false);
+			return;
+		case 'spotlightcircle':
+			drawCircle(ctx, item, true);
 			return;
 		case 'square':
 			drawSquare(ctx, item.x, item.y, item.size);
@@ -156,7 +159,9 @@ function hitTestShape(item: SeriesMarkerRendererDataItem, x: Coordinate, y: Coor
 		case 'triangleUp':
 			return hitTestTriangle(false, item.x, item.y, item.size, x, y);
 		case 'circle':
-			return hitTestCircle(item.x, item.y, item.size, x, y);
+			return hitTestCircle(item, x, y, false);
+		case 'spotlightcircle':
+			return hitTestCircle(item, x, y, true);
 		case 'square':
 			return hitTestSquare(item.x, item.y, item.size, x, y);
 	}
