@@ -56,7 +56,7 @@ export class PriceAxisWidget implements IDestroyable {
 	private _mouseEventHandler: MouseEventHandler;
 	private _mousedown: boolean = false;
 	private _mouseDraggingCustomPriceLine: CustomPriceLine | null = null;
-	private _mouseDragFromPriceString: string = '';
+	private _mouseDragFromPriceString: number = 0;
 
 	private readonly _widthCache: TextWidthCache = new TextWidthCache(50);
 	private _tickMarksCache: LabelsImageCache = new LabelsImageCache(11, '#000');
@@ -338,7 +338,7 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	private _mouseMoveEvent(e: TouchMouseEvent): void {
-		if (this._mouseHoveredCustomPriceLine(e.localY as Coordinate) !== null) {
+		if (this._mouseHoveredCustomPriceLine(e.localY) !== null) {
 			this._setCursor(CursorType.Grab);
 		} else {
 			this._setCursor(CursorType.NsResize);
@@ -352,12 +352,10 @@ export class PriceAxisWidget implements IDestroyable {
 
 		this._mousedown = true;
 
-		const hoveredCustomPriceLine = this._mouseHoveredCustomPriceLine(e.localY as Coordinate);
+		const hoveredCustomPriceLine = this._mouseHoveredCustomPriceLine(e.localY);
 		if (hoveredCustomPriceLine) {
 			this._mouseDraggingCustomPriceLine = hoveredCustomPriceLine;
-			const price = hoveredCustomPriceLine.options().price;
-			const firstValue = ensureNotNull(this._priceScale.firstValue());
-			this._mouseDragFromPriceString = this._priceScale.formatPrice(price, firstValue);
+			this._mouseDragFromPriceString = hoveredCustomPriceLine.options().price;
 			this._setCursor(CursorType.Grabbing);
 			return;
 		}
@@ -379,7 +377,7 @@ export class PriceAxisWidget implements IDestroyable {
 		const priceScale = this._priceScale;
 		if (this._mouseDraggingCustomPriceLine) {
 			const firstValue = ensureNotNull(priceScale.firstValue());
-			const price = priceScale.coordinateToPrice(e.localY as Coordinate, firstValue);
+			const price = priceScale.coordinateToPrice(e.localY, firstValue);
 			this._mouseDraggingCustomPriceLine.applyOptions({ price: price });
 			return;
 		}
@@ -401,7 +399,7 @@ export class PriceAxisWidget implements IDestroyable {
 		if (this._mousedown) {
 			this._mousedown = false;
 			this._mouseDraggingCustomPriceLine = null;
-			this._mouseDragFromPriceString = '';
+			this._mouseDragFromPriceString = 0;
 
 			if (!this._pane.chart().options().handleScale.axisPressedMouseMove.price) {
 				return;
@@ -422,9 +420,10 @@ export class PriceAxisWidget implements IDestroyable {
 		this._mousedown = false;
 
 		if (this._mouseDraggingCustomPriceLine) {
-			model.fireCustomPriceLineDragged(this._mouseDraggingCustomPriceLine, this._mouseDragFromPriceString);
+			const currPrice = this._mouseDraggingCustomPriceLine.options().price;
+			model.fireCustomPriceLineDragged(this._mouseDragFromPriceString, currPrice, this._pane.state());
 			this._mouseDraggingCustomPriceLine = null;
-			this._mouseDragFromPriceString = '';
+			this._mouseDragFromPriceString = 0;
 			this._setCursor(CursorType.Grab);
 			return;
 		}
@@ -438,7 +437,7 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	private _mouseDoubleClickEvent(e: TouchMouseEvent): void {
-		if (this._mouseHoveredCustomPriceLine(e.localY as Coordinate) !== null) {
+		if (this._mouseHoveredCustomPriceLine(e.localY) !== null) {
 			return;
 		}
 
@@ -457,7 +456,7 @@ export class PriceAxisWidget implements IDestroyable {
 			return;
 		}
 
-		if (this._mouseHoveredCustomPriceLine(e.localY as Coordinate) !== null) {
+		if (this._mouseHoveredCustomPriceLine(e.localY) !== null) {
 			this._setCursor(CursorType.Grab);
 			return;
 		}

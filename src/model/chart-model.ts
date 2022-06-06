@@ -14,7 +14,7 @@ import { PriceAxisRendererOptionsProvider } from '../renderers/price-axis-render
 
 import { Coordinate } from './coordinate';
 import { Crosshair, CrosshairOptions } from './crosshair';
-import { CustomPriceLine } from './custom-price-line';
+import { CustomPriceLineDetails } from './custom-price-line';
 import { DefaultPriceScaleId, isDefaultPriceScale } from './default-price-scale';
 import { GridOptions } from './grid';
 import { InvalidateMask, InvalidationLevel } from './invalidate-mask';
@@ -343,7 +343,7 @@ export class ChartModel implements IDestroyable {
 	private _crosshairMoved: Delegate<TimePointIndex | null, Point & PaneInfo | null> = new Delegate();
 
 	private _suppressSeriesMoving: boolean = false;
-	private _customPriceLineDragged: Delegate<CustomPriceLine, string> = new Delegate();
+	private _customPriceLineDragged: Delegate<CustomPriceLineDetails | null, PaneInfo | null> = new Delegate();
 
 	private _backgroundTopColor: string;
 	private _backgroundBottomColor: string;
@@ -495,7 +495,7 @@ export class ChartModel implements IDestroyable {
 		return this._crosshairMoved;
 	}
 
-	public customPriceLineDragged(): ISubscription<CustomPriceLine, string> {
+	public customPriceLineDragged(): ISubscription<CustomPriceLineDetails | null, PaneInfo | null> {
 		return this._customPriceLineDragged;
 	}
 
@@ -811,8 +811,13 @@ export class ChartModel implements IDestroyable {
 		this.updateCrosshair();
 	}
 
-	public fireCustomPriceLineDragged(customPriceLine: CustomPriceLine, fromPriceString: string): void {
-		this._customPriceLineDragged.fire(customPriceLine, fromPriceString);
+	public fireCustomPriceLineDragged(prevPrice: number, currPrice: number, pane: Pane): void {
+		const details: CustomPriceLineDetails = {
+			prevPrice,
+			currPrice,
+		};
+		const paneIndex = this.getPaneIndex(pane);
+		this._customPriceLineDragged.fire(details, { paneIndex });
 	}
 
 	public destroy(): void {

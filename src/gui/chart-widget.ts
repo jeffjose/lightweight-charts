@@ -7,7 +7,7 @@ import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { ChartModel, ChartOptionsInternal } from '../model/chart-model';
 import { Coordinate } from '../model/coordinate';
-import { CustomPriceLine } from '../model/custom-price-line';
+import { CustomPriceLineDetails } from '../model/custom-price-line';
 import { DefaultPriceScaleId } from '../model/default-price-scale';
 import {
 	InvalidateMask,
@@ -40,9 +40,10 @@ export interface MouseEventParamsImpl extends PaneInfo {
 
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
 
-export interface CustomPriceLineDraggedEventParamsImpl {
-	customPriceLine: CustomPriceLine;
-	fromPriceString: string;
+export interface CustomPriceLineDraggedEventParamsImpl extends PaneInfo {
+	// customPriceLine?: CustomPriceLine;
+	prevPrice?: number;
+	currPrice?: number;
 }
 
 export type CustomPriceLineDraggedEventParamsImplSupplier = () => CustomPriceLineDraggedEventParamsImpl;
@@ -692,10 +693,11 @@ export class ChartWidget implements IDestroyable {
 	private _onPaneWidgetClicked(time: TimePointIndex | null, details: Point & PaneInfo): void {
 		this._clicked.fire(() => this._getMouseEventParamsImpl(time, details));
 	}
-	private _getCustomPriceLineDraggedEventParamsImpl(customPriceLine: CustomPriceLine, fromPriceString: string): CustomPriceLineDraggedEventParamsImpl {
+	private _getCustomPriceLineDraggedEventParamsImpl(details: CustomPriceLineDetails | null, pane: PaneInfo | null): CustomPriceLineDraggedEventParamsImpl {
 		return {
-			customPriceLine: customPriceLine,
-			fromPriceString: fromPriceString,
+			prevPrice: details?.prevPrice,
+			currPrice: details?.currPrice,
+			paneIndex: pane?.paneIndex,
 		};
 	}
 
@@ -703,8 +705,8 @@ export class ChartWidget implements IDestroyable {
 		this._crosshairMoved.fire(() => this._getMouseEventParamsImpl(time, details));
 	}
 
-	private _onCustomPriceLineDragged(customPriceLine: CustomPriceLine, fromPriceString: string): void {
-		this._customPriceLineDragged.fire(() => this._getCustomPriceLineDraggedEventParamsImpl(customPriceLine, fromPriceString));
+	private _onCustomPriceLineDragged(details: CustomPriceLineDetails | null, pane: PaneInfo | null): void {
+		this._customPriceLineDragged.fire(() => this._getCustomPriceLineDraggedEventParamsImpl(details, pane));
 	}
 
 	private _updateTimeAxisVisibility(): void {

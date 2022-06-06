@@ -1,7 +1,6 @@
 import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { ChartOptions } from '../model/chart-model';
-import { CustomPriceLine } from '../model/custom-price-line';
 import { Point } from '../model/point';
 import { SeriesLollipop } from '../model/series-lollipops';
 import { SeriesMarker } from '../model/series-markers';
@@ -68,8 +67,18 @@ export interface MouseEventParams {
 export type MouseEventHandler = (param: MouseEventParams) => void;
 
 export interface CustomPriceLineDraggedEventParams {
-	customPriceLine: CustomPriceLine;
-	fromPriceString: string;
+	/**
+	 * The index of the Pane
+	 */
+	paneIndex?: number;
+	/**
+	 * Value of priceLine prior to the move
+	 */
+	prevPrice?: number;
+	/**
+	 * Value of priceLine prior currently
+	 */
+	currPrice?: number;
 }
 
 export type CustomPriceLineDraggedEventHandler = (param: CustomPriceLineDraggedEventParams) => void;
