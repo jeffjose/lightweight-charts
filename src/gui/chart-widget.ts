@@ -33,7 +33,6 @@ export interface MouseEventParamsImpl extends PaneInfo {
 	index?: TimePointIndex;
 	point?: Point;
 	seriesData: Map<Series, SeriesPlotRow>;
-	paneIndex?: number;
 	hoveredSeries?: Series;
 	hoveredObject?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint>;
 }
