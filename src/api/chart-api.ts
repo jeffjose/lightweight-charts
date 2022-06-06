@@ -362,8 +362,9 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 	private _convertCustomPriceLineDraggedParams(param: CustomPriceLineDraggedEventParamsImpl): CustomPriceLineDraggedEventParams {
 		return {
-			customPriceLine: param.customPriceLine,
-			fromPriceString: param.fromPriceString,
+			prevPrice: param.prevPrice,
+			currPrice: param.currPrice,
+			paneIndex: param.paneIndex,
 		};
 	}
 }

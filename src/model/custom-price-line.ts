@@ -10,6 +10,11 @@ import { Coordinate } from './coordinate';
 import { PriceLineOptions } from './price-line-options';
 import { Series } from './series';
 
+export interface CustomPriceLineDetails {
+	prevPrice: number;
+	currPrice: number;
+}
+
 export class CustomPriceLine {
 	private readonly _series: Series;
 	private readonly _priceLineView: CustomPriceLinePaneView;

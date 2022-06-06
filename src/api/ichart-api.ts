@@ -68,8 +68,19 @@ export interface MouseEventParams {
 export type MouseEventHandler = (param: MouseEventParams) => void;
 
 export interface CustomPriceLineDraggedEventParams {
-	customPriceLine: CustomPriceLine;
-	fromPriceString: string;
+	customPriceLine?: CustomPriceLine;
+	/**
+	 * The index of the Pane
+	 */
+	paneIndex?: number;
+	/**
+	 * Value of priceLine prior to the move
+	 */
+	prevPrice?: number;
+	/**
+	 * Value of priceLine prior currently
+	 */
+	currPrice?: number;
 }
 
 export type CustomPriceLineDraggedEventHandler = (param: CustomPriceLineDraggedEventParams) => void;
