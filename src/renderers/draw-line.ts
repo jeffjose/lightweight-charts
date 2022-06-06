@@ -21,6 +21,10 @@ export const enum LineType {
 	 * A curved line.
 	 */
 	Curved,
+	/**
+	 * A curved line.
+	 */
+	WithBreaks,
 }
 
 /**

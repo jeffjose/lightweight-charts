@@ -37,6 +37,11 @@ export function walkLine(
 				ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, currItem.x, currItem.y);
 				break;
 			}
+			case LineType.WithBreaks: {
+				ctx.lineTo(currItem.x, points[i - 1].y);
+				ctx.lineTo(currItem.x, currItem.y);
+				break;
+			}
 		}
 	}
 }

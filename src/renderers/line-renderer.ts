@@ -74,6 +74,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 	/**
 	 * Similar to {@link walkLine}, but supports color changes
 	 */
+	// eslint-disable-next-line complexity
 	protected override _drawLine(ctx: CanvasRenderingContext2D, data: PaneRendererLineData): void {
 		const { items, visibleRange, lineType, lineColor } = data;
 		if (items.length === 0 || visibleRange === null) {
@@ -118,9 +119,36 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 					ctx.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, currItem.x, currItem.y);
 					break;
 				}
+				case LineType.WithBreaks: {
+					const fullWidth = currItem.x - items[i - 1].x;
+					const diagonalLineWidth = 30; // 30 is a magic number
+					const straightLineWidth = (fullWidth - diagonalLineWidth) / 2;
+
+					ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
+
+					if (currentStrokeStyle !== prevStrokeStyle) {
+						changeColor(currentStrokeStyle);
+						ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
+					}
+
+					ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
+
+					if (currentStrokeStyle !== prevStrokeStyle) {
+						changeColor(currentStrokeStyle);
+						ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
+					}
+
+					ctx.lineTo(currItem.x, currItem.y);
+					break;
+				}
 			}
 
 			if (lineType !== LineType.WithSteps && currentStrokeStyle !== prevStrokeStyle) {
+				changeColor(currentStrokeStyle);
+				ctx.moveTo(currItem.x, currItem.y);
+			}
+
+			if (lineType !== LineType.WithBreaks && currentStrokeStyle !== prevStrokeStyle) {
 				changeColor(currentStrokeStyle);
 				ctx.moveTo(currItem.x, currItem.y);
 			}
