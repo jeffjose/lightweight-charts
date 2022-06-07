@@ -40,7 +40,6 @@ export interface MouseEventParamsImpl extends PaneInfo {
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
 
 export interface CustomPriceLineDraggedEventParamsImpl extends PaneInfo {
-	// customPriceLine?: CustomPriceLine;
 	prevPrice?: number;
 	currPrice?: number;
 }
