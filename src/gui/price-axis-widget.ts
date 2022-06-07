@@ -338,7 +338,7 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	private _mouseMoveEvent(e: TouchMouseEvent): void {
-		if (this._mouseHoveredCustomPriceLine(e.localY as Coordinate) !== null) {
+		if (this._mouseHoveredCustomPriceLine(e.localY) !== null) {
 			this._setCursor(CursorType.Grab);
 		} else {
 			this._setCursor(CursorType.NsResize);
@@ -346,13 +346,13 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	private _mouseDownEvent(e: TouchMouseEvent): void {
-		if (this._priceScale === null || this._priceScale.isEmpty()) {
+		if (this._priceScale === null || this._priceScale.isEmpty() || !this._pane.chart().options().handleScale.axisPressedMouseMove.price) {
 			return;
 		}
 
 		this._mousedown = true;
 
-		const hoveredCustomPriceLine = this._mouseHoveredCustomPriceLine(e.localY as Coordinate);
+		const hoveredCustomPriceLine = this._mouseHoveredCustomPriceLine(e.localY);
 		if (hoveredCustomPriceLine) {
 			this._mouseDraggingCustomPriceLine = hoveredCustomPriceLine;
 			const price = hoveredCustomPriceLine.options().price;
@@ -362,29 +362,21 @@ export class PriceAxisWidget implements IDestroyable {
 			return;
 		}
 
-		if (!this._pane.chart().options().handleScale.axisPressedMouseMove.price) {
-			return;
-		}
-
 		const model = this._pane.chart().model();
 		const pane = this._pane.state();
 		model.startScalePrice(pane, this._priceScale, e.localY);
 	}
 
 	private _pressedMouseMoveEvent(e: TouchMouseEvent): void {
-		if (this._priceScale === null) {
+		if (this._priceScale === null || !this._pane.chart().options().handleScale.axisPressedMouseMove.price) {
 			return;
 		}
 
 		const priceScale = this._priceScale;
 		if (this._mouseDraggingCustomPriceLine) {
 			const firstValue = ensureNotNull(priceScale.firstValue());
-			const price = priceScale.coordinateToPrice(e.localY as Coordinate, firstValue);
+			const price = priceScale.coordinateToPrice(e.localY, firstValue);
 			this._mouseDraggingCustomPriceLine.applyOptions({ price: price });
-			return;
-		}
-
-		if (!this._pane.chart().options().handleScale.axisPressedMouseMove.price) {
 			return;
 		}
 
@@ -394,7 +386,7 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	private _mouseDownOutsideEvent(): void {
-		if (this._priceScale === null) {
+		if (this._priceScale === null || !this._pane.chart().options().handleScale.axisPressedMouseMove.price) {
 			return;
 		}
 
@@ -414,7 +406,7 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	private _mouseUpEvent(e: TouchMouseEvent): void {
-		if (this._priceScale === null) {
+		if (this._priceScale === null || !this._pane.chart().options().handleScale.axisPressedMouseMove.price) {
 			return;
 		}
 
@@ -438,7 +430,7 @@ export class PriceAxisWidget implements IDestroyable {
 	}
 
 	private _mouseDoubleClickEvent(e: TouchMouseEvent): void {
-		if (this._mouseHoveredCustomPriceLine(e.localY as Coordinate) !== null) {
+		if (this._mouseHoveredCustomPriceLine(e.localY) !== null) {
 			return;
 		}
 
@@ -457,7 +449,7 @@ export class PriceAxisWidget implements IDestroyable {
 			return;
 		}
 
-		if (this._mouseHoveredCustomPriceLine(e.localY as Coordinate) !== null) {
+		if (this._mouseHoveredCustomPriceLine(e.localY) !== null) {
 			this._setCursor(CursorType.Grab);
 			return;
 		}
