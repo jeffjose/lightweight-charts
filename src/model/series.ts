@@ -34,6 +34,8 @@ import { FirstValue } from './iprice-data-source';
 import { Pane } from './pane';
 import { PlotRowValueIndex } from './plot-data';
 import { MismatchDirection } from './plot-list';
+import { PriceChannel } from './price-channel';
+import { PriceChannelOptions } from './price-channel-options';
 import { PriceDataSource } from './price-data-source';
 import { PriceLineOptions } from './price-line-options';
 import { PriceRangeImpl } from './price-range-impl';
@@ -111,6 +113,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private _formatter!: IPriceFormatter;
 	private readonly _priceLineView: SeriesPriceLinePaneView = new SeriesPriceLinePaneView(this);
 	private readonly _customPriceLines: CustomPriceLine[] = [];
+	private readonly _priceChannels: PriceChannel[] = [];
 	private readonly _baseHorizontalLineView: SeriesHorizontalBaseLinePaneView = new SeriesHorizontalBaseLinePaneView(this);
 	private _paneView!: IUpdatablePaneView;
 	private readonly _lastPriceAnimationPaneView: SeriesLastPriceAnimationPaneView | null = null;
@@ -335,6 +338,21 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 	public customPriceLines(): CustomPriceLine[] {
 		return this._customPriceLines;
+	}
+
+	public createPriceChannel(options: PriceChannelOptions): PriceChannel {
+		const result = new PriceChannel(this, options);
+		this._priceChannels.push(result);
+		this.model().updateSource(this);
+		return result;
+	}
+
+	public removePriceChannel(channel: PriceChannel): void {
+		const index = this._priceChannels.indexOf(channel);
+		if (index !== -1) {
+			this._priceChannels.splice(index, 1);
+		}
+		this.model().updateSource(this);
 	}
 
 	public seriesType(): T {
