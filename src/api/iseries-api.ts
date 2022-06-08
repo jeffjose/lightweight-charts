@@ -3,6 +3,7 @@ import { IPriceFormatter } from '../formatters/iprice-formatter';
 import { BarPrice } from '../model/bar';
 import { Coordinate } from '../model/coordinate';
 import { MismatchDirection } from '../model/plot-list';
+import { PriceChannelOptions } from '../model/price-channel-options';
 import { PriceLineOptions } from '../model/price-line-options';
 import { SeriesLollipop } from '../model/series-lollipops';
 import { SeriesMarker } from '../model/series-markers';
@@ -14,6 +15,7 @@ import {
 import { Range, Time } from '../model/time-data';
 
 import { SeriesDataItemTypeMap } from './data-consumer';
+import { IPriceChannel } from './iprice-channel';
 import { IPriceLine } from './iprice-line';
 import { IPriceScaleApi } from './iprice-scale-api';
 
@@ -270,7 +272,28 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	 * });
 	 * ```
 	 */
-	createPriceLine(options: PriceLineOptions): IPriceLine;
+	createPriceLine(options: PriceLineOptions): IPriceLine;/**
+	 * Creates a new price channel
+	 *
+	 * @param options - Any subset of options.
+	 * @example
+	 * ```js
+	 * const priceLine = series.createPriceChannel({
+	 *     price1: 80.0,
+	 *     price2: 100.0,
+	 *     color: 'green',
+	 *     fillColor1: 'rgba(38, 166, 154, 1)',
+	 *     fillColor2: 'rgba(239, 83, 80, 0.05)',
+	 *     lineWidth: 2,
+	 *     lineStyle: LightweightCharts.LineStyle.Dotted,
+	 *     axisLabel1Visible: true,
+	 *     axisLabel2Visible: true,
+	 *     title1: 'P/L 700',
+	 *     title2: 'P/L 500',
+	 * });
+	 * ```
+	 */
+	createPriceChannel(options: PriceChannelOptions): IPriceChannel;
 
 	/**
 	 * Removes the price line that was created before.
