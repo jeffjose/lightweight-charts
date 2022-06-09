@@ -35,4 +35,5 @@ export const priceChannelOptionsDefaults: PriceChannelOptions = {
 		title: '',
 		draggable: false,
 	},
+	visible: true,
 };

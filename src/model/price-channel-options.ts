@@ -17,4 +17,10 @@ export interface PriceChannelOptions {
 	 * @defaultValue `''`
 	 */
 	price2: PriceLineOptions;
+
+	/**
+	 * Display channel
+	 *
+	 */
+	visible: boolean;
 }

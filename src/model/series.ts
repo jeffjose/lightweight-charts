@@ -355,6 +355,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		this.model().updateSource(this);
 	}
 
+	public priceChannels(): PriceChannel[] {
+		return this._priceChannels;
+	}
+
 	public seriesType(): T {
 		return this._seriesType;
 	}
@@ -439,6 +443,9 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const priceLineViews = this._customPriceLines.map((line: CustomPriceLine) => line.paneView());
 		res.push(...priceLineViews);
 
+		const priceChannels = this._priceChannels.map((line: PriceChannel) => line.paneView());
+		res.push(...priceChannels);
+
 		return res;
 	}
 
@@ -446,6 +453,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return [
 			this._panePriceAxisView,
 			...this._customPriceLines.map((line: CustomPriceLine) => line.labelPaneView()),
+			...this._priceChannels.map((channel: PriceChannel) => channel.labelPaneView()),
 		];
 	}
 
