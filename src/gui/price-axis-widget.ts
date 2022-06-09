@@ -198,9 +198,12 @@ export class PriceAxisWidget implements IDestroyable {
 
 		const views = this._backLabels();
 		for (let j = views.length; j--;) {
-			const width = this._widthCache.measureText(ctx, views[j].text());
-			if (width > tickMarkMaxWidth) {
-				tickMarkMaxWidth = width;
+			const texts = views[j].text();
+			for (let k = 0; k < texts.length; k ++) {
+				const width = this._widthCache.measureText(ctx, texts[k]);
+				if (width > tickMarkMaxWidth) {
+					tickMarkMaxWidth = width;
+				}
 			}
 		}
 

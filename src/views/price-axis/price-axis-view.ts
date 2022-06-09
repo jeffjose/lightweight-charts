@@ -4,6 +4,7 @@ import {
 	IPriceAxisViewRendererConstructor,
 	PriceAxisViewRendererCommonData,
 	PriceAxisViewRendererData,
+	PriceAxisViewRendererDataItem,
 	PriceAxisViewRendererOptions,
 } from '../../renderers/iprice-axis-view-renderer';
 import { PriceAxisViewRenderer } from '../../renderers/price-axis-view-renderer';
@@ -17,20 +18,26 @@ export abstract class PriceAxisView implements IPriceAxisView {
 		background: '#000',
 	};
 
-	private readonly _axisRendererData: PriceAxisViewRendererData = {
-		text: '',
-		visible: false,
-		tickVisible: true,
-		moveTextToInvisibleTick: false,
-		borderColor: '',
+	private readonly _axisRendererData: PriceAxisViewRendererData= {
+		items: [{
+			text: '',
+			visible: false,
+			tickVisible: true,
+			moveTextToInvisibleTick: false,
+			borderColor: '',
+		}],
 	};
 
-	private readonly _paneRendererData: PriceAxisViewRendererData = {
-		text: '',
-		visible: false,
-		tickVisible: false,
-		moveTextToInvisibleTick: true,
-		borderColor: '',
+	private readonly _paneRendererData: PriceAxisViewRendererData= {
+		items: [
+			{
+				text: '',
+				visible: false,
+				tickVisible: false,
+				moveTextToInvisibleTick: true,
+				borderColor: '',
+			},
+		],
 	};
 
 	private readonly _axisRenderer: IPriceAxisViewRenderer;
@@ -42,9 +49,9 @@ export abstract class PriceAxisView implements IPriceAxisView {
 		this._paneRenderer = new (ctor || PriceAxisViewRenderer)(this._paneRendererData, this._commonRendererData);
 	}
 
-	public text(): string {
+	public text(): string[] {
 		this._updateRendererDataIfNeeded();
-		return this._axisRendererData.text;
+		return this._axisRendererData.items.map((item: PriceAxisViewRendererDataItem) => {return item.text;});
 	}
 
 	public coordinate(): number {
@@ -73,12 +80,19 @@ export abstract class PriceAxisView implements IPriceAxisView {
 
 	public isVisible(): boolean {
 		this._updateRendererDataIfNeeded();
-		return this._axisRendererData.visible || this._paneRendererData.visible;
+		return this._axisRendererData.items.some((item: PriceAxisViewRendererDataItem) => {
+			return item.visible === true;
+		}) ||
+		this._paneRendererData.items.some((item: PriceAxisViewRendererDataItem) => {
+			return item.visible === true;
+		});
 	}
 
 	public isAxisLabelVisible(): boolean {
 		this._updateRendererDataIfNeeded();
-		return this._axisRendererData.visible;
+		return this._axisRendererData.items.some((item: PriceAxisViewRendererDataItem) => {
+			return item.visible === true;
+		});
 	}
 
 	public renderer(priceScale: PriceScale): IPriceAxisViewRenderer {
@@ -87,8 +101,13 @@ export abstract class PriceAxisView implements IPriceAxisView {
 		// force update tickVisible state from price scale options
 		// because we don't have and we can't have price axis in other methods
 		// (like paneRenderer or any other who call _updateRendererDataIfNeeded)
-		this._axisRendererData.tickVisible = this._axisRendererData.tickVisible && priceScale.options().ticksVisible;
-		this._paneRendererData.tickVisible = this._paneRendererData.tickVisible && priceScale.options().ticksVisible;
+
+		this._axisRendererData.items.forEach((item: PriceAxisViewRendererDataItem) => {
+			item.tickVisible = item.tickVisible && priceScale.options().ticksVisible;
+		});
+		this._paneRendererData.items.forEach((item: PriceAxisViewRendererDataItem) => {
+			item.tickVisible = item.tickVisible && priceScale.options().ticksVisible;
+		});
 
 		this._axisRenderer.setData(this._axisRendererData, this._commonRendererData);
 		this._paneRenderer.setData(this._paneRendererData, this._commonRendererData);
@@ -112,8 +131,12 @@ export abstract class PriceAxisView implements IPriceAxisView {
 
 	private _updateRendererDataIfNeeded(): void {
 		if (this._invalidated) {
-			this._axisRendererData.tickVisible = true;
-			this._paneRendererData.tickVisible = false;
+			this._axisRendererData.items.forEach((item: PriceAxisViewRendererDataItem) => {
+				item.tickVisible = true;
+			});
+			this._paneRendererData.items.forEach((item: PriceAxisViewRendererDataItem) => {
+				item.tickVisible = false;
+			});
 			this._updateRendererData(this._axisRendererData, this._paneRendererData, this._commonRendererData);
 		}
 	}

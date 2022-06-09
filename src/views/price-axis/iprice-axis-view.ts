@@ -13,6 +13,6 @@ export interface IPriceAxisView {
 	renderer(priceScale: PriceScale): IPriceAxisViewRenderer;
 	paneRenderer(): IPriceAxisViewRenderer;
 	setFixedCoordinate(value: number | null): void;
-	text(): string;
+	text(): string[];
 	update(): void;
 }

@@ -2,7 +2,7 @@ import { generateContrastColors } from '../../helpers/color';
 
 import { Crosshair, CrosshairPriceAndCoordinate } from '../../model/crosshair';
 import { PriceScale } from '../../model/price-scale';
-import { PriceAxisViewRendererCommonData, PriceAxisViewRendererData } from '../../renderers/iprice-axis-view-renderer';
+import { PriceAxisViewRendererCommonData, PriceAxisViewRendererData, PriceAxisViewRendererDataItem } from '../../renderers/iprice-axis-view-renderer';
 
 import { PriceAxisView } from './price-axis-view';
 
@@ -25,7 +25,20 @@ export class CrosshairPriceAxisView extends PriceAxisView {
 		paneRendererData: PriceAxisViewRendererData,
 		commonRendererData: PriceAxisViewRendererCommonData
 	): void {
-		axisRendererData.visible = false;
+		for (let i = 0; i < axisRendererData.items.length; i++) {
+			const axisRendererDataItem = axisRendererData.items[i];
+			const paneRendererDataItem = paneRendererData.items[i];
+
+			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererData);
+		}
+	}
+
+	protected _updateRendererDataItem(
+		axisRendererDataItem: PriceAxisViewRendererDataItem,
+		paneRendererDataItem: PriceAxisViewRendererDataItem,
+		commonRendererData: PriceAxisViewRendererCommonData
+	): void {
+		axisRendererDataItem.visible = false;
 		const options = this._source.options().horzLine;
 		if (!options.labelVisible) {
 			return;
@@ -42,7 +55,7 @@ export class CrosshairPriceAxisView extends PriceAxisView {
 
 		const value = this._valueProvider(this._priceScale);
 		commonRendererData.coordinate = value.coordinate;
-		axisRendererData.text = this._priceScale.formatPrice(value.price, firstValue);
-		axisRendererData.visible = true;
+		axisRendererDataItem.text = this._priceScale.formatPrice(value.price, firstValue);
+		axisRendererDataItem.visible = true;
 	}
 }

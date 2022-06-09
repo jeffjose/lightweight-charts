@@ -10,10 +10,14 @@ export interface PriceAxisViewRendererCommonData {
 }
 
 export interface PriceAxisViewRendererData {
-	visible: boolean;
+	items: PriceAxisViewRendererDataItem[];
+}
+
+export interface PriceAxisViewRendererDataItem {
 	text: string;
-	tickVisible: boolean;
 	moveTextToInvisibleTick: boolean;
+	tickVisible: boolean;
+	visible: boolean;
 	borderColor: string;
 	lineWidth?: LineWidth;
 }

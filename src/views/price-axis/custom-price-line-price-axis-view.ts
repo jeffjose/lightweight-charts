@@ -5,6 +5,7 @@ import { Series } from '../../model/series';
 import {
 	PriceAxisViewRendererCommonData,
 	PriceAxisViewRendererData,
+	PriceAxisViewRendererDataItem,
 } from '../../renderers/iprice-axis-view-renderer';
 
 import { PriceAxisView } from './price-axis-view';
@@ -24,8 +25,21 @@ export class CustomPriceLinePriceAxisView extends PriceAxisView {
 		paneRendererData: PriceAxisViewRendererData,
 		commonData: PriceAxisViewRendererCommonData
 	): void {
-		axisRendererData.visible = false;
-		paneRendererData.visible = false;
+		for (let i = 0; i < axisRendererData.items.length; i++) {
+			const axisRendererDataItem = axisRendererData.items[i];
+			const paneRendererDataItem = paneRendererData.items[i];
+
+			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonData);
+		}
+	}
+
+	protected _updateRendererDataItem(
+		axisRendererDataItem: PriceAxisViewRendererDataItem,
+		paneRendererDataItem: PriceAxisViewRendererDataItem,
+		commonData: PriceAxisViewRendererCommonData
+	): void {
+		axisRendererDataItem.visible = false;
+		paneRendererDataItem.visible = false;
 
 		const options = this._priceLine.options();
 		const labelVisible = options.axisLabelVisible;
@@ -43,14 +57,14 @@ export class CustomPriceLinePriceAxisView extends PriceAxisView {
 		}
 
 		if (showPaneLabel) {
-			paneRendererData.text = options.title;
-			paneRendererData.visible = true;
+			paneRendererDataItem.text = options.title;
+			paneRendererDataItem.visible = true;
 		}
 
-		paneRendererData.borderColor = series.model().backgroundColorAtYPercentFromTop(y / series.priceScale().height());
+		paneRendererDataItem.borderColor = series.model().backgroundColorAtYPercentFromTop(y / series.priceScale().height());
 
-		axisRendererData.text = this._formatPrice(options.price);
-		axisRendererData.visible = true;
+		axisRendererDataItem.text = this._formatPrice(options.price);
+		axisRendererDataItem.visible = true;
 
 		const colors = generateContrastColors(options.color);
 		commonData.background = colors.background;
