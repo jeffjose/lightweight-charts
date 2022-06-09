@@ -1,5 +1,6 @@
 import { assert } from '../helpers/assertions';
 
+import { PriceChannelOptions } from '../model/price-channel-options';
 import { PriceLineOptions } from '../model/price-line-options';
 import { SeriesMarker } from '../model/series-markers';
 import { SeriesType } from '../model/series-options';
@@ -15,6 +16,17 @@ export function checkPriceLineOptions(options: PriceLineOptions): void {
 
 	// eslint-disable-next-line @typescript-eslint/tslint/config
 	assert(typeof options.price === 'number', `the type of 'price' price line's property must be a number, got '${typeof options.price}'`);
+}
+
+export function checkPriceChannelOptions(options: PriceChannelOptions): void {
+	if (process.env.NODE_ENV === 'production') {
+		return;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/tslint/config
+	assert(typeof options.price1.price === 'number', `the type of 'price' price line's property must be a number, got '${typeof options.price1.price}'`);
+	// eslint-disable-next-line @typescript-eslint/tslint/config
+	assert(typeof options.price2.price === 'number', `the type of 'price' price line's property must be a number, got '${typeof options.price2.price}'`);
 }
 
 export function checkItemsAreOrdered(data: readonly (SeriesMarker<Time> | SeriesDataItemTypeMap[SeriesType])[], allowDuplicates: boolean = false): void {

@@ -11,21 +11,21 @@ import { PriceAxisViewRenderer } from '../../renderers/price-axis-view-renderer'
 import { IPriceAxisView } from './iprice-axis-view';
 
 export abstract class PriceAxisView implements IPriceAxisView {
-	private readonly _commonRendererData: PriceAxisViewRendererCommonData = {
+	private readonly _commonRendererData: PriceAxisViewRendererCommonData= {
 		coordinate: 0,
 		color: '#FFF',
 		background: '#000',
 	};
 
-	private readonly _axisRendererData: PriceAxisViewRendererData = {
+	private readonly _axisRendererData: PriceAxisViewRendererData= {
 		text: '',
 		visible: false,
-		tickVisible: true,
-		moveTextToInvisibleTick: false,
+		tickVisible: false,
+		moveTextToInvisibleTick: true,
 		borderColor: '',
 	};
 
-	private readonly _paneRendererData: PriceAxisViewRendererData = {
+	private readonly _paneRendererData: PriceAxisViewRendererData= {
 		text: '',
 		visible: false,
 		tickVisible: false,
@@ -78,7 +78,8 @@ export abstract class PriceAxisView implements IPriceAxisView {
 
 	public isAxisLabelVisible(): boolean {
 		this._updateRendererDataIfNeeded();
-		return this._axisRendererData.visible;
+
+		return this._axisRendererData.visible === true;
 	}
 
 	public renderer(priceScale: PriceScale): IPriceAxisViewRenderer {
@@ -87,6 +88,7 @@ export abstract class PriceAxisView implements IPriceAxisView {
 		// force update tickVisible state from price scale options
 		// because we don't have and we can't have price axis in other methods
 		// (like paneRenderer or any other who call _updateRendererDataIfNeeded)
+
 		this._axisRendererData.tickVisible = this._axisRendererData.tickVisible && priceScale.options().ticksVisible;
 		this._paneRendererData.tickVisible = this._paneRendererData.tickVisible && priceScale.options().ticksVisible;
 

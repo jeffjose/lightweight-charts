@@ -17,7 +17,7 @@ export class SeriesPriceAxisView extends PriceAxisView {
 	protected _updateRendererData(
 		axisRendererData: PriceAxisViewRendererData,
 		paneRendererData: PriceAxisViewRendererData,
-		commonRendererData: PriceAxisViewRendererCommonData
+		commonRenderer: PriceAxisViewRendererCommonData
 	): void {
 		axisRendererData.visible = false;
 		paneRendererData.visible = false;
@@ -52,9 +52,9 @@ export class SeriesPriceAxisView extends PriceAxisView {
 		const lastValueColor = source.priceLineColor(lastValueData.color);
 		const colors = generateContrastColors(lastValueColor);
 
-		commonRendererData.background = colors.background;
-		commonRendererData.color = colors.foreground;
-		commonRendererData.coordinate = lastValueData.coordinate;
+		commonRenderer.background = colors.background;
+		commonRenderer.color = colors.foreground;
+		commonRenderer.coordinate = lastValueData.coordinate;
 		paneRendererData.borderColor = source.model().backgroundColorAtYPercentFromTop(lastValueData.coordinate / source.priceScale().height());
 		axisRendererData.borderColor = lastValueColor;
 	}

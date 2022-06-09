@@ -625,21 +625,31 @@ export class PriceAxisWidget implements IDestroyable {
 		// crosshair individually
 		updateForSources(orderedSources);
 
-		// split into two parts
-		const top = views.filter((view: IPriceAxisView) => view.coordinate() <= center);
-		const bottom = views.filter((view: IPriceAxisView) => view.coordinate() > center);
+    // split into two parts
+		const top = views.filter(
+      (view: IPriceAxisView) => view.coordinate() <= center
+    );
+		const bottom = views.filter(
+      (view: IPriceAxisView) => view.coordinate() > center
+    );
 
-		// sort top from center to top
-		top.sort((l: IPriceAxisView, r: IPriceAxisView) => r.coordinate() - l.coordinate());
+    // sort top from center to top
+		top.sort(
+      (l: IPriceAxisView, r: IPriceAxisView) => r.coordinate() - l.coordinate()
+    );
 
-		// share center label
+    // share center label
 		if (top.length && bottom.length) {
 			bottom.push(top[0]);
 		}
 
-		bottom.sort((l: IPriceAxisView, r: IPriceAxisView) => l.coordinate() - r.coordinate());
+		bottom.sort(
+      (l: IPriceAxisView, r: IPriceAxisView) => l.coordinate() - r.coordinate()
+    );
 
-		views.forEach((view: IPriceAxisView) => view.setFixedCoordinate(view.coordinate()));
+		views.forEach((view: IPriceAxisView) => {
+			view.setFixedCoordinate(view.coordinate());
+		});
 
 		const options = this._priceScale.options();
 		if (!options.alignLabels) {
@@ -653,19 +663,20 @@ export class PriceAxisWidget implements IDestroyable {
 			const coordinate = view.coordinate();
 			const prevFixedCoordinate = prev.getFixedCoordinate();
 
-			if (coordinate > prevFixedCoordinate - height) {
+			if (coordinate > (prevFixedCoordinate - height)) {
 				view.setFixedCoordinate(prevFixedCoordinate - height);
 			}
 		}
 
 		for (let j = 1; j < bottom.length; j++) {
 			const view = bottom[j];
+
 			const prev = bottom[j - 1];
 			const height = prev.height(rendererOptions, true);
 			const coordinate = view.coordinate();
 			const prevFixedCoordinate = prev.getFixedCoordinate();
 
-			if (coordinate < prevFixedCoordinate + height) {
+			if (coordinate < (prevFixedCoordinate + height)) {
 				view.setFixedCoordinate(prevFixedCoordinate + height);
 			}
 		}

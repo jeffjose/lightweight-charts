@@ -40,7 +40,7 @@ export class CustomPriceLine {
 		return this._options;
 	}
 
-	public paneView(): IPaneView {
+	public paneView(): CustomPriceLinePaneView {
 		return this._priceLineView;
 	}
 

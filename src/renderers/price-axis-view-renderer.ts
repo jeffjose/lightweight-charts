@@ -34,6 +34,8 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 			return;
 		}
 
+		const commonData = this._commonData;
+
 		ctx.font = rendererOptions.font;
 
 		const tickSize = (this._data.tickVisible || !this._data.moveTextToInvisibleTick) ? rendererOptions.tickLength : 0;
@@ -49,9 +51,9 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 		const halfHeigth = Math.ceil(totalHeight * 0.5);
 		const totalWidth = horzBorder + textWidth + paddingInner + paddingOuter + tickSize;
 
-		let yMid = this._commonData.coordinate;
-		if (this._commonData.fixedCoordinate) {
-			yMid = this._commonData.fixedCoordinate;
+		let yMid = commonData.coordinate;
+		if (commonData.fixedCoordinate) {
+			yMid = commonData.fixedCoordinate;
 		}
 
 		yMid = Math.round(yMid);
@@ -68,7 +70,7 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 		let xTick: number;
 		let xText: number;
 
-		ctx.fillStyle = this._commonData.background;
+		ctx.fillStyle = commonData.background;
 		ctx.lineWidth = 1;
 		ctx.lineCap = 'butt';
 
@@ -118,12 +120,12 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 			ctx.fillRect(alignRight ? rightScaled - horzBorderScaled : 0, yTopScaled, horzBorderScaled, yBottomScaled - yTopScaled);
 
 			if (this._data.tickVisible) {
-				ctx.fillStyle = this._commonData.color;
+				ctx.fillStyle = commonData.color;
 				ctx.fillRect(xInsideScaled, yMidScaled, xTickScaled - xInsideScaled, tickHeight);
 			}
 
 			ctx.textAlign = 'left';
-			ctx.fillStyle = this._commonData.color;
+			ctx.fillStyle = commonData.color;
 
 			drawScaled(ctx, pixelRatio, () => {
 				ctx.fillText(text, xText, yBottom - paddingBottom - baselineOffset);

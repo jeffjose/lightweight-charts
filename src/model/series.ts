@@ -34,6 +34,8 @@ import { FirstValue } from './iprice-data-source';
 import { Pane } from './pane';
 import { PlotRowValueIndex } from './plot-data';
 import { MismatchDirection } from './plot-list';
+import { PriceChannel } from './price-channel';
+import { PriceChannelOptions } from './price-channel-options';
 import { PriceDataSource } from './price-data-source';
 import { PriceLineOptions } from './price-line-options';
 import { PriceRangeImpl } from './price-range-impl';
@@ -111,6 +113,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private _formatter!: IPriceFormatter;
 	private readonly _priceLineView: SeriesPriceLinePaneView = new SeriesPriceLinePaneView(this);
 	private readonly _customPriceLines: CustomPriceLine[] = [];
+	private readonly _priceChannels: PriceChannel[] = [];
 	private readonly _baseHorizontalLineView: SeriesHorizontalBaseLinePaneView = new SeriesHorizontalBaseLinePaneView(this);
 	private _paneView!: IUpdatablePaneView;
 	private readonly _lastPriceAnimationPaneView: SeriesLastPriceAnimationPaneView | null = null;
@@ -337,6 +340,25 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return this._customPriceLines;
 	}
 
+	public createPriceChannel(options: PriceChannelOptions): PriceChannel {
+		const result = new PriceChannel(this, options);
+		this._priceChannels.push(result);
+		this.model().updateSource(this);
+		return result;
+	}
+
+	public removePriceChannel(channel: PriceChannel): void {
+		const index = this._priceChannels.indexOf(channel);
+		if (index !== -1) {
+			this._priceChannels.splice(index, 1);
+		}
+		this.model().updateSource(this);
+	}
+
+	public priceChannels(): PriceChannel[] {
+		return this._priceChannels;
+	}
+
 	public seriesType(): T {
 		return this._seriesType;
 	}
@@ -421,14 +443,23 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const priceLineViews = this._customPriceLines.map((line: CustomPriceLine) => line.paneView());
 		res.push(...priceLineViews);
 
+		const priceChannels = this._priceChannels.map((line: PriceChannel) => line.paneView());
+		res.push(...priceChannels);
+
 		return res;
 	}
 
 	public override labelPaneViews(pane?: Pane): readonly IPaneView[] {
-		return [
+		const result = [
 			this._panePriceAxisView,
 			...this._customPriceLines.map((line: CustomPriceLine) => line.labelPaneView()),
 		];
+
+		for (const priceChannel of this._priceChannels) {
+			result.push(...priceChannel.labelPaneView());
+		}
+
+		return result;
 	}
 
 	public override priceAxisViews(pane: Pane, priceScale: PriceScale): readonly IPriceAxisView[] {
@@ -438,6 +469,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const result = [...this._priceAxisViews];
 		for (const customPriceLine of this._customPriceLines) {
 			result.push(customPriceLine.priceAxisView());
+		}
+
+		for (const priceChannel of this._priceChannels) {
+			result.push(...priceChannel.priceAxisView());
 		}
 		return result;
 	}
@@ -473,6 +508,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 		for (const customPriceLine of this._customPriceLines) {
 			customPriceLine.update();
+		}
+
+		for (const priceChannel of this._priceChannels) {
+			priceChannel.update();
 		}
 
 		this._priceLineView.update();
