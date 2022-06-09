@@ -6,6 +6,7 @@ import { Series } from '../../model/series';
 import {
 	PriceAxisViewRendererCommonData,
 	PriceAxisViewRendererData,
+	PriceAxisViewRendererDataItem,
 } from '../../renderers/iprice-axis-view-renderer';
 
 import { PriceAxisView } from './price-axis-view';
@@ -25,12 +26,18 @@ export class PriceChannelPriceAxisView extends PriceAxisView {
 		paneRendererData: PriceAxisViewRendererData,
 		commonData: PriceAxisViewRendererCommonData
 	): void {
-		return this._updateRendererData(axisRendererData, paneRendererData, commonData);
+		// TODO: Fix this.
+		// 2 issues.
+		// We're only passing priceLine1
+		// We're assuming length of axisRenderData and paneRendererData is the same
+		for (let i = 0; i < axisRendererData.items.length; i ++) {
+			return this._updateRendererDataImpl(axisRendererData.items[i], paneRendererData.items[i], commonData, this._priceChannel.priceLine1());
+		}
 	}
 
 	protected _updateRendererDataImpl(
-		axisRendererData: PriceAxisViewRendererData,
-		paneRendererData: PriceAxisViewRendererData,
+		axisRendererData: PriceAxisViewRendererDataItem,
+		paneRendererData: PriceAxisViewRendererDataItem,
 		commonData: PriceAxisViewRendererCommonData,
 		priceLine: CustomPriceLine
 	): void {
