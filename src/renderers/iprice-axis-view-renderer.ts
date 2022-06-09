@@ -18,7 +18,7 @@ export interface PriceAxisViewRendererData {
 	lineWidth?: LineWidth;
 }
 
-export interface PriceAxisViewRendererOptions {
+export interface PriceAxisViewRendererOptions{
 	baselineOffset: number;
 	borderSize: number;
 	font: string;
