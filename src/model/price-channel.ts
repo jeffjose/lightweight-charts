@@ -97,8 +97,8 @@ export class PriceChannel {
 		return this._panePriceAxisView;
 	}
 
-	public priceAxisView(): IPriceAxisView {
-		return this._priceAxisView;
+	public priceAxisView(): IPriceAxisView[] {
+		return [this._priceLine1.priceAxisView(), this._priceLine2.priceAxisView()];
 	}
 
 	public update(): void {

@@ -467,7 +467,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		}
 
 		for (const priceChannel of this._priceChannels) {
-			result.push(priceChannel.priceAxisView());
+			result.push(...priceChannel.priceAxisView());
 		}
 		return result;
 	}
