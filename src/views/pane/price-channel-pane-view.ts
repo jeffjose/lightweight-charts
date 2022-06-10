@@ -1,6 +1,5 @@
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
-import { Pane } from '../../model/pane';
 import { PriceChannel } from '../../model/price-channel';
 import { Series } from '../../model/series';
 import { LineStyle } from '../../renderers/draw-line';

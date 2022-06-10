@@ -465,6 +465,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		for (const customPriceLine of this._customPriceLines) {
 			result.push(customPriceLine.priceAxisView());
 		}
+
+		for (const priceChannel of this._priceChannels) {
+			result.push(priceChannel.priceAxisView());
+		}
 		return result;
 	}
 
@@ -499,6 +503,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 		for (const customPriceLine of this._customPriceLines) {
 			customPriceLine.update();
+		}
+
+		for (const priceChannel of this._priceChannels) {
+			priceChannel.update();
 		}
 
 		this._priceLineView.update();

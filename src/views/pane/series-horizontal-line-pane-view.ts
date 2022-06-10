@@ -30,17 +30,36 @@ export abstract class SeriesHorizontalLinePaneView implements IPaneView {
 	}
 
 	public update(): void {
+		console.trace('HL');
 		this._invalidated = true;
 	}
 
 	public renderer(height: number, width: number): IPaneRenderer | null {
-		console.log(`PL pane view: renderer()`, this._series.visible(), 'invalidated', this._invalidated);
+		if (this._lineRendererData.color === '#00FF00') {
+			console.log(
+      `gPL pane view: renderer()`,
+      this._series.visible(),
+      'invalidated',
+      this._invalidated
+    );
+			console.trace();
+		}
 		if (!this._series.visible()) {
+			if (this._lineRendererData.color === '#00FF00') {
+				console.log(`gPL pane view: renderer() returning null`);
+			}
+
 			return null;
 		}
 
+		if (this._lineRendererData.color === '#00FF00') {
+			console.log(`gPL pane view: renderer() ${this._invalidated}`);
+		}
 		if (this._invalidated) {
-			console.log('-------- START?');
+			console.log('-------- START?', this._lineRendererData);
+			if (this._lineRendererData.color === '#00FF00') {
+				console.log('gXXXXXXXXXXXXXXXX before must call this');
+			}
 			this._updateImpl(height, width);
 			this._invalidated = false;
 		}

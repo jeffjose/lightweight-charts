@@ -1,6 +1,7 @@
 import { merge } from '../helpers/strict-type-checks';
 
 import { IPaneRenderer } from '../renderers/ipane-renderer';
+import { CustomPriceLinePaneView } from '../views/pane/custom-price-line-pane-view';
 import { IPaneView } from '../views/pane/ipane-view';
 import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
 import { PriceChannelPaneView } from '../views/pane/price-channel-pane-view';
@@ -9,7 +10,6 @@ import { PriceChannelPriceAxisView } from '../views/price-axis/price-channel-pri
 
 import { Coordinate } from './coordinate';
 import { CustomPriceLine } from './custom-price-line';
-import { Pane } from './pane';
 import { PriceChannelOptions } from './price-channel-options';
 import { PriceLineOptions } from './price-line-options';
 import { Series } from './series';
@@ -29,8 +29,8 @@ export class PriceChannel {
 	private readonly _priceLine1: CustomPriceLine;
 	private readonly _priceLine2: CustomPriceLine;
 
-	private readonly _priceLine1PaneView: IPaneView;
-	private readonly _priceLine2PaneView: IPaneView;
+	private readonly _priceLine1PaneView: CustomPriceLinePaneView;
+	private readonly _priceLine2PaneView: CustomPriceLinePaneView;
 
 	public constructor(series: Series, options: PriceChannelOptions) {
 		this._series = series;

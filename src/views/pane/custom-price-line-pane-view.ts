@@ -14,7 +14,9 @@ export class CustomPriceLinePaneView extends SeriesHorizontalLinePaneView {
 
 	protected _updateImpl(height: number, width: number): void {
 		// TODO: This needs to be called
-		debugger;
+		if (this._lineRendererData.color === '#00FF00') {
+			console.log('XXXXXXXXXXXXXXXX must call this');
+		}
 		const data = this._lineRendererData;
 		console.log('CPL: pane view updateImpl: will attempt to update color ', data);
 		data.visible = false;
