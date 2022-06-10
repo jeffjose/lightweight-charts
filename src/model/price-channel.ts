@@ -8,6 +8,7 @@ import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
 import { CustomPriceLine } from './custom-price-line';
 import { PriceChannelOptions } from './price-channel-options';
+import { PriceChannelPriceLine } from './price-channel-price-line';
 import { PriceLineOptions } from './price-line-options';
 import { Series } from './series';
 
@@ -21,8 +22,8 @@ export class PriceChannel {
 	private readonly _priceChannelView: PriceChannelPaneView;
 	private readonly _options: PriceChannelOptions;
 
-	private readonly _priceLine1: CustomPriceLine;
-	private readonly _priceLine2: CustomPriceLine;
+	private readonly _priceLine1: PriceChannelPriceLine;
+	private readonly _priceLine2: PriceChannelPriceLine;
 
 	private readonly _priceLine1PaneView: CustomPriceLinePaneView;
 	private readonly _priceLine2PaneView: CustomPriceLinePaneView;
@@ -31,8 +32,8 @@ export class PriceChannel {
 		this._series = series;
 		this._options = options;
 
-		this._priceLine1 = new CustomPriceLine(series, options.price1);
-		this._priceLine2 = new CustomPriceLine(series, options.price2);
+		this._priceLine1 = new PriceChannelPriceLine(series, options.price1, this);
+		this._priceLine2 = new PriceChannelPriceLine(series, options.price2, this);
 
 		this._priceLine1PaneView = this._priceLine1.paneView();
 		this._priceLine2PaneView = this._priceLine2.paneView();
@@ -42,6 +43,10 @@ export class PriceChannel {
 
 	public applyOptions(options: Partial<PriceChannelOptions>): void {
 		merge(this._options, options);
+		this.update();
+		this._series.model().lightUpdate();
+	}
+	public lightUpdate(): void {
 		this.update();
 		this._series.model().lightUpdate();
 	}
