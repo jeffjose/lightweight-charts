@@ -2,13 +2,16 @@ import { TextWidthCache } from '../model/text-width-cache';
 import { LineWidth } from '../renderers/draw-line';
 
 export interface PriceAxisViewRendererCommonData {
+	items: PriceAxisViewRendererCommonDataItem[];
+}
+
+export interface PriceAxisViewRendererCommonDataItem {
 	activeBackground?: string;
 	background: string;
 	color: string;
 	coordinate: number;
 	fixedCoordinate?: number;
 }
-
 export interface PriceAxisViewRendererData {
 	items: PriceAxisViewRendererDataItem[];
 }

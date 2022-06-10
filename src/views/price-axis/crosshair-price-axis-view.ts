@@ -2,7 +2,7 @@ import { generateContrastColors } from '../../helpers/color';
 
 import { Crosshair, CrosshairPriceAndCoordinate } from '../../model/crosshair';
 import { PriceScale } from '../../model/price-scale';
-import { PriceAxisViewRendererCommonData, PriceAxisViewRendererData, PriceAxisViewRendererDataItem } from '../../renderers/iprice-axis-view-renderer';
+import { PriceAxisViewRendererCommonData, PriceAxisViewRendererCommonDataItem, PriceAxisViewRendererData, PriceAxisViewRendererDataItem } from '../../renderers/iprice-axis-view-renderer';
 
 import { PriceAxisView } from './price-axis-view';
 
@@ -28,15 +28,16 @@ export class CrosshairPriceAxisView extends PriceAxisView {
 		for (let i = 0; i < axisRendererData.items.length; i++) {
 			const axisRendererDataItem = axisRendererData.items[i];
 			const paneRendererDataItem = paneRendererData.items[i];
+			const commonRendererDataItem = commonRendererData.items[i];
 
-			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererData);
+			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererDataItem);
 		}
 	}
 
 	protected _updateRendererDataItem(
 		axisRendererDataItem: PriceAxisViewRendererDataItem,
 		paneRendererDataItem: PriceAxisViewRendererDataItem,
-		commonRendererData: PriceAxisViewRendererCommonData
+		commonRendererDataItem: PriceAxisViewRendererCommonDataItem
 	): void {
 		axisRendererDataItem.visible = false;
 		const options = this._source.options().horzLine;
@@ -50,11 +51,11 @@ export class CrosshairPriceAxisView extends PriceAxisView {
 		}
 
 		const colors = generateContrastColors(options.labelBackgroundColor);
-		commonRendererData.background = colors.background;
-		commonRendererData.color = colors.foreground;
+		commonRendererDataItem.background = colors.background;
+		commonRendererDataItem.color = colors.foreground;
 
 		const value = this._valueProvider(this._priceScale);
-		commonRendererData.coordinate = value.coordinate;
+		commonRendererDataItem.coordinate = value.coordinate;
 		axisRendererDataItem.text = this._priceScale.formatPrice(value.price, firstValue);
 		axisRendererDataItem.visible = true;
 	}

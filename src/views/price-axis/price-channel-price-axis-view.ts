@@ -5,6 +5,7 @@ import { PriceChannel } from '../../model/price-channel';
 import { Series } from '../../model/series';
 import {
 	PriceAxisViewRendererCommonData,
+	PriceAxisViewRendererCommonDataItem,
 	PriceAxisViewRendererData,
 	PriceAxisViewRendererDataItem,
 } from '../../renderers/iprice-axis-view-renderer';
@@ -16,7 +17,7 @@ export class PriceChannelPriceAxisView extends PriceAxisView {
 	private readonly _priceChannel: PriceChannel;
 
 	public constructor(series: Series, priceChannel: PriceChannel) {
-		super();
+		super(undefined, 2);
 		this._series = series;
 		this._priceChannel = priceChannel;
 	}
@@ -30,15 +31,18 @@ export class PriceChannelPriceAxisView extends PriceAxisView {
 		// 2 issues.
 		// We're only passing priceLine1
 		// We're assuming length of axisRenderData and paneRendererData is the same
-		for (let i = 0; i < axisRendererData.items.length; i ++) {
-			return this._updateRendererDataImpl(axisRendererData.items[i], paneRendererData.items[i], commonData, this._priceChannel.priceLine1());
-		}
+
+		console.log('YY - ', axisRendererData, paneRendererData);
+		this._updateRendererDataImpl(axisRendererData.items[0], paneRendererData.items[0], commonData.items[0], this._priceChannel.priceLine1());
+		this._updateRendererDataImpl(axisRendererData.items[1], paneRendererData.items[1], commonData.items[1], this._priceChannel.priceLine2());
+
+		console.log('YY - ', axisRendererData, paneRendererData);
 	}
 
 	protected _updateRendererDataImpl(
 		axisRendererData: PriceAxisViewRendererDataItem,
 		paneRendererData: PriceAxisViewRendererDataItem,
-		commonData: PriceAxisViewRendererCommonData,
+		commonData: PriceAxisViewRendererCommonDataItem,
 		priceLine: CustomPriceLine
 	): void {
 		axisRendererData.visible = false;

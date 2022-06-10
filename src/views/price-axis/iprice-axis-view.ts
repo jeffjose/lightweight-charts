@@ -5,14 +5,15 @@ import {
 } from '../../renderers/iprice-axis-view-renderer';
 
 export interface IPriceAxisView {
-	coordinate(): number;
-	getFixedCoordinate(): number;
+	coordinate(index: number): number;
+	getFixedCoordinate(index: number): number;
 	height(rendererOptions: PriceAxisViewRendererOptions, useSecondLine?: boolean): number;
 	isVisible(): boolean;
 	isAxisLabelVisible(): boolean;
 	renderer(priceScale: PriceScale): IPriceAxisViewRenderer;
 	paneRenderer(): IPriceAxisViewRenderer;
-	setFixedCoordinate(value: number | null): void;
+	setFixedCoordinate(index: number, value: number | null): void;
 	text(): string[];
 	update(): void;
+	numItems(): number;
 }

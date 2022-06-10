@@ -332,7 +332,8 @@ export class PriceAxisWidget implements IDestroyable {
 		for (const customPriceLine of this._getDraggableCustomPriceLines()) {
 			const view = customPriceLine.priceAxisView();
 			const height = view.height(rendererOptions, false);
-			const fixedCoordinate = view.getFixedCoordinate();
+			// FIXME: (jeffjose) 0 is totally random
+			const fixedCoordinate = view.getFixedCoordinate(0);
 			if (fixedCoordinate - height / 2 <= y && y <= fixedCoordinate + height / 2) {
 				return customPriceLine;
 			}
@@ -614,13 +615,16 @@ export class PriceAxisWidget implements IDestroyable {
 				const sourceViews = source.priceAxisViews(paneState, priceScale);
 				// never align selected sources
 				sourceViews.forEach((view: IPriceAxisView) => {
-					view.setFixedCoordinate(null);
-					if (view.isVisible()) {
-						views.push(view);
+					for (let i = 0; i < view.numItems(); i++) {
+						view.setFixedCoordinate(i, null);
+						if (view.isVisible()) {
+							views.push(view);
+						}
 					}
 				});
 				if (centerSource === source && sourceViews.length > 0) {
-					center = sourceViews[0].coordinate();
+					// FIXME: (jeffjose) coordinate(0) is totally random
+					center = sourceViews[0].coordinate(0);
 				}
 			});
 		};
@@ -628,21 +632,38 @@ export class PriceAxisWidget implements IDestroyable {
 		// crosshair individually
 		updateForSources(orderedSources);
 
-		// split into two parts
-		const top = views.filter((view: IPriceAxisView) => view.coordinate() <= center);
-		const bottom = views.filter((view: IPriceAxisView) => view.coordinate() > center);
+    // split into two parts
+		const top = views.filter(
+					// FIXME: (jeffjose) 0 is totally random
+      (view: IPriceAxisView) => view.coordinate(0) <= center
+    );
+		const bottom = views.filter(
+					// FIXME: (jeffjose) 0 is totally random
+      (view: IPriceAxisView) => view.coordinate(0) > center
+    );
 
-		// sort top from center to top
-		top.sort((l: IPriceAxisView, r: IPriceAxisView) => r.coordinate() - l.coordinate());
+    // sort top from center to top
+		top.sort(
+					// FIXME: (jeffjose) 0 is totally random
+      (l: IPriceAxisView, r: IPriceAxisView) => r.coordinate(0) - l.coordinate(0)
+    );
 
-		// share center label
+    // share center label
 		if (top.length && bottom.length) {
 			bottom.push(top[0]);
 		}
 
-		bottom.sort((l: IPriceAxisView, r: IPriceAxisView) => l.coordinate() - r.coordinate());
+		bottom.sort(
+					// FIXME: (jeffjose) 0 is totally random
+      (l: IPriceAxisView, r: IPriceAxisView) => l.coordinate(0) - r.coordinate(0)
+    );
 
-		views.forEach((view: IPriceAxisView) => view.setFixedCoordinate(view.coordinate()));
+		views.forEach(
+      (view: IPriceAxisView) => {
+	for (let itemIndex = 0; itemIndex < view.numItems(); itemIndex++) {
+		view.setFixedCoordinate(itemIndex, view.coordinate(itemIndex));
+	}
+});
 
 		const options = this._priceScale.options();
 		if (!options.alignLabels) {
@@ -651,25 +672,30 @@ export class PriceAxisWidget implements IDestroyable {
 
 		for (let i = 1; i < top.length; i++) {
 			const view = top[i];
-			const prev = top[i - 1];
-			const height = prev.height(rendererOptions, false);
-			const coordinate = view.coordinate();
-			const prevFixedCoordinate = prev.getFixedCoordinate();
+			for (let itemIndex = 0; itemIndex < view.numItems(); itemIndex++) {
+				const prev = top[i - 1];
+				const height = prev.height(rendererOptions, false);
+				const coordinate = view.coordinate(itemIndex);
+				const prevFixedCoordinate = prev.getFixedCoordinate(itemIndex);
 
-			if (coordinate > prevFixedCoordinate - height) {
-				view.setFixedCoordinate(prevFixedCoordinate - height);
+				if (coordinate > (prevFixedCoordinate - height)) {
+					view.setFixedCoordinate(itemIndex, prevFixedCoordinate - height);
+				}
 			}
 		}
 
 		for (let j = 1; j < bottom.length; j++) {
 			const view = bottom[j];
-			const prev = bottom[j - 1];
-			const height = prev.height(rendererOptions, true);
-			const coordinate = view.coordinate();
-			const prevFixedCoordinate = prev.getFixedCoordinate();
 
-			if (coordinate < prevFixedCoordinate + height) {
-				view.setFixedCoordinate(prevFixedCoordinate + height);
+			for (let itemIndex = 0; itemIndex < view.numItems(); itemIndex++) {
+				const prev = bottom[j - 1];
+				const height = prev.height(rendererOptions, true);
+				const coordinate = view.coordinate(itemIndex);
+				const prevFixedCoordinate = prev.getFixedCoordinate(itemIndex);
+
+				if (coordinate < (prevFixedCoordinate + height)) {
+					view.setFixedCoordinate(itemIndex, prevFixedCoordinate + height);
+				}
 			}
 		}
 	}

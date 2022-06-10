@@ -2,7 +2,7 @@ import { generateContrastColors } from '../../helpers/color';
 
 import { LastValueDataResultWithData, Series } from '../../model/series';
 import { PriceAxisLastValueMode } from '../../model/series-options';
-import { PriceAxisViewRendererCommonData, PriceAxisViewRendererData, PriceAxisViewRendererDataItem } from '../../renderers/iprice-axis-view-renderer';
+import { PriceAxisViewRendererCommonData, PriceAxisViewRendererCommonDataItem, PriceAxisViewRendererData, PriceAxisViewRendererDataItem } from '../../renderers/iprice-axis-view-renderer';
 
 import { PriceAxisView } from './price-axis-view';
 
@@ -22,15 +22,16 @@ export class SeriesPriceAxisView extends PriceAxisView {
 		for (let i = 0; i < axisRendererData.items.length; i++) {
 			const axisRendererDataItem = axisRendererData.items[i];
 			const paneRendererDataItem = paneRendererData.items[i];
+			const commonRendererDataItem = commonRendererData.items[i];
 
-			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererData);
+			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererDataItem);
 		}
 	}
 
 	protected _updateRendererDataItem(
 		axisRendererDataItem: PriceAxisViewRendererDataItem,
 		paneRendererDataItem: PriceAxisViewRendererDataItem,
-		commonRendererData: PriceAxisViewRendererCommonData
+		commonRendererData: PriceAxisViewRendererCommonDataItem
 	): void {
 		axisRendererDataItem.visible = false;
 		paneRendererDataItem.visible = false;

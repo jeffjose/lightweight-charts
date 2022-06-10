@@ -4,6 +4,7 @@ import { CustomPriceLine } from '../../model/custom-price-line';
 import { Series } from '../../model/series';
 import {
 	PriceAxisViewRendererCommonData,
+	PriceAxisViewRendererCommonDataItem,
 	PriceAxisViewRendererData,
 	PriceAxisViewRendererDataItem,
 } from '../../renderers/iprice-axis-view-renderer';
@@ -23,20 +24,21 @@ export class CustomPriceLinePriceAxisView extends PriceAxisView {
 	protected _updateRendererData(
 		axisRendererData: PriceAxisViewRendererData,
 		paneRendererData: PriceAxisViewRendererData,
-		commonData: PriceAxisViewRendererCommonData
+		commonRendererData: PriceAxisViewRendererCommonData
 	): void {
 		for (let i = 0; i < axisRendererData.items.length; i++) {
 			const axisRendererDataItem = axisRendererData.items[i];
 			const paneRendererDataItem = paneRendererData.items[i];
+			const commonRendererDataItem = commonRendererData.items[i];
 
-			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonData);
+			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererDataItem);
 		}
 	}
 
 	protected _updateRendererDataItem(
 		axisRendererDataItem: PriceAxisViewRendererDataItem,
 		paneRendererDataItem: PriceAxisViewRendererDataItem,
-		commonData: PriceAxisViewRendererCommonData
+		commonData: PriceAxisViewRendererCommonDataItem
 	): void {
 		axisRendererDataItem.visible = false;
 		paneRendererDataItem.visible = false;

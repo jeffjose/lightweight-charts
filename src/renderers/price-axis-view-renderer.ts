@@ -31,16 +31,19 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 		align: 'left' | 'right',
 		pixelRatio: number
 	): void {
-		this._data.items.forEach((item: PriceAxisViewRendererDataItem) => {
-			this.drawItem(ctx, rendererOptions, textWidthCache, width, align, pixelRatio, item);
+		this._data.items.forEach((item: PriceAxisViewRendererDataItem, index: number) => {
+			console.log(`ZZ - Writing ${item.text}`);
+			this.drawItem(ctx, rendererOptions, textWidthCache, width, align, pixelRatio, item, index);
 		});
 	}
 
 	// eslint-disable-next-line max-params
-	public drawItem(ctx: CanvasRenderingContext2D, rendererOptions: PriceAxisViewRendererOptions, textWidthCache: TextWidthCache, width: number, align: 'left' | 'right', pixelRatio: number, data: PriceAxisViewRendererDataItem): void {
+	public drawItem(ctx: CanvasRenderingContext2D, rendererOptions: PriceAxisViewRendererOptions, textWidthCache: TextWidthCache, width: number, align: 'left' | 'right', pixelRatio: number, data: PriceAxisViewRendererDataItem, index: number): void {
 		if (!data.visible) {
 			return;
 		}
+
+		const commonData = this._commonData.items[index];
 
 		ctx.font = rendererOptions.font;
 
@@ -57,9 +60,9 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 		const halfHeigth = Math.ceil(totalHeight * 0.5);
 		const totalWidth = horzBorder + textWidth + paddingInner + paddingOuter + tickSize;
 
-		let yMid = this._commonData.coordinate;
-		if (this._commonData.fixedCoordinate) {
-			yMid = this._commonData.fixedCoordinate;
+		let yMid = commonData.coordinate;
+		if (commonData.fixedCoordinate) {
+			yMid = commonData.fixedCoordinate;
 		}
 
 		yMid = Math.round(yMid);
@@ -76,7 +79,7 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 		let xTick: number;
 		let xText: number;
 
-		ctx.fillStyle = this._commonData.background;
+		ctx.fillStyle = commonData.background;
 		ctx.lineWidth = 1;
 		ctx.lineCap = 'butt';
 
@@ -126,12 +129,12 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 			ctx.fillRect(alignRight ? rightScaled - horzBorderScaled : 0, yTopScaled, horzBorderScaled, yBottomScaled - yTopScaled);
 
 			if (data.tickVisible) {
-				ctx.fillStyle = this._commonData.color;
+				ctx.fillStyle = commonData.color;
 				ctx.fillRect(xInsideScaled, yMidScaled, xTickScaled - xInsideScaled, tickHeight);
 			}
 
 			ctx.textAlign = 'left';
-			ctx.fillStyle = this._commonData.color;
+			ctx.fillStyle = commonData.color;
 
 			drawScaled(ctx, pixelRatio, () => {
 				ctx.fillText(text, xText, yBottom - paddingBottom - baselineOffset);

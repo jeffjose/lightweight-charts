@@ -23,6 +23,7 @@ export class PriceChannelRenderer implements IPaneRenderer {
 	private _priceLine2Renderer: IPaneRenderer | null = null;
 
 	public setData(data: PriceChannelRendererData): void {
+		console.log(`PC renderer setData()`);
 		this._data = data;
 	}
 
@@ -35,15 +36,20 @@ export class PriceChannelRenderer implements IPaneRenderer {
 	}
 
 	public draw(ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean, hitTestData?: unknown): void {
+		console.log(`PC renderer draw()`);
 		if (this._data === null) {
+			console.log(`PC renderer returning 1.`);
 			return;
 		}
 
 		if (this._data.visible === false) {
+			console.log(`PC renderer returning 2.`);
 			return;
 		}
 
-		this._priceLine1Renderer?.draw(ctx, pixelRatio, isHovered, hitTestData);
+		console.log(this._priceLine1Renderer?.draw(ctx, pixelRatio, isHovered, hitTestData));
+		console.log('--');
 		this._priceLine2Renderer?.draw(ctx, pixelRatio, isHovered, hitTestData);
+		console.log('--');
 	}
 }

@@ -3,6 +3,7 @@ import {
 	IPriceAxisViewRenderer,
 	IPriceAxisViewRendererConstructor,
 	PriceAxisViewRendererCommonData,
+	PriceAxisViewRendererCommonDataItem,
 	PriceAxisViewRendererData,
 	PriceAxisViewRendererDataItem,
 	PriceAxisViewRendererOptions,
@@ -13,40 +14,50 @@ import { IPriceAxisView } from './iprice-axis-view';
 
 export abstract class PriceAxisView implements IPriceAxisView {
 	private readonly _commonRendererData: PriceAxisViewRendererCommonData = {
+		items: [],
+	};
+
+	private readonly _commonRendererDataItem: PriceAxisViewRendererCommonDataItem = {
 		coordinate: 0,
 		color: '#FFF',
 		background: '#000',
 	};
 
 	private readonly _axisRendererData: PriceAxisViewRendererData= {
-		items: [{
-			text: '',
-			visible: false,
-			tickVisible: true,
-			moveTextToInvisibleTick: false,
-			borderColor: '',
-		}],
+		items: [],
 	};
 
 	private readonly _paneRendererData: PriceAxisViewRendererData= {
-		items: [
-			{
-				text: '',
-				visible: false,
-				tickVisible: false,
-				moveTextToInvisibleTick: true,
-				borderColor: '',
-			},
-		],
+		items: [],
+	};
+
+	private readonly _rendererDataItem: PriceAxisViewRendererDataItem = {
+
+		text: '',
+		visible: false,
+		tickVisible: false,
+		moveTextToInvisibleTick: true,
+		borderColor: '',
 	};
 
 	private readonly _axisRenderer: IPriceAxisViewRenderer;
 	private readonly _paneRenderer: IPriceAxisViewRenderer;
 	private _invalidated: boolean = true;
 
-	public constructor(ctor?: IPriceAxisViewRendererConstructor) {
+	public constructor(ctor?: IPriceAxisViewRendererConstructor, numLabels: number = 1) {
+		for (let i = 0; i < numLabels; i++) {
+			this._axisRendererData.items.push({ ...this._rendererDataItem });
+			this._paneRendererData.items.push({ ...this._rendererDataItem });
+			this._commonRendererData.items.push({ ...this._commonRendererDataItem });
+		}
+
 		this._axisRenderer = new (ctor || PriceAxisViewRenderer)(this._axisRendererData, this._commonRendererData);
 		this._paneRenderer = new (ctor || PriceAxisViewRenderer)(this._paneRendererData, this._commonRendererData);
+	}
+
+	public numItems(): number {
+		// We can use either axisRendererData, paneRendererData or commonRendererData
+		return this._axisRendererData.items.length;
 	}
 
 	public text(): string[] {
@@ -54,9 +65,9 @@ export abstract class PriceAxisView implements IPriceAxisView {
 		return this._axisRendererData.items.map((item: PriceAxisViewRendererDataItem) => {return item.text;});
 	}
 
-	public coordinate(): number {
+	public coordinate(index: number): number {
 		this._updateRendererDataIfNeeded();
-		return this._commonRendererData.coordinate;
+		return this._commonRendererData.items[index].coordinate;
 	}
 
 	public update(): void {
@@ -70,12 +81,12 @@ export abstract class PriceAxisView implements IPriceAxisView {
 		);
 	}
 
-	public getFixedCoordinate(): number {
-		return this._commonRendererData.fixedCoordinate || 0;
+	public getFixedCoordinate(index: number): number {
+		return this._commonRendererData.items[index].fixedCoordinate || 0;
 	}
 
-	public setFixedCoordinate(value: number): void {
-		this._commonRendererData.fixedCoordinate = value;
+	public setFixedCoordinate(index: number, value: number): void {
+		this._commonRendererData.items[index].fixedCoordinate = value;
 	}
 
 	public isVisible(): boolean {
