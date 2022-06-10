@@ -1,3 +1,4 @@
+import { Background } from './layout-options';
 import { PriceLineOptions } from './price-line-options';
 
 /**
@@ -23,4 +24,11 @@ export interface PriceChannelOptions {
 	 *
 	 */
 	visible: boolean;
+
+	/**
+	 * Channel area color
+	 *
+	 */
+	background: Background;
+
 }

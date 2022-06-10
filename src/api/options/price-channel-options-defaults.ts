@@ -1,3 +1,4 @@
+import { ColorType } from '../../model/layout-options';
 import { PriceChannelOptions } from '../../model/price-channel-options';
 import { LineStyle } from '../../renderers/draw-line';
 
@@ -23,4 +24,8 @@ export const priceChannelOptionsDefaults: PriceChannelOptions = {
 		draggable: false,
 	},
 	visible: true,
+	background: {
+		type: ColorType.Solid,
+		color: '#004404',
+	},
 };

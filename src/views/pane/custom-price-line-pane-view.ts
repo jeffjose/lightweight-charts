@@ -1,5 +1,6 @@
 import { CustomPriceLine } from '../../model/custom-price-line';
 import { Series } from '../../model/series';
+import { HorizontalLineRendererData } from '../../renderers/horizontal-line-renderer';
 
 import { SeriesHorizontalLinePaneView } from './series-horizontal-line-pane-view';
 
@@ -9,6 +10,9 @@ export class CustomPriceLinePaneView extends SeriesHorizontalLinePaneView {
 	public constructor(series: Series, priceLine: CustomPriceLine) {
 		super(series);
 		this._priceLine = priceLine;
+	}
+	public rendererOptions(): HorizontalLineRendererData {
+		return this._lineRendererData;
 	}
 
 	protected _updateImpl(height: number, width: number): void {

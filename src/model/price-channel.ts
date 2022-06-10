@@ -6,7 +6,6 @@ import { IPaneView } from '../views/pane/ipane-view';
 import { PriceChannelPaneView } from '../views/pane/price-channel-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
-import { Coordinate } from './coordinate';
 import { CustomPriceLine } from './custom-price-line';
 import { PriceChannelOptions } from './price-channel-options';
 import { PriceLineOptions } from './price-line-options';
@@ -97,22 +96,5 @@ export class PriceChannel {
 
 	public update(): void {
 		this._priceChannelView.update();
-	}
-
-	public yCoord(priceLine: CustomPriceLine): Coordinate | null {
-		const series = this._series;
-		const priceScale = series.priceScale();
-		const timeScale = series.model().timeScale();
-
-		if (timeScale.isEmpty() || priceScale.isEmpty()) {
-			return null;
-		}
-
-		const firstValue = series.firstValue();
-		if (firstValue === null) {
-			return null;
-		}
-
-		return priceScale.priceToCoordinate(priceLine.options().price, firstValue.value);
 	}
 }
