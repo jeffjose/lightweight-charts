@@ -5,7 +5,6 @@ import { CustomPriceLinePaneView } from '../views/pane/custom-price-line-pane-vi
 import { IPaneView } from '../views/pane/ipane-view';
 import { PriceChannelPaneView } from '../views/pane/price-channel-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
-import { PriceChannelPriceAxisView } from '../views/price-axis/price-channel-price-axis-view';
 
 import { Coordinate } from './coordinate';
 import { CustomPriceLine } from './custom-price-line';
@@ -21,8 +20,6 @@ export interface PriceChannelLineDetails {
 export class PriceChannel {
 	private readonly _series: Series;
 	private readonly _priceChannelView: PriceChannelPaneView;
-	private readonly _priceAxisView: PriceChannelPriceAxisView;
-	// private readonly _panePriceAxisView: PanePriceAxisView;
 	private readonly _options: PriceChannelOptions;
 
 	private readonly _priceLine1: CustomPriceLine;
@@ -42,8 +39,6 @@ export class PriceChannel {
 		this._priceLine2PaneView = this._priceLine2.paneView();
 
 		this._priceChannelView = new PriceChannelPaneView(series, this);
-		this._priceAxisView = new PriceChannelPriceAxisView(series, this);
-		// this._panePriceAxisView = new PanePriceAxisView(this._priceAxisView, series, series.model());
 	}
 
 	public applyOptions(options: Partial<PriceChannelOptions>): void {
@@ -102,7 +97,6 @@ export class PriceChannel {
 
 	public update(): void {
 		this._priceChannelView.update();
-		this._priceAxisView.update();
 	}
 
 	public yCoord(priceLine: CustomPriceLine): Coordinate | null {
