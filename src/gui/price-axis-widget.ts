@@ -314,9 +314,17 @@ export class PriceAxisWidget implements IDestroyable {
 
 		for (const source of this._pane.state().orderedSources()) {
 			if (source instanceof Series) {
-				lines.push(...source.customPriceLines().filter(
+				const customPriceLines = [
+
+					...source.customPriceLines().filter(
 					(line: CustomPriceLine) => line.options().draggable && line.priceAxisView().isAxisLabelVisible()
-				));
+					),
+					...source.priceChannelsPriceLines().filter(
+					(line: CustomPriceLine) => line.options().draggable && line.priceAxisView().isAxisLabelVisible()
+					),
+
+				];
+				lines.push(...customPriceLines);
 			}
 		}
 

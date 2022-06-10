@@ -359,6 +359,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return this._priceChannels;
 	}
 
+	public priceChannelsPriceLines(): CustomPriceLine[] {
+		return ([] as CustomPriceLine[]).concat(...this._priceChannels.map((channel: PriceChannel) => channel.priceLines()));
+	}
+
 	public seriesType(): T {
 		return this._seriesType;
 	}

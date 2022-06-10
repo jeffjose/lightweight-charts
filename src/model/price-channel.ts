@@ -66,6 +66,10 @@ export class PriceChannel {
 		return this._priceLine2;
 	}
 
+	public priceLines(): CustomPriceLine[] {
+		return [this._priceLine1, this._priceLine2];
+	}
+
 	public priceLine1PaneView(): IPaneView {
 		return this._priceLine1PaneView;
 	}
