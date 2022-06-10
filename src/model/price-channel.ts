@@ -36,7 +36,6 @@ export class PriceChannel {
 		this._series = series;
 		this._options = options;
 
-		console.log('Creating priceLine1 and 2 with ', options);
 		this._priceLine1 = new CustomPriceLine(series, options.price1);
 		this._priceLine2 = new CustomPriceLine(series, options.price2);
 

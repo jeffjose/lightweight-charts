@@ -30,13 +30,8 @@ export class PriceChannelPriceAxisView extends PriceAxisView {
 		// TODO: Fix this.
 		// We're assuming length of axisRenderData and paneRendererData is the same
 
-		// console.log('YY PC - ', axisRendererData, paneRendererData);
-		// console.log('YY PC 1 = ', this._priceChannel.priceLine1().options());
-		// console.log('YY PC 2 = ', this._priceChannel.priceLine2().options());
 		this._updateRendererDataImpl(axisRendererData.items[0], paneRendererData.items[0], commonData.items[0], this._priceChannel.priceLine1());
 		this._updateRendererDataImpl(axisRendererData.items[1], paneRendererData.items[1], commonData.items[1], this._priceChannel.priceLine2());
-
-		// console.log('YY PC- ', axisRendererData, paneRendererData);
 	}
 
 	protected _updateRendererDataImpl(

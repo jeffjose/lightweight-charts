@@ -38,7 +38,6 @@ export class PriceChannelPaneView implements IPaneView {
 	private _invalidated: boolean = true;
 
 	public constructor(series: Series, priceChannel: PriceChannel) {
-		console.log(`PC pane view constructor()`);
 		this._series = series;
 		this._model = series.model();
 		this._priceChannel = priceChannel;
@@ -52,7 +51,6 @@ export class PriceChannelPaneView implements IPaneView {
 	}
 
 	public renderer(height: number, width: number): IPaneRenderer | null {
-		console.log(`PC pane view: renderer()`, this._series.visible(), 'invalidated', this._invalidated);
 		if (!this._series.visible()) {
 			return null;
 		}
@@ -63,32 +61,26 @@ export class PriceChannelPaneView implements IPaneView {
 		}
 
 		const renderer1 = this._priceChannel.priceLine1Renderer(height, width);
-		console.log('PC pane view renderer - ', renderer1);
-		this._priceChannelRenderer.setPriceLine1Renderer(renderer1);
 		const renderer2 = this._priceChannel.priceLine2Renderer(height, width);
-		console.log('PC pane view renderer - ', renderer2);
+
+		this._priceChannelRenderer.setPriceLine1Renderer(renderer1);
 		this._priceChannelRenderer.setPriceLine2Renderer(renderer2);
+
 		return this._priceChannelRenderer;
 	}
 
 	private _updateImpl(height: number, width: number): void {
-		console.log(`PC pane view updateImpl()`, this._priceChannelRendererData);
 		const data = this._priceChannelRendererData;
 		data.visible = false;
 
 		const line1Options = this._priceChannel.price1Options();
 		const line2Options = this._priceChannel.price2Options();
-		console.log('PC pane view: lineOptions:', line1Options);
-		console.log('PC pane view: lineOptions:', line2Options);
 
 		if (!this._series.visible() || (!line1Options.lineVisible && !line2Options.lineVisible)) {
-			console.log(`PC pane view: returning`);
 			return;
 		}
 
-		console.log('priceLine1().update()');
 		this._priceChannel.priceLine1().update();
-		console.log('priceLine2().update()');
 		this._priceChannel.priceLine2().update();
 
 		data.visible = true;

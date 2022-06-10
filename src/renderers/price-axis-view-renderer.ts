@@ -32,7 +32,6 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 		pixelRatio: number
 	): void {
 		this._data.items.forEach((item: PriceAxisViewRendererDataItem, index: number) => {
-			console.log(`ZZ - Writing ${item.text}`);
 			this.drawItem(ctx, rendererOptions, textWidthCache, width, align, pixelRatio, item, index);
 		});
 	}
