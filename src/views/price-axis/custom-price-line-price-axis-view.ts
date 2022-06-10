@@ -4,9 +4,7 @@ import { CustomPriceLine } from '../../model/custom-price-line';
 import { Series } from '../../model/series';
 import {
 	PriceAxisViewRendererCommonData,
-	PriceAxisViewRendererCommonDataItem,
 	PriceAxisViewRendererData,
-	PriceAxisViewRendererDataItem,
 } from '../../renderers/iprice-axis-view-renderer';
 
 import { PriceAxisView } from './price-axis-view';
@@ -24,24 +22,10 @@ export class CustomPriceLinePriceAxisView extends PriceAxisView {
 	protected _updateRendererData(
 		axisRendererData: PriceAxisViewRendererData,
 		paneRendererData: PriceAxisViewRendererData,
-		commonRendererData: PriceAxisViewRendererCommonData
+		commonData: PriceAxisViewRendererCommonData
 	): void {
-		for (let i = 0; i < axisRendererData.items.length; i++) {
-			const axisRendererDataItem = axisRendererData.items[i];
-			const paneRendererDataItem = paneRendererData.items[i];
-			const commonRendererDataItem = commonRendererData.items[i];
-
-			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererDataItem);
-		}
-	}
-
-	protected _updateRendererDataItem(
-		axisRendererDataItem: PriceAxisViewRendererDataItem,
-		paneRendererDataItem: PriceAxisViewRendererDataItem,
-		commonData: PriceAxisViewRendererCommonDataItem
-	): void {
-		axisRendererDataItem.visible = false;
-		paneRendererDataItem.visible = false;
+		axisRendererData.visible = false;
+		paneRendererData.visible = false;
 
 		const options = this._priceLine.options();
 		const labelVisible = options.axisLabelVisible;
@@ -59,14 +43,14 @@ export class CustomPriceLinePriceAxisView extends PriceAxisView {
 		}
 
 		if (showPaneLabel) {
-			paneRendererDataItem.text = options.title;
-			paneRendererDataItem.visible = true;
+			paneRendererData.text = options.title;
+			paneRendererData.visible = true;
 		}
 
-		paneRendererDataItem.borderColor = series.model().backgroundColorAtYPercentFromTop(y / series.priceScale().height());
+		paneRendererData.borderColor = series.model().backgroundColorAtYPercentFromTop(y / series.priceScale().height());
 
-		axisRendererDataItem.text = this._formatPrice(options.price);
-		axisRendererDataItem.visible = true;
+		axisRendererData.text = this._formatPrice(options.price);
+		axisRendererData.visible = true;
 
 		const colors = generateContrastColors(options.color);
 		commonData.background = colors.background;

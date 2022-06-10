@@ -6,7 +6,6 @@ import {
 	IPriceAxisViewRenderer,
 	PriceAxisViewRendererCommonData,
 	PriceAxisViewRendererData,
-	PriceAxisViewRendererDataItem,
 	PriceAxisViewRendererOptions,
 } from './iprice-axis-view-renderer';
 
@@ -31,28 +30,21 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 		align: 'left' | 'right',
 		pixelRatio: number
 	): void {
-		this._data.items.forEach((item: PriceAxisViewRendererDataItem, index: number) => {
-			this.drawItem(ctx, rendererOptions, textWidthCache, width, align, pixelRatio, item, index);
-		});
-	}
-
-	// eslint-disable-next-line max-params
-	public drawItem(ctx: CanvasRenderingContext2D, rendererOptions: PriceAxisViewRendererOptions, textWidthCache: TextWidthCache, width: number, align: 'left' | 'right', pixelRatio: number, data: PriceAxisViewRendererDataItem, index: number): void {
-		if (!data.visible) {
+		if (!this._data.visible) {
 			return;
 		}
 
-		const commonData = this._commonData.items[index];
+		const commonData = this._commonData;
 
 		ctx.font = rendererOptions.font;
 
-		const tickSize = (data.tickVisible || !data.moveTextToInvisibleTick) ? rendererOptions.tickLength : 0;
+		const tickSize = (this._data.tickVisible || !this._data.moveTextToInvisibleTick) ? rendererOptions.tickLength : 0;
 		const horzBorder = rendererOptions.borderSize;
 		const paddingTop = rendererOptions.paddingTop;
 		const paddingBottom = rendererOptions.paddingBottom;
 		const paddingInner = rendererOptions.paddingInner;
 		const paddingOuter = rendererOptions.paddingOuter;
-		const text = data.text;
+		const text = this._data.text;
 		const textWidth = Math.ceil(textWidthCache.measureText(ctx, text));
 		const baselineOffset = rendererOptions.baselineOffset;
 		const totalHeight = rendererOptions.fontSize + paddingTop + paddingBottom;
@@ -124,10 +116,10 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 			ctx.fill();
 
 			// draw border
-			ctx.fillStyle = data.borderColor;
+			ctx.fillStyle = this._data.borderColor;
 			ctx.fillRect(alignRight ? rightScaled - horzBorderScaled : 0, yTopScaled, horzBorderScaled, yBottomScaled - yTopScaled);
 
-			if (data.tickVisible) {
+			if (this._data.tickVisible) {
 				ctx.fillStyle = commonData.color;
 				ctx.fillRect(xInsideScaled, yMidScaled, xTickScaled - xInsideScaled, tickHeight);
 			}
@@ -144,8 +136,7 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 	}
 
 	public height(rendererOptions: PriceAxisViewRendererOptions, useSecondLine: boolean): number {
-		// TODO: We're picking the first one here. This might or might not work.
-		if (!this._data.items[0].visible) {
+		if (!this._data.visible) {
 			return 0;
 		}
 
