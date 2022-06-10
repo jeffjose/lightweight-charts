@@ -3,7 +3,6 @@ import { merge } from '../helpers/strict-type-checks';
 import { IPaneRenderer } from '../renderers/ipane-renderer';
 import { CustomPriceLinePaneView } from '../views/pane/custom-price-line-pane-view';
 import { IPaneView } from '../views/pane/ipane-view';
-import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
 import { PriceChannelPaneView } from '../views/pane/price-channel-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 import { PriceChannelPriceAxisView } from '../views/price-axis/price-channel-price-axis-view';
@@ -23,7 +22,7 @@ export class PriceChannel {
 	private readonly _series: Series;
 	private readonly _priceChannelView: PriceChannelPaneView;
 	private readonly _priceAxisView: PriceChannelPriceAxisView;
-	private readonly _panePriceAxisView: PanePriceAxisView;
+	// private readonly _panePriceAxisView: PanePriceAxisView;
 	private readonly _options: PriceChannelOptions;
 
 	private readonly _priceLine1: CustomPriceLine;
@@ -44,7 +43,7 @@ export class PriceChannel {
 
 		this._priceChannelView = new PriceChannelPaneView(series, this);
 		this._priceAxisView = new PriceChannelPriceAxisView(series, this);
-		this._panePriceAxisView = new PanePriceAxisView(this._priceAxisView, series, series.model());
+		// this._panePriceAxisView = new PanePriceAxisView(this._priceAxisView, series, series.model());
 	}
 
 	public applyOptions(options: Partial<PriceChannelOptions>): void {
@@ -93,8 +92,8 @@ export class PriceChannel {
 		return this._priceChannelView;
 	}
 
-	public labelPaneView(): IPaneView {
-		return this._panePriceAxisView;
+	public labelPaneView(): IPaneView[] {
+		return [this._priceLine1.labelPaneView(), this._priceLine2.labelPaneView()];
 	}
 
 	public priceAxisView(): IPriceAxisView[] {

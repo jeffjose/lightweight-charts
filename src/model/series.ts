@@ -450,11 +450,16 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	}
 
 	public override labelPaneViews(pane?: Pane): readonly IPaneView[] {
-		return [
+		const result = [
 			this._panePriceAxisView,
 			...this._customPriceLines.map((line: CustomPriceLine) => line.labelPaneView()),
-			...this._priceChannels.map((channel: PriceChannel) => channel.labelPaneView()),
 		];
+
+		for (const priceChannel of this._priceChannels) {
+			result.push(...priceChannel.labelPaneView());
+		}
+
+		return result;
 	}
 
 	public override priceAxisViews(pane: Pane, priceScale: PriceScale): readonly IPriceAxisView[] {
