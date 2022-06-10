@@ -31,7 +31,10 @@ export class CustomPriceLinePriceAxisView extends PriceAxisView {
 			const paneRendererDataItem = paneRendererData.items[i];
 			const commonRendererDataItem = commonRendererData.items[i];
 
+			// console.log('YY PL - ', axisRendererData, paneRendererData);
+			// console.log('YY PL =', this._priceLine.options());
 			this._updateRendererDataItem(axisRendererDataItem, paneRendererDataItem, commonRendererDataItem);
+			// console.log('YY PL - ', axisRendererData, paneRendererData);
 		}
 	}
 

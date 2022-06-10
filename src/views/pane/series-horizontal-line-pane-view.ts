@@ -34,11 +34,13 @@ export abstract class SeriesHorizontalLinePaneView implements IPaneView {
 	}
 
 	public renderer(height: number, width: number): IPaneRenderer | null {
+		console.log(`PL pane view: renderer()`, this._series.visible(), 'invalidated', this._invalidated);
 		if (!this._series.visible()) {
 			return null;
 		}
 
 		if (this._invalidated) {
+			console.log('-------- START?');
 			this._updateImpl(height, width);
 			this._invalidated = false;
 		}

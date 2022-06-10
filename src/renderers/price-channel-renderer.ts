@@ -47,6 +47,7 @@ export class PriceChannelRenderer implements IPaneRenderer {
 			return;
 		}
 
+		console.trace();
 		console.log(this._priceLine1Renderer?.draw(ctx, pixelRatio, isHovered, hitTestData));
 		console.log('--');
 		this._priceLine2Renderer?.draw(ctx, pixelRatio, isHovered, hitTestData);

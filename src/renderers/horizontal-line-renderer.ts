@@ -22,6 +22,7 @@ export class HorizontalLineRenderer implements IPaneRenderer {
 	}
 
 	public draw(ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean, hitTestData?: unknown): void {
+		console.log('XXXXXXXX - HL draw', this._data, this._data?.visible);
 		if (this._data === null) {
 			return;
 		}

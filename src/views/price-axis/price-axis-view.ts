@@ -101,9 +101,12 @@ export abstract class PriceAxisView implements IPriceAxisView {
 
 	public isAxisLabelVisible(): boolean {
 		this._updateRendererDataIfNeeded();
-		return this._axisRendererData.items.some((item: PriceAxisViewRendererDataItem) => {
+		const x = this._axisRendererData.items.some((item: PriceAxisViewRendererDataItem) => {
 			return item.visible === true;
 		});
+
+		console.log('AA - isaxislabelvisible', x, this._axisRendererData.items);
+		return x;
 	}
 
 	public renderer(priceScale: PriceScale): IPriceAxisViewRenderer {

@@ -52,8 +52,8 @@ export class PriceChannelPaneView implements IPaneView {
 		this._priceChannel.priceLine2().update();
 	}
 
-	public renderer(height: number, width: number, pane: Pane, addAnchors?: boolean): IPaneRenderer | null {
-		console.log(`PC pane view: renderer()`, this._series.visible());
+	public renderer(height: number, width: number): IPaneRenderer | null {
+		console.log(`PC pane view: renderer()`, this._series.visible(), 'invalidated', this._invalidated);
 		if (!this._series.visible()) {
 			return null;
 		}
@@ -63,10 +63,10 @@ export class PriceChannelPaneView implements IPaneView {
 			this._invalidated = false;
 		}
 
-		const renderer1 = this._priceChannel.priceLine1Renderer(height, width, pane, addAnchors);
+		const renderer1 = this._priceChannel.priceLine1Renderer(height, width);
 		console.log('PC pane view renderer - ', renderer1);
 		this._priceChannelRenderer.setPriceLine1Renderer(renderer1);
-		const renderer2 = this._priceChannel.priceLine2Renderer(height, width, pane, addAnchors);
+		const renderer2 = this._priceChannel.priceLine2Renderer(height, width);
 		console.log('PC pane view renderer - ', renderer2);
 		this._priceChannelRenderer.setPriceLine2Renderer(renderer2);
 		return this._priceChannelRenderer;

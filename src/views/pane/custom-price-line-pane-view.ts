@@ -9,16 +9,18 @@ export class CustomPriceLinePaneView extends SeriesHorizontalLinePaneView {
 	public constructor(series: Series, priceLine: CustomPriceLine) {
 		super(series);
 		this._priceLine = priceLine;
-		console.log('CPL: ', priceLine.options().color);
+		console.log('CPL: pane view', priceLine.options().color);
 	}
 
 	protected _updateImpl(height: number, width: number): void {
+		// TODO: This needs to be called
+		debugger;
 		const data = this._lineRendererData;
-		console.log('CPL: updateImpl: will attempt to update color ', data);
+		console.log('CPL: pane view updateImpl: will attempt to update color ', data);
 		data.visible = false;
 
 		const lineOptions = this._priceLine.options();
-		console.log('CPL: updateImpl: color is ', lineOptions.color, lineOptions);
+		console.log('CPL: pane view updateImpl: color is ', lineOptions.color, lineOptions);
 
 		if (!this._series.visible() || !lineOptions.lineVisible) {
 			return;
@@ -29,8 +31,7 @@ export class CustomPriceLinePaneView extends SeriesHorizontalLinePaneView {
 		if (y === null) {
 			return;
 		}
-		console.log('CPL: updateImpl: updating color here ', lineOptions.color);
-		console.trace();
+		console.log('CPL: pane view updateImpl: updating color here ', lineOptions.color);
 
 		data.visible = true;
 		data.y = y;

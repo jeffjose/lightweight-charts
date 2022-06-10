@@ -36,6 +36,7 @@ export class PriceChannel {
 		this._series = series;
 		this._options = options;
 
+		console.log('Creating priceLine1 and 2 with ', options);
 		this._priceLine1 = new CustomPriceLine(series, options.price1);
 		this._priceLine2 = new CustomPriceLine(series, options.price2);
 
@@ -81,12 +82,12 @@ export class PriceChannel {
 		return this._priceLine2PaneView;
 	}
 
-	public priceLine1Renderer(height: number, width: number, pane: Pane, addAnchors?: boolean): IPaneRenderer | null {
-		return this._priceLine1PaneView.renderer(height, width, pane, addAnchors);
+	public priceLine1Renderer(height: number, width: number): IPaneRenderer | null {
+		return this._priceLine1PaneView.renderer(height, width);
 	}
 
-	public priceLine2Renderer(height: number, width: number, pane: Pane, addAnchors?: boolean): IPaneRenderer | null {
-		return this._priceLine2PaneView.renderer(height, width, pane, addAnchors);
+	public priceLine2Renderer(height: number, width: number): IPaneRenderer | null {
+		return this._priceLine2PaneView.renderer(height, width);
 	}
 
 	public paneView(): IPaneView {

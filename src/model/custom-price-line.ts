@@ -71,6 +71,8 @@ export class CustomPriceLine {
 			return null;
 		}
 
+		const y = priceScale.priceToCoordinate(this._options.price, firstValue.value);
+		console.log('yCoord - ', y);
 		return priceScale.priceToCoordinate(this._options.price, firstValue.value);
 	}
 }
