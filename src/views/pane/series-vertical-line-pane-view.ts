@@ -2,8 +2,8 @@ import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
 import { Series } from '../../model/series';
 import { LineStyle } from '../../renderers/draw-line';
-import { VerticalLineRenderer, VerticalLineRendererData } from '../../renderers/Vertical-line-renderer';
 import { IPaneRenderer } from '../../renderers/ipane-renderer';
+import { VerticalLineRenderer, VerticalLineRendererData } from '../../renderers/vertical-line-renderer';
 
 import { IPaneView } from './ipane-view';
 

@@ -1,14 +1,14 @@
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
 import { ColorType } from '../../model/layout-options';
-import { TimeChannel } from '../../model/time-channel';
 import { Series } from '../../model/series';
+import { TimeChannel } from '../../model/time-channel';
 import { LineStyle } from '../../renderers/draw-line';
 import { IPaneRenderer } from '../../renderers/ipane-renderer';
 import { TimeChannelRenderer, TimeChannelRendererData } from '../../renderers/time-channel-renderer';
 
-import { CustomTimeLinePaneView } from './time-line-pane-view';
 import { IPaneView } from './ipane-view';
+import { TimeLinePaneView } from './time-line-pane-view';
 
 export class TimeChannelPaneView implements IPaneView {
 	protected readonly _timeChannelRendererData: TimeChannelRendererData= {
@@ -50,7 +50,7 @@ export class TimeChannelPaneView implements IPaneView {
 	public constructor(series: Series, timeChannel: TimeChannel) {
 		this._series = series;
 		this._model = series.model();
-		this._timeChannel = TimeChannel;
+		this._timeChannel = timeChannel;
 		this._timeChannelRenderer.setData(this._timeChannelRendererData);
 	}
 

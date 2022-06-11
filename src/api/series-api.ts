@@ -26,7 +26,7 @@ import { TimeScaleVisibleRange } from '../model/time-scale-visible-range';
 import { IPriceScaleApiProvider } from './chart-api';
 import { DataUpdatesConsumer, SeriesDataItemTypeMap } from './data-consumer';
 import { convertTime } from './data-layer';
-import { checkItemsAreOrdered, checkPriceChannelOptions, checkPriceLineOptions, checkSeriesValuesType } from './data-validators';
+import { checkItemsAreOrdered, checkPriceChannelOptions, checkPriceLineOptions, checkSeriesValuesType, checkTimeChannelOptions } from './data-validators';
 import { getSeriesDataCreator } from './get-series-data-creator';
 import { IPriceChannel } from './iprice-channel';
 import { IPriceLine } from './iprice-line';

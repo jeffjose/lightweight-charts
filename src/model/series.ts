@@ -54,8 +54,10 @@ import {
 	SeriesPartialOptionsMap,
 	SeriesType,
 } from './series-options';
+import { TimeChannel } from './time-channel';
 import { TimeChannelOptions } from './time-channel-options';
 import { TimePoint, TimePointIndex } from './time-data';
+import { TimeLine } from './time-line';
 
 export interface LastValueDataResultWithoutData {
 	noData: true;
@@ -492,7 +494,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		}
 
 		for (const timeChannel of this._timeChannels) {
-			result.push(...priceChannel.labelPaneView());
+			result.push(...timeChannel.labelPaneView());
 		}
 
 		return result;
@@ -617,7 +619,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			const base = (this._options as HistogramStyleOptions).base;
 			const rangeWithBase = new PriceRangeImpl(base, base);
 			range = range !== null ? range.merge(rangeWithBase) : rangeWithBase;
-		} // TODO (jeffjose):  No lollipop here
+		} // TODO: (jeffjose):  No lollipop here
 		return new AutoscaleInfoImpl(range, this._markersPaneView.autoScaleMargins());
 	}
 

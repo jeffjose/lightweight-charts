@@ -2,9 +2,15 @@ import { merge } from '../helpers/strict-type-checks';
 
 import { IPaneRenderer } from '../renderers/ipane-renderer';
 import { IPaneView } from '../views/pane/ipane-view';
+import { TimeChannelPaneView } from '../views/pane/time-channel-pane-view';
+import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
 import { Series } from './series';
+import { TimeChannelOptions } from './time-channel-options';
+import { TimeChannelTimeLine } from './time-channel-time-line';
+import { TimeLine } from './time-line';
+import { TimeLineOptions } from './time-line-options';
 
 export interface TimeChannelLineDetails {
 	prevPrice: number;
@@ -16,8 +22,8 @@ export class TimeChannel {
 	private readonly _timeChannelView: TimeChannelPaneView;
 	private readonly _options: TimeChannelOptions;
 
-	private readonly _timeLine1: TimeChannelPriceLine;
-	private readonly _timeLine2: TimeChannelPriceLine;
+	private readonly _timeLine1: TimeChannelTimeLine;
+	private readonly _timeLine2: TimeChannelTimeLine;
 
 	private readonly _timeLine1PaneView: TimeLinePaneView;
 	private readonly _timeLine2PaneView: TimeLinePaneView;
