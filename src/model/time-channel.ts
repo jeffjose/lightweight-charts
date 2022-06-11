@@ -96,11 +96,11 @@ export class TimeChannel {
 	}
 
 	public labelPaneView(): IPaneView[] {
-		return [this._timeLine1.labelPaneView(), this._timeLine2.labelPaneView()];
+		return this._options.visible ? [this._timeLine1.labelPaneView(), this._timeLine2.labelPaneView()] : [];
 	}
 
 	public priceAxisView(): IPriceAxisView[] {
-		return [this._timeLine1.priceAxisView(), this._timeLine2.priceAxisView()];
+		return this._options.visible ? [this._timeLine1.priceAxisView(), this._timeLine2.priceAxisView()] : [];
 	}
 
 	public update(): void {

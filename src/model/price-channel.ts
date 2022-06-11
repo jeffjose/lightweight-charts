@@ -96,11 +96,11 @@ export class PriceChannel {
 	}
 
 	public labelPaneView(): IPaneView[] {
-		return [this._priceLine1.labelPaneView(), this._priceLine2.labelPaneView()];
+		return this._options.visible ? [this._priceLine1.labelPaneView(), this._priceLine2.labelPaneView()] : [];
 	}
 
 	public priceAxisView(): IPriceAxisView[] {
-		return [this._priceLine1.priceAxisView(), this._priceLine2.priceAxisView()];
+		return this._options.visible ? [this._priceLine1.priceAxisView(), this._priceLine2.priceAxisView()] : [];
 	}
 
 	public update(): void {
