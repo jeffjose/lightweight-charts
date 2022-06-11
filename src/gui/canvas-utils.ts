@@ -1,6 +1,52 @@
+import { interpolateCubehelix } from 'd3-interpolate';
 import { Binding as CanvasCoordinateSpaceBinding, bindToDevicePixelRatio } from 'fancy-canvas/coordinate-space';
 
 import { ensureNotNull } from '../helpers/assertions';
+import { Color, ColorType } from '../helpers/color';
+
+export type CanvasStyle = string | CanvasPattern | CanvasGradient;
+
+export function getColorValueAt(color: Color, index: number = 1, numBars: number = 1, value: number = 0, minValue: number = 0, maxValue: number = 0): string {
+	if (typeof color === 'string') {
+		return color;
+	}
+	switch (color.type) {
+		case ColorType.Solid:
+			return color.color;
+		case ColorType.VerticalGradient:
+			return interpolateColorValueAt(color.color1, color.color2, (value - minValue) / (maxValue - minValue));
+		case ColorType.HorizontalGradient:
+			return interpolateColorValueAt(color.color1, color.color2, index / numBars);
+	}
+}
+
+function interpolateColorValueAt(color1: string, color2: string, offset: number): string {
+	return interpolateCubehelix(color1, color2)(offset);
+}
+
+// eslint-disable-next-line max-params
+export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasStyle {
+	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+	const totalStops = 10;
+	for (const i of Array.from(Array(totalStops).keys()).map((x: number) => x + 1)) {
+		gradient.addColorStop(i / totalStops, interpolateColorValueAt(color1, color2, i / totalStops));
+	}
+	return gradient;
+}
+
+export function getCanvasGradient(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+	if (typeof bg === 'string') {
+		return bg;
+	}
+	switch (bg.type) {
+		case ColorType.Solid:
+			return bg.color;
+		case ColorType.VerticalGradient:
+			return getCanvasGradientsFrom2Colors(ctx, bg.color1, bg.color2, x0, y0, x0, y0 + height);
+		case ColorType.HorizontalGradient:
+			return getCanvasGradientsFrom2Colors(ctx, bg.color1, bg.color2, x0, y0, x0 + width, y0);
+	}
+}
 
 export class Size {
 	public h: number;

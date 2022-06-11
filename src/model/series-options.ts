@@ -1,3 +1,4 @@
+import { Color } from '../helpers/color';
 import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { LineStyle, LineType, LineWidth } from '../renderers/draw-line';
@@ -151,7 +152,7 @@ export interface LineStyleOptions {
 	 *
 	 * @defaultValue `'#2196f3'`
 	 */
-	color: string;
+	color: Color;
 
 	/**
 	 * Line style.
@@ -416,7 +417,7 @@ export interface HistogramStyleOptions {
 	 *
 	 * @defaultValue `'#26a69a'`
 	 */
-	color: string;
+	color: Color;
 
 	/**
 	 * Initial level of histogram columns.
@@ -627,7 +628,7 @@ export interface SeriesOptionsCommon {
 	 *
 	 * @defaultValue `''`
 	 */
-	priceLineColor: string;
+	priceLineColor: Color;
 
 	/**
 	 * Price line style.

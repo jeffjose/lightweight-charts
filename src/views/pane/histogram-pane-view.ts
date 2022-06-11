@@ -1,4 +1,5 @@
 import { ensureNotNull } from '../../helpers/assertions';
+import { Color } from '../../helpers/color';
 
 import { BarPrice } from '../../model/bar';
 import { ChartModel } from '../../model/chart-model';
@@ -23,7 +24,7 @@ function createEmptyHistogramData(barSpacing: number): PaneRendererHistogramData
 	};
 }
 
-function createRawItem(time: TimePointIndex, price: BarPrice, color: string): HistogramItem {
+function createRawItem(time: TimePointIndex, price: BarPrice, color: Color): HistogramItem {
 	return {
 		time: time,
 		price: price,

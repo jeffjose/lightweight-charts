@@ -1,4 +1,7 @@
+import { CanvasStyle, getColorValueAt } from '../gui/canvas-utils';
+
 import { fillRectInnerBorder } from '../helpers/canvas-helpers';
+import { Color } from '../helpers/color';
 
 import { SeriesItemsIndexesRange } from '../model/time-data';
 
@@ -7,7 +10,7 @@ import { IPaneRenderer } from './ipane-renderer';
 import { optimalCandlestickWidth } from './optimal-bar-width';
 
 export interface CandlestickItem extends BarCandlestickItemBase {
-	color: string;
+	color: Color;
 	borderColor: string;
 	wickColor: string;
 }
@@ -29,12 +32,14 @@ const enum Constants {
 
 export class PaneRendererCandlesticks implements IPaneRenderer {
 	private _data: PaneRendererCandlesticksData | null = null;
+	private _numBars: number = 0;
 
 	// scaled with pixelRatio
 	private _barWidth: number = 0;
 
 	public setData(data: PaneRendererCandlesticksData): void {
 		this._data = data;
+		this._numBars = data.bars.length;
 	}
 
 	public draw(ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean, hitTestData?: unknown): void {
@@ -169,7 +174,7 @@ export class PaneRendererCandlesticks implements IPaneRenderer {
 			return;
 		}
 
-		let prevBarColor = '';
+		let prevBarColor: CanvasStyle = '';
 
 		const borderWidth = this._calculateBorderWidth(pixelRatio);
 
@@ -182,10 +187,10 @@ export class PaneRendererCandlesticks implements IPaneRenderer {
 			let left = Math.round(bar.x * pixelRatio) - Math.floor(this._barWidth * 0.5);
 			let right = left + this._barWidth - 1;
 
-			if (bar.color !== prevBarColor) {
+			if (getColorValueAt(bar.color, i, this._numBars) !== prevBarColor) {
 				const barColor = bar.color;
-				ctx.fillStyle = barColor;
-				prevBarColor = barColor;
+				ctx.fillStyle = getColorValueAt(barColor, i, this._numBars);
+				prevBarColor = getColorValueAt(barColor, i, this._numBars);
 			}
 
 			if (this._data.borderVisible) {

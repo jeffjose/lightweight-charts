@@ -3,7 +3,7 @@
 import { ChartWidget } from '../gui/chart-widget';
 
 import { assert, ensureNotNull } from '../helpers/assertions';
-import { gradientColorAtPercent } from '../helpers/color';
+import { ColorType, gradientColorAtPercent } from '../helpers/color';
 import { Delegate } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
 import { ISubscription } from '../helpers/isubscription';
@@ -19,7 +19,7 @@ import { DefaultPriceScaleId, isDefaultPriceScale } from './default-price-scale'
 import { GridOptions } from './grid';
 import { InvalidateMask, InvalidationLevel } from './invalidate-mask';
 import { IPriceDataSource } from './iprice-data-source';
-import { ColorType, LayoutOptions } from './layout-options';
+import { LayoutOptions } from './layout-options';
 import { LocalizationOptions } from './localization-options';
 import { Magnet } from './magnet';
 import { DEFAULT_STRETCH_FACTOR, Pane, PaneInfo } from './pane';
@@ -1036,17 +1036,21 @@ export class ChartModel implements IDestroyable {
 	private _getBackgroundColor(side: BackgroundColorSide): string {
 		const layoutOptions = this._options.layout;
 
+		if (typeof layoutOptions.background === 'string') {
+			return layoutOptions.background;
+		}
+
 		switch (layoutOptions.background.type) {
 			case ColorType.Solid:
 				return layoutOptions.background.color;
 			case ColorType.VerticalGradient:
 				return side === BackgroundColorSide.Top ?
-				layoutOptions.background.topColor :
-				layoutOptions.background.bottomColor;
+				layoutOptions.background.color1 :
+				layoutOptions.background.color2;
 			case ColorType.HorizontalGradient:
 				return side === BackgroundColorSide.Left ?
-				layoutOptions.background.leftColor :
-				layoutOptions.background.rightColor;
+				layoutOptions.background.color1 :
+				layoutOptions.background.color2;
 		}
 	}
 

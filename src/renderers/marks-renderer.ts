@@ -1,3 +1,7 @@
+import { getColorValueAt } from '../gui/canvas-utils';
+
+import { Color } from '../helpers/color';
+
 import { SeriesItemsIndexesRange } from '../model/time-data';
 
 import { LineItem } from './line-renderer';
@@ -5,8 +9,8 @@ import { ScaledRenderer } from './scaled-renderer';
 
 export interface MarksRendererData {
 	items: LineItem[];
-	lineColor: string;
-	backColor: string;
+	lineColor: Color;
+	backColor: Color;
 	radius: number;
 	visibleRange: SeriesItemsIndexesRange | null;
 }
@@ -38,10 +42,10 @@ export class PaneRendererMarks extends ScaledRenderer {
 			ctx.fill();
 		};
 
-		ctx.fillStyle = data.backColor;
+		ctx.fillStyle = getColorValueAt(data.backColor);
 		draw(data.radius + 2);
 
-		ctx.fillStyle = data.lineColor;
+		ctx.fillStyle = getColorValueAt(data.lineColor);
 		draw(data.radius);
 	}
 }

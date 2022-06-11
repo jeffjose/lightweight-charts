@@ -1,6 +1,7 @@
+import { ColorType } from '../../helpers/color';
+
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
-import { ColorType } from '../../model/layout-options';
 import { Series } from '../../model/series';
 import { TimeChannel } from '../../model/time-channel';
 import { LineStyle } from '../../renderers/draw-line';

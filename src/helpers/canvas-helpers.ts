@@ -1,3 +1,5 @@
+import { getCanvasGradientsFrom2Colors } from '../gui/canvas-utils';
+
 /**
  * Fills rectangle's inner border (so, all the filled area is limited by the [x, x + width]*[y, y + height] region)
  * ```
@@ -56,10 +58,7 @@ export function clearRectWithGradient(ctx: CanvasRenderingContext2D, x: number, 
 	ctx.save();
 
 	ctx.globalCompositeOperation = 'copy';
-	const gradient = ctx.createLinearGradient(0, 0, 0, h);
-	gradient.addColorStop(0, topColor);
-	gradient.addColorStop(1, bottomColor);
-	ctx.fillStyle = gradient;
+	ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, topColor, bottomColor, 0, 0, 0, h);
 	ctx.fillRect(x, y, w, h);
 
 	ctx.restore();

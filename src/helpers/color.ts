@@ -1,3 +1,4 @@
+
 import { Nominal } from './nominal';
 
 /**
@@ -25,6 +26,80 @@ type BlueComponent = Nominal<number, 'BlueComponent'>;
 type AlphaComponent = Nominal<number, 'AlphaComponent'>;
 
 type Rgba = [RedComponent, GreenComponent, BlueComponent, AlphaComponent];
+
+/**
+ * Represents a type of color.
+ */
+export const enum ColorType {
+	/** Solid color */
+	Solid = 'solid',
+
+	/** Vertical gradient color */
+	VerticalGradient = 'vertical-gradient',
+
+	/** Horizontal gradient color */
+	HorizontalGradient = 'horizontal-gradient',
+}
+
+/**
+ * Represents a solid color.
+ */
+export interface SolidColor {
+	/**
+	 * Type of color.
+	 */
+	type: ColorType.Solid;
+
+	/**
+	 * Color.
+	 */
+	color: string;
+}
+
+/**
+ * Represents a vertical gradient of two colors.
+ */
+export interface VerticalGradientColor {
+	/**
+	 * Type of color.
+	 */
+	type: ColorType.VerticalGradient;
+
+	/**
+	 * Top color
+	 */
+	color1: string;
+
+	/**
+	 * Bottom color
+	 */
+	color2: string;
+}
+
+/**
+ * Represents a horizontal gradient of two colors.
+ */
+export interface HorizontalGradientColor {
+	/**
+	 * Type of color.
+	 */
+	type: ColorType.HorizontalGradient;
+
+	/**
+	 * Left color
+	 */
+	color1: string;
+
+	/**
+	 * Bottom color
+	 */
+	color2: string;
+}
+
+/**
+ * Represents the background color of the chart.
+ */
+export type Color = string | SolidColor | VerticalGradientColor | HorizontalGradientColor;
 
 /**
  * Note this object should be explicitly marked as public so that dts-bundle-generator does not mangle the property names.
@@ -336,4 +411,20 @@ export function gradientColorAtPercent(topColor: string, bottomColor: string, pe
 	];
 
 	return `rgba(${resultRgba[0]}, ${resultRgba[1]}, ${resultRgba[2]}, ${resultRgba[3]})`;
+}
+
+export function getColorString(color: Color): string {
+	if (typeof color === 'string') {
+		return color;
+	}
+	switch (color.type) {
+		case ColorType.Solid:
+			return color.color;
+		case ColorType.VerticalGradient:
+			// FIXME: This is fake. Ideally pick a representative color from the gradient
+			return '#FF00FF';
+		case ColorType.HorizontalGradient:
+			// FIXME: This is fake. Ideally pick a representative color from the gradient
+			return '#FF00FF';
+	}
 }
