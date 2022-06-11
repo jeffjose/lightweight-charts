@@ -257,7 +257,7 @@ function runTestCase(container) {
 			time: data[data.length - 1].time,
 			position: 'top',
 			color: '#fff00a',
-			shape: 'square',
+			shape: 'fingerpost',
 			text: 'test',
 			size: 1,
 		},
