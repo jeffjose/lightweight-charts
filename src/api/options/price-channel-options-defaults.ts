@@ -4,9 +4,9 @@ import { LineStyle } from '../../renderers/draw-line';
 
 export const priceChannelOptionsDefaults: PriceChannelOptions = {
 	price1: {
-		color: '#FF0000',
+		color: '#F59E0B',
 		price: 0,
-		lineStyle: LineStyle.Dashed,
+		lineStyle: LineStyle.Solid,
 		lineWidth: 1,
 		lineVisible: true,
 		axisLabelVisible: true,
@@ -14,9 +14,9 @@ export const priceChannelOptionsDefaults: PriceChannelOptions = {
 		draggable: false,
 	},
 	price2: {
-		color: '#00FF00',
+		color: '#F59E0B',
 		price: 0,
-		lineStyle: LineStyle.Dashed,
+		lineStyle: LineStyle.Solid,
 		lineWidth: 1,
 		lineVisible: true,
 		axisLabelVisible: true,
@@ -26,6 +26,6 @@ export const priceChannelOptionsDefaults: PriceChannelOptions = {
 	visible: true,
 	background: {
 		type: ColorType.Solid,
-		color: '#004404',
+		color: 'rgba(245, 158, 11, 0.08)',
 	},
 };
