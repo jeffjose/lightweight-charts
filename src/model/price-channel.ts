@@ -106,8 +106,4 @@ export class PriceChannel {
 	public update(): void {
 		this._priceChannelView.update();
 	}
-
-	public priceChannel(): PriceChannel {
-		return this;
-	}
 }

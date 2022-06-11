@@ -219,7 +219,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public removePriceChannel(channel: IPriceChannel): void {
-		this._series.removePriceChannel((channel as PriceChannel).priceChannel());
+		this._series.removePriceChannel((channel as PriceChannel));
 	}
 
 	public createTimeChannel(options: TimeChannelOptions): ITimeChannel {
