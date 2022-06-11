@@ -164,6 +164,8 @@ export interface PriceScaleOnPane {
 const enum BackgroundColorSide {
 	Top,
 	Bottom,
+	Left,
+	Right
 }
 
 type InvalidateHandler = (mask: InvalidateMask) => void;
@@ -1034,13 +1036,18 @@ export class ChartModel implements IDestroyable {
 	private _getBackgroundColor(side: BackgroundColorSide): string {
 		const layoutOptions = this._options.layout;
 
-		if (layoutOptions.background.type === ColorType.VerticalGradient) {
-			return side === BackgroundColorSide.Top ?
+		switch (layoutOptions.background.type) {
+			case ColorType.Solid:
+				return layoutOptions.background.color;
+			case ColorType.VerticalGradient:
+				return side === BackgroundColorSide.Top ?
 				layoutOptions.background.topColor :
 				layoutOptions.background.bottomColor;
+			case ColorType.HorizontalGradient:
+				return side === BackgroundColorSide.Left ?
+				layoutOptions.background.leftColor :
+				layoutOptions.background.rightColor;
 		}
-
-		return layoutOptions.background.color;
 	}
 
 	private _buildPaneIndexMapping(): void {
