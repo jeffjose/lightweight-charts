@@ -1,6 +1,6 @@
 
 import { Coordinate } from '../model/coordinate';
-import { Background, ColorType } from '../model/layout-options';
+import { Color, ColorType } from '../model/layout-options';
 
 import { HorizontalLineRendererData } from './horizontal-line-renderer';
 import { IPaneRenderer } from './ipane-renderer';
@@ -13,7 +13,7 @@ export interface PriceChannelRendererData {
 	height: number;
 	topLeftX: Coordinate;
 	topLeftY: Coordinate;
-	background: Background;
+	background: Color;
 }
 
 export class PriceChannelRenderer implements IPaneRenderer {
@@ -51,10 +51,13 @@ export class PriceChannelRenderer implements IPaneRenderer {
 		const height = Math.ceil(this._data.height * pixelRatio);
 
 		// Fill gradient from top to bottom
-		ctx.fillStyle = this._getColor(ctx, this._data.background, topLeftX, topLeftY, width, height);
+		ctx.fillStyle = this._getStyleFromColor(ctx, this._data.background, topLeftX, topLeftY, width, height);
 		ctx.fillRect(topLeftX, topLeftY, width, height);
 	}
-	private _getColor(ctx: CanvasRenderingContext2D, bg: Background, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+	private _getStyleFromColor(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+		if (typeof bg === 'string') {
+			return bg;
+		}
 		switch (bg.type) {
 			case ColorType.Solid:
 				return bg.color;
@@ -66,10 +69,10 @@ export class PriceChannelRenderer implements IPaneRenderer {
 	}
 
 	// eslint-disable-next-line max-params
-	private _fillStyle(ctx: CanvasRenderingContext2D, topColor: string, bottomColor: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['fillStyle'] {
+	private _fillStyle(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['fillStyle'] {
 		const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
-		gradient.addColorStop(0, topColor);
-		gradient.addColorStop(1, bottomColor);
+		gradient.addColorStop(0, color1);
+		gradient.addColorStop(1, color2);
 		return gradient;
 	}
 }
