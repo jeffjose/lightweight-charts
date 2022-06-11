@@ -1,6 +1,7 @@
 import { assert } from '../../helpers/assertions';
-import { applyAlpha } from '../../helpers/color';
+import { applyAlpha, getColorString } from '../../helpers/color';
 
+import { Color } from '../../model/layout-options';
 import { Point } from '../../model/point';
 import { Series } from '../../model/series';
 import { LastPriceAnimationMode } from '../../model/series-options';
@@ -97,7 +98,7 @@ function radius(stage: number, startRadius: number, endRadius: number): number {
 	return startRadius + (endRadius - startRadius) * stage;
 }
 
-function animationData(durationSinceStart: number, lineColor: string): AnimationData {
+function animationData(durationSinceStart: number, lineColor: Color): AnimationData {
 	const globalStage = (durationSinceStart % Constants.AnimationPeriod) / Constants.AnimationPeriod;
 
 	let currentStageData: AnimationStageData | undefined;
@@ -113,8 +114,8 @@ function animationData(durationSinceStart: number, lineColor: string): Animation
 
 	const subStage = (globalStage - currentStageData.start) / (currentStageData.end - currentStageData.start);
 	return {
-		fillColor: color(lineColor, subStage, currentStageData.startFillAlpha, currentStageData.endFillAlpha),
-		strokeColor: color(lineColor, subStage, currentStageData.startStrokeAlpha, currentStageData.endStrokeAlpha),
+		fillColor: color(getColorString(lineColor), subStage, currentStageData.startFillAlpha, currentStageData.endFillAlpha),
+		strokeColor: color(getColorString(lineColor), subStage, currentStageData.startStrokeAlpha, currentStageData.endStrokeAlpha),
 		radius: radius(subStage, currentStageData.startRadius, currentStageData.endRadius),
 	};
 }

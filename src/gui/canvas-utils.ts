@@ -2,6 +2,32 @@ import { Binding as CanvasCoordinateSpaceBinding, bindToDevicePixelRatio } from 
 
 import { ensureNotNull } from '../helpers/assertions';
 
+import { Color, ColorType } from '../model/layout-options';
+
+export type CanvasStyle = string | CanvasPattern | CanvasGradient;
+
+export function color2CanvasStyle(color: Color, ctx: CanvasRenderingContext2D): CanvasStyle {
+	if (typeof color === 'string') {
+		return color;
+	}
+	switch (color.type) {
+		case ColorType.Solid:
+			return color.color;
+		case ColorType.VerticalGradient:
+			return fillStyle(ctx, color.topColor, color.bottomColor, 0, 0, 0, 0 + ctx.canvas.height);
+		case ColorType.HorizontalGradient:
+			return fillStyle(ctx, color.leftColor, color.rightColor, 0, 0, 0 + ctx.canvas.width, 0);
+	}
+}
+
+	// eslint-disable-next-line max-params
+function fillStyle(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasStyle {
+	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+	gradient.addColorStop(0, color1);
+	gradient.addColorStop(1, color2);
+	return gradient;
+}
+
 export class Size {
 	public h: number;
 	public w: number;

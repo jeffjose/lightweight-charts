@@ -1,3 +1,5 @@
+import { Color, ColorType } from '../model/layout-options';
+
 import { Nominal } from './nominal';
 
 /**
@@ -336,4 +338,20 @@ export function gradientColorAtPercent(topColor: string, bottomColor: string, pe
 	];
 
 	return `rgba(${resultRgba[0]}, ${resultRgba[1]}, ${resultRgba[2]}, ${resultRgba[3]})`;
+}
+
+export function getColorString(color: Color): string {
+	if (typeof color === 'string') {
+		return color;
+	}
+	switch (color.type) {
+		case ColorType.Solid:
+			return color.color;
+		case ColorType.VerticalGradient:
+			// FIXME: This is fake. Ideally pick a representative color from the gradient
+			return '#FF00FF';
+		case ColorType.HorizontalGradient:
+			// FIXME: This is fake. Ideally pick a representative color from the gradient
+			return '#FF00FF';
+	}
 }

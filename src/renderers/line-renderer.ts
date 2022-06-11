@@ -1,3 +1,6 @@
+import { color2CanvasStyle } from '../gui/canvas-utils';
+
+import { Color } from '../model/layout-options';
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
@@ -5,7 +8,7 @@ import { LinePoint, LineStyle, LineType, LineWidth, setLineStyle } from './draw-
 import { ScaledRenderer } from './scaled-renderer';
 import { getControlPoints, walkLine } from './walk-line';
 
-export type LineItem = TimedValue & PricedValue & LinePoint & { color?: string };
+export type LineItem = TimedValue & PricedValue & LinePoint & { color?: Color };
 
 export interface PaneRendererLineDataBase {
 	lineType: LineType;
@@ -48,7 +51,7 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 			ctx.lineTo(point.x + this._data.barWidth / 2, point.y);
 
 			if (point.color !== undefined) {
-				ctx.strokeStyle = point.color;
+				ctx.strokeStyle = color2CanvasStyle(point.color, ctx);
 			}
 
 			ctx.stroke();
@@ -67,7 +70,7 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 }
 
 export interface PaneRendererLineData extends PaneRendererLineDataBase {
-	lineColor: string;
+	lineColor: Color;
 }
 
 export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData> {
@@ -87,12 +90,12 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		ctx.moveTo(firstItem.x, firstItem.y);
 
 		let prevStrokeStyle = firstItem.color ?? lineColor;
-		ctx.strokeStyle = prevStrokeStyle;
+		ctx.strokeStyle = color2CanvasStyle(prevStrokeStyle, ctx);
 
-		const changeColor = (color: string) => {
+		const changeColor = (color: Color) => {
 			ctx.stroke();
 			ctx.beginPath();
-			ctx.strokeStyle = color;
+			ctx.strokeStyle = color2CanvasStyle(color, ctx);
 			prevStrokeStyle = color;
 		};
 
@@ -157,8 +160,8 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		ctx.stroke();
 	}
 
-	protected override _strokeStyle(): CanvasRenderingContext2D['strokeStyle'] {
+	protected _strokeStyle(ctx: CanvasRenderingContext2D): CanvasRenderingContext2D['strokeStyle'] {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return this._data!.lineColor;
+		return color2CanvasStyle(this._data!.lineColor, ctx);
 	}
 }

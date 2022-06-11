@@ -32,6 +32,7 @@ import { Coordinate } from './coordinate';
 import { CustomPriceLine } from './custom-price-line';
 import { isDefaultPriceScale } from './default-price-scale';
 import { FirstValue } from './iprice-data-source';
+import { Color } from './layout-options';
 import { Pane } from './pane';
 import { PlotRowValueIndex } from './plot-data';
 import { MismatchDirection } from './plot-list';
@@ -72,7 +73,7 @@ export interface LastValueDataResultWithData {
 	text: string;
 	formattedPriceAbsolute: string;
 	formattedPricePercentage: string;
-	color: string;
+	color: Color;
 	coordinate: Coordinate;
 	index: TimePointIndex;
 }
@@ -83,14 +84,14 @@ export interface MarkerData {
 	price: BarPrice;
 	radius: number;
 	borderColor: string | null;
-	backgroundColor: string;
+	backgroundColor: Color;
 }
 
 export interface LollipopData {
 	price: BarPrice;
 	radius: number;
 	borderColor: string | null;
-	backgroundColor: string;
+	backgroundColor: Color;
 }
 
 export interface SeriesDataAtTypeMap {
@@ -160,7 +161,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		}
 	}
 
-	public priceLineColor(lastBarColor: string): string {
+	public priceLineColor(lastBarColor: Color): Color {
 		return this._options.priceLineColor || lastBarColor;
 	}
 
@@ -686,7 +687,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return null;
 	}
 
-	private _markerBackgroundColor(index: TimePointIndex): string {
+	private _markerBackgroundColor(index: TimePointIndex): Color {
 		switch (this._seriesType) {
 			case 'Line':
 			case 'Area':

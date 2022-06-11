@@ -1,3 +1,5 @@
+import { color2CanvasStyle } from '../gui/canvas-utils';
+
 import { drawScaled } from '../helpers/canvas-helpers';
 
 import { TextWidthCache } from '../model/text-width-cache';
@@ -116,7 +118,7 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 			ctx.fill();
 
 			// draw border
-			ctx.fillStyle = this._data.borderColor;
+			ctx.fillStyle = color2CanvasStyle(this._data.borderColor, ctx);
 			ctx.fillRect(alignRight ? rightScaled - horzBorderScaled : 0, yTopScaled, horzBorderScaled, yBottomScaled - yTopScaled);
 
 			if (this._data.tickVisible) {

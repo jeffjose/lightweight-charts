@@ -1,5 +1,8 @@
+import { CanvasStyle, color2CanvasStyle } from '../gui/canvas-utils';
+
 import { fillRectInnerBorder } from '../helpers/canvas-helpers';
 
+import { Color } from '../model/layout-options';
 import { SeriesItemsIndexesRange } from '../model/time-data';
 
 import { BarCandlestickItemBase } from './bars-renderer';
@@ -7,7 +10,7 @@ import { IPaneRenderer } from './ipane-renderer';
 import { optimalCandlestickWidth } from './optimal-bar-width';
 
 export interface CandlestickItem extends BarCandlestickItemBase {
-	color: string;
+	color: Color;
 	borderColor: string;
 	wickColor: string;
 }
@@ -169,7 +172,7 @@ export class PaneRendererCandlesticks implements IPaneRenderer {
 			return;
 		}
 
-		let prevBarColor = '';
+		let prevBarColor: CanvasStyle = '';
 
 		const borderWidth = this._calculateBorderWidth(pixelRatio);
 
@@ -182,10 +185,10 @@ export class PaneRendererCandlesticks implements IPaneRenderer {
 			let left = Math.round(bar.x * pixelRatio) - Math.floor(this._barWidth * 0.5);
 			let right = left + this._barWidth - 1;
 
-			if (bar.color !== prevBarColor) {
+			if (color2CanvasStyle(bar.color, ctx) !== prevBarColor) {
 				const barColor = bar.color;
-				ctx.fillStyle = barColor;
-				prevBarColor = barColor;
+				ctx.fillStyle = color2CanvasStyle(barColor, ctx);
+				prevBarColor = color2CanvasStyle(barColor, ctx);
 			}
 
 			if (this._data.borderVisible) {

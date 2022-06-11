@@ -1,6 +1,9 @@
+import { CanvasStyle, color2CanvasStyle } from '../gui/canvas-utils';
+
 import { ensureNotNull } from '../helpers/assertions';
 
 import { BarCoordinates, BarPrices } from '../model/bar';
+import { Color } from '../model/layout-options';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
 import { IPaneRenderer } from './ipane-renderer';
@@ -9,7 +12,7 @@ import { optimalBarWidth } from './optimal-bar-width';
 export type BarCandlestickItemBase = TimedValue & BarPrices & BarCoordinates;
 
 export interface BarItem extends BarCandlestickItemBase {
-	color: string;
+	color: Color;
 }
 
 export interface PaneRendererBarsData {
@@ -51,14 +54,14 @@ export class PaneRendererBars implements IPaneRenderer {
 
 		// if scale is compressed, bar could become less than 1 CSS pixel
 		this._barLineWidth = this._data.thinBars ? Math.min(this._barWidth, Math.floor(pixelRatio)) : this._barWidth;
-		let prevColor: string | null = null;
+		let prevColor: CanvasStyle = '';
 
 		const drawOpenClose = this._barLineWidth <= this._barWidth && this._data.barSpacing >= Math.floor(1.5 * pixelRatio);
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; ++i) {
 			const bar = this._data.bars[i];
 			if (prevColor !== bar.color) {
-				ctx.fillStyle = bar.color;
-				prevColor = bar.color;
+				ctx.fillStyle = color2CanvasStyle(bar.color, ctx);
+				prevColor = color2CanvasStyle(bar.color, ctx);
 			}
 
 			const bodyWidthHalf = Math.floor(this._barLineWidth * 0.5);

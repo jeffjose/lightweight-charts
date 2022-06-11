@@ -1,3 +1,4 @@
+
 import { BarPrice } from '../../model/bar';
 import { ChartModel } from '../../model/chart-model';
 import { Series } from '../../model/series';
