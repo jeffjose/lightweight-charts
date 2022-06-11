@@ -270,7 +270,8 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	 * });
 	 * ```
 	 */
-	createPriceLine(options: PriceLineOptions): IPriceLine; /**
+	createPriceLine(options: PriceLineOptions): IPriceLine;
+	/**
 	 * Creates a new price channel
 	 *
 	 * @param options - Any subset of options.

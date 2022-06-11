@@ -6,10 +6,7 @@ function generateLineData() {
 	const res = [];
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 500; ++i) {
-		res.push({
-			time: time.toISOString().slice(0, 10),
-			value: i,
-		});
+		res.push({ time: time.toISOString().slice(0, 10), value: i });
 
 		time.setUTCDate(time.getUTCDate() + 1);
 	}
@@ -26,8 +23,8 @@ function generateBars(count = 500, startDay = 15) {
 		res.push({
 			time: time.getTime() / 1000,
 			open: base * (1 - step),
-			high: base * (1 + 2 * step),
-			low: base * (1 - 2 * step),
+			high: base * (1 + (2 * step)),
+			low: base * (1 - (2 * step)),
 			close: base * (1 + step),
 		});
 
@@ -38,51 +35,45 @@ function generateBars(count = 500, startDay = 15) {
 }
 
 function generateHistogramData() {
-	const colors = [
-		'#013370',
-		'#3a9656',
-		undefined,
-	];
+	const colors = ['#013370', '#3a9656', undefined];
 
-	return generateLineData().map((item, index) => ({
-		...item,
-		color: colors[index % colors.length],
-	}));
+	return generateLineData().map(
+		(item, index) => ({ ...item, color: colors[index % colors.length] })
+	);
 }
 
 // eslint-disable-next-line no-unused-vars
 function runTestCase(container) {
-	const chart = LightweightCharts.createChart(container, {
-		leftPriceScale: {
-			visible: true,
-			mode: LightweightCharts.PriceScaleMode.Logarithmic,
-		},
-		rightPriceScale: {
-			visible: true,
-			mode: LightweightCharts.PriceScaleMode.Percentage,
-		},
-		timeScale: {
-			timeVisible: true,
-		},
-		watermark: {
-			visible: true,
-			color: 'red',
-			text: 'Watermark',
-			fontSize: 24,
-			fontFamily: 'Roboto',
-			fontStyle: 'italic',
-		},
-		kineticScroll: {
-			mouse: true,
-		},
-		layout: {
-			background: {
-				type: LightweightCharts.ColorType.VerticalGradient,
-				topColor: '#FFFFFF',
-				bottomColor: '#AAFFAA',
+	const chart = LightweightCharts.createChart(
+		container,
+		{
+			leftPriceScale: {
+				visible: true,
+				mode: LightweightCharts.PriceScaleMode.Logarithmic,
 			},
-		},
-	});
+			rightPriceScale: {
+				visible: true,
+				mode: LightweightCharts.PriceScaleMode.Percentage,
+			},
+			timeScale: { timeVisible: true },
+			watermark: {
+				visible: true,
+				color: 'red',
+				text: 'Watermark',
+				fontSize: 24,
+				fontFamily: 'Roboto',
+				fontStyle: 'italic',
+			},
+			kineticScroll: { mouse: true },
+			layout: {
+				background: {
+					type: LightweightCharts.ColorType.VerticalGradient,
+					topColor: '#FFFFFF',
+					bottomColor: '#AAFFAA',
+				},
+			},
+		}
+	);
 
 	const data = generateLineData();
 	const areaSeries = chart.addAreaSeries({
@@ -96,9 +87,7 @@ function runTestCase(container) {
 
 	const seriesToRemove = chart.addAreaSeries({
 		priceScaleId: 'overlay-id',
-		priceFormat: {
-			type: 'volume',
-		},
+		priceFormat: { type: 'volume' },
 		lastPriceAnimation: LightweightCharts.LastPriceAnimationMode.Continuous,
 	});
 	seriesToRemove.setData(generateLineData());
@@ -108,9 +97,7 @@ function runTestCase(container) {
 
 	const barSeries = chart.addBarSeries({
 		title: 'Initial title',
-		priceFormat: {
-			type: 'percent',
-		},
+		priceFormat: { type: 'percent' },
 	});
 	barSeries.setData(generateBars());
 	barSeries.applyOptions({ priceScaleId: 'left' });
@@ -125,9 +112,7 @@ function runTestCase(container) {
 	const lineSeries = chart.addLineSeries({
 		lineWidth: 1,
 		color: '#ff0000',
-		priceFormat: {
-			type: 'volume',
-		},
+		priceFormat: { type: 'volume' },
 		lastPriceAnimation: LightweightCharts.LastPriceAnimationMode.OnDataUpdate,
 	});
 
@@ -171,86 +156,199 @@ function runTestCase(container) {
 		lineStyle: LightweightCharts.LineStyle.SparseDotted,
 	});
 
+	const draggablePriceLine1 = areaSeries.createPriceLine({
+		price: 50,
+		color: '#f0f',
+		lineWidth: 4,
+		lineStyle: LightweightCharts.LineStyle.SparseDotted,
+		draggable: true,
+	});
+
+	lineSeries.createPriceChannel({
+		price1: {
+			price: 50,
+			color: '#f0f',
+			lineWidth: 4,
+			lineStyle: LightweightCharts.LineStyle.SparseDotted,
+			draggable: true,
+		},
+		price2: {
+			price: 100,
+			color: '#f0f',
+			lineWidth: 1,
+			lineStyle: LightweightCharts.LineStyle.Solid,
+		},
+		visible: true,
+	});
+
+	// lineSeries.removePriceChannel(priceChannel1);
+
 	areaSeries.setMarkers([
-		{ time: data[data.length - 7].time, position: 'belowBar', color: 'rgb(255, 0, 0)', shape: 'arrowUp', text: 'test' },
-		{ time: data[data.length - 5].time, position: 'aboveBar', color: 'rgba(255, 255, 0, 1)', shape: 'arrowDown', text: 'test' },
-		{ time: data[data.length - 3].time, position: 'inBar', color: '#f0f', shape: 'circle', text: 'test' },
-		{ time: data[data.length - 1].time, position: 'belowBar', color: '#fff00a', shape: 'square', text: 'test', size: 2 },
+		{
+			time: data[data.length - 7].time,
+			position: 'belowBar',
+			color: 'rgb(255, 0, 0)',
+			shape: 'arrowUp',
+			text: 'test',
+		},
+		{
+			time: data[data.length - 5].time,
+			position: 'aboveBar',
+			color: 'rgba(255, 255, 0, 1)',
+			shape: 'arrowDown',
+			text: 'test',
+		},
+		{
+			time: data[data.length - 3].time,
+			position: 'inBar',
+			color: '#f0f',
+			shape: 'circle',
+			text: 'test',
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'square',
+			text: 'test',
+			size: 2,
+		},
+	]);
+
+	areaSeries.setLollipops([
+		{
+			time: data[data.length - 7].time,
+			position: 'top',
+			color: 'rgb(255, 0, 0)',
+			shape: 'circle',
+			text: 'test',
+		},
+		{
+			time: data[data.length - 5].time,
+			position: 'bottom',
+			color: 'rgba(255, 255, 0, 1)',
+			shape: 'circle',
+			text: 'test',
+		},
+		{
+			time: data[data.length - 3].time,
+			position: 'top',
+			color: '#f0f',
+			shape: 'circle',
+			text: 'test',
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'bottom',
+			color: '#fff00a',
+			shape: 'square',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'bottom',
+			color: '#fff00a',
+			shape: 'fingerpost',
+			text: 'test',
+			size: 1,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'top',
+			color: '#fff00a',
+			shape: 'square',
+			text: 'test',
+			size: 1,
+		},
 	]);
 
 	// apply overlay price scales while create series
 	// time formatter
 
-	chart.timeScale().fitContent();
+	chart
+		.timeScale()
+		.fitContent();
 
 	chart.timeScale().subscribeVisibleTimeRangeChange(console.log);
 	chart.timeScale().subscribeVisibleLogicalRangeChange(console.log);
 	chart.subscribeCrosshairMove(console.log);
 	chart.subscribeClick(console.log);
 
-	return new Promise(resolve => {
-		setTimeout(() => {
-			chart.timeScale().scrollToRealTime();
+	return new Promise(
+		resolve => {
+			setTimeout(
+				() => {
+					chart.timeScale().scrollToRealTime();
 
-			chart.priceScale('overlay-id').applyOptions({});
+					chart.priceScale('overlay-id').applyOptions({});
 
-			chart.removeSeries(seriesToRemove);
-			areaSeries.removePriceLine(priceLineToRemove);
+					chart.removeSeries(seriesToRemove);
+					areaSeries.removePriceLine(priceLineToRemove);
 
-			chart.takeScreenshot();
+					chart.takeScreenshot();
 
-			chart.resize(700, 700);
+					chart.resize(700, 700);
 
-			chart.applyOptions({
-				leftPriceScale: {
-					mode: LightweightCharts.PriceScaleMode.IndexedTo100,
+					chart.applyOptions({
+						leftPriceScale: {
+							mode: LightweightCharts.PriceScaleMode.IndexedTo100,
+						},
+						rightPriceScale: {
+							mode: LightweightCharts.PriceScaleMode.Normal,
+							invertScale: true,
+							alignLabels: false,
+						},
+						localization: { dateFormat: 'yyyy MM dd' },
+					});
+
+					chart.priceScale('left').width();
+
+					// move series to left price scale
+					lineSeries.applyOptions({ priceScaleId: 'left' });
+
+					// set new series data
+					const newData = generateBars(520, 1);
+					barSeries.setData(newData);
+					barSeries.update({
+						...newData[newData.length - 1],
+						close: newData[newData.length - 1].close - 10,
+					});
+					barSeries.update({
+						...newData[newData.length - 1],
+						time: newData[newData.length - 1].time + 3600,
+					});
+
+					chart.timeScale().getVisibleRange();
+					chart.timeScale().setVisibleRange({
+						from: newData[0].time,
+						to: newData[newData.length - 1].time,
+					});
+
+					barSeries.barsInLogicalRange(
+						chart.timeScale().getVisibleLogicalRange()
+					);
+					chart.timeScale().applyOptions({ fixLeftEdge: true });
+
+					priceLine1.applyOptions({});
+					draggablePriceLine1.applyOptions({});
+
+					setTimeout(
+						() => {
+							chart.timeScale().unsubscribeVisibleTimeRangeChange(console.log);
+							chart.timeScale().unsubscribeVisibleLogicalRangeChange(
+								console.log
+							);
+							chart.unsubscribeCrosshairMove(console.log);
+							chart.unsubscribeClick(console.log);
+
+							resolve(() => chart.remove());
+						},
+						500
+					);
 				},
-				rightPriceScale: {
-					mode: LightweightCharts.PriceScaleMode.Normal,
-					invertScale: true,
-					alignLabels: false,
-				},
-				localization: {
-					dateFormat: 'yyyy MM dd',
-				},
-			});
-
-			chart.priceScale('left').width();
-
-			// move series to left price scale
-			lineSeries.applyOptions({ priceScaleId: 'left' });
-
-			// set new series data
-			const newData = generateBars(520, 1);
-			barSeries.setData(newData);
-			barSeries.update({
-				...newData[newData.length - 1],
-				close: newData[newData.length - 1].close - 10,
-			});
-			barSeries.update({
-				...newData[newData.length - 1],
-				time: newData[newData.length - 1].time + 3600,
-			});
-
-			chart.timeScale().getVisibleRange();
-			chart.timeScale().setVisibleRange({
-				from: newData[0].time,
-				to: newData[newData.length - 1].time,
-			});
-
-			barSeries.barsInLogicalRange(chart.timeScale().getVisibleLogicalRange());
-			chart.timeScale().applyOptions({ fixLeftEdge: true });
-
-			priceLine1.applyOptions({});
-
-			setTimeout(() => {
-				chart.timeScale().unsubscribeVisibleTimeRangeChange(console.log);
-				chart.timeScale().unsubscribeVisibleLogicalRangeChange(console.log);
-				chart.unsubscribeCrosshairMove(console.log);
-				chart.unsubscribeClick(console.log);
-
-				resolve(() => chart.remove());
-			}, 500);
-		}, 500);
-	});
+				500
+			);
+		}
+	);
 }

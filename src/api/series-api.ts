@@ -6,6 +6,7 @@ import { clone, merge } from '../helpers/strict-type-checks';
 import { BarPrice } from '../model/bar';
 import { Coordinate } from '../model/coordinate';
 import { MismatchDirection } from '../model/plot-list';
+import { PriceChannel } from '../model/price-channel';
 import { PriceChannelOptions } from '../model/price-channel-options';
 import { PriceLineOptions } from '../model/price-line-options';
 import { RangeImpl } from '../model/range-impl';
@@ -203,6 +204,10 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 		return new PriceLine(priceLine);
 	}
 
+	public removePriceLine(line: IPriceLine): void {
+		this._series.removePriceLine((line as PriceLine).priceLine());
+	}
+
 	public createPriceChannel(options: PriceChannelOptions): IPriceChannel {
 		checkPriceChannelOptions(options);
 
@@ -210,8 +215,8 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 		return this._series.createPriceChannel(strictOptions);
 	}
 
-	public removePriceLine(line: IPriceLine): void {
-		this._series.removePriceLine((line as PriceLine).priceLine());
+	public removePriceChannel(channel: IPriceChannel): void {
+		this._series.removePriceChannel((channel as PriceChannel).priceChannel());
 	}
 
 	public seriesType(): TSeriesType {
