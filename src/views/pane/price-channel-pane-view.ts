@@ -87,10 +87,8 @@ export class PriceChannelPaneView implements IPaneView {
 		this._priceChannel.priceLine2().update();
 
 		const channelOptions = this._priceChannel.options();
-		const line1Options = this._priceChannel.price1Options();
-		const line2Options = this._priceChannel.price2Options();
 
-		if (!this._series.visible() || (!line1Options.lineVisible && !line2Options.lineVisible)) {
+		if (!this._series.visible()) {
 			return;
 		}
 

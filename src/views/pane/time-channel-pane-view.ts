@@ -87,10 +87,8 @@ export class TimeChannelPaneView implements IPaneView {
 		this._timeChannel.timeLine2().update();
 
 		const channelOptions = this._timeChannel.options();
-		const line1Options = this._timeChannel.time1Options();
-		const line2Options = this._timeChannel.time2Options();
 
-		if (!this._series.visible() || (!line1Options.lineVisible && !line2Options.lineVisible)) {
+		if (!this._series.visible()) {
 			return;
 		}
 

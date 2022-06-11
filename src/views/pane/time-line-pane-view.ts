@@ -21,7 +21,7 @@ export class TimeLinePaneView extends SeriesVerticalLinePaneView {
 
 		const lineOptions = this._timeLine.options();
 
-		if (!this._series.visible() || !lineOptions.lineVisible) {
+		if (!this._series.visible()) {
 			return;
 		}
 
@@ -29,8 +29,7 @@ export class TimeLinePaneView extends SeriesVerticalLinePaneView {
 		if (x === null) {
 			return;
 		}
-
-		data.visible = true;
+		data.visible = lineOptions.lineVisible;
 		data.x = x;
 		data.color = lineOptions.color;
 		data.width = width;

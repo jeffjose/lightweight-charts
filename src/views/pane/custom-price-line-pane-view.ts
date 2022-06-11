@@ -21,7 +21,7 @@ export class CustomPriceLinePaneView extends SeriesHorizontalLinePaneView {
 
 		const lineOptions = this._priceLine.options();
 
-		if (!this._series.visible() || !lineOptions.lineVisible) {
+		if (!this._series.visible()) {
 			return;
 		}
 
@@ -30,7 +30,7 @@ export class CustomPriceLinePaneView extends SeriesHorizontalLinePaneView {
 			return;
 		}
 
-		data.visible = true;
+		data.visible = lineOptions.lineVisible;
 		data.y = y;
 		data.color = lineOptions.color;
 		data.width = width;
