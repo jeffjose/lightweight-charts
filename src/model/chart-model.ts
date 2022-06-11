@@ -1036,6 +1036,10 @@ export class ChartModel implements IDestroyable {
 	private _getBackgroundColor(side: BackgroundColorSide): string {
 		const layoutOptions = this._options.layout;
 
+		if (typeof layoutOptions.background === 'string') {
+			return layoutOptions.background;
+		}
+
 		switch (layoutOptions.background.type) {
 			case ColorType.Solid:
 				return layoutOptions.background.color;
