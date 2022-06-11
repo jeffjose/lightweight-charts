@@ -1,3 +1,5 @@
+import { convertTime } from '../api/data-layer';
+
 import { merge } from '../helpers/strict-type-checks';
 
 import { IPaneView } from '../views/pane/ipane-view';
@@ -6,6 +8,7 @@ import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 import { TimeLinePriceAxisView } from '../views/price-axis/time-line-price-axis-view';
 
+import { UTCTimestamp } from '../../src/model/time-data';
 import { Coordinate } from './coordinate';
 import { Series } from './series';
 import { TimeLineOptions } from './time-line-options';
@@ -57,7 +60,7 @@ export class TimeLine {
 		this._priceAxisView.update();
 	}
 
-	public yCoord(): Coordinate | null {
+	public xCoord(): Coordinate | null {
 		const series = this._series;
 		const priceScale = series.priceScale();
 		const timeScale = series.model().timeScale();
@@ -66,11 +69,10 @@ export class TimeLine {
 			return null;
 		}
 
-		const firstValue = series.firstValue();
-		if (firstValue === null) {
+		const timePointIndex = timeScale.timeToIndex(convertTime(this._options.time as UTCTimestamp), false);
+		if (timePointIndex === null) {
 			return null;
 		}
-
-		return priceScale.priceToCoordinate(this._options.time, firstValue.value);
+		return timeScale.indexToCoordinate(timePointIndex);
 	}
 }

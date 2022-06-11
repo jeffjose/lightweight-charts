@@ -25,17 +25,17 @@ export class TimeLinePaneView extends SeriesVerticalLinePaneView {
 			return;
 		}
 
-		const y = this._timeLine.yCoord();
-		if (y === null) {
+		const x = this._timeLine.xCoord();
+		if (x === null) {
 			return;
 		}
 
-		// data.visible = true;
-		// data.y = y;
-		// data.color = lineOptions.color;
-		// data.width = width;
-		// data.height = height;
-		// data.lineWidth = lineOptions.lineWidth;
-		// data.lineStyle = lineOptions.lineStyle;
+		data.visible = true;
+		data.x = x;
+		data.color = lineOptions.color;
+		data.width = width;
+		data.height = height;
+		data.lineWidth = lineOptions.lineWidth;
+		data.lineStyle = lineOptions.lineStyle;
 	}
 }

@@ -15,7 +15,7 @@ export class TimeChannelPaneView implements IPaneView {
 		time1: {
 			width: 0,
 			height: 0,
-			y: 0 as Coordinate,
+			x: 0 as Coordinate,
 			color: 'rgba(0, 0, 0, 0)',
 			lineWidth: 1,
 			lineStyle: LineStyle.Solid,
@@ -24,7 +24,7 @@ export class TimeChannelPaneView implements IPaneView {
 		time2: {
 			width: 0,
 			height: 0,
-			y: 0 as Coordinate,
+			x: 0 as Coordinate,
 			color: 'rgba(0, 0, 0, 0)',
 			lineWidth: 1,
 			lineStyle: LineStyle.Solid,
@@ -100,15 +100,15 @@ export class TimeChannelPaneView implements IPaneView {
 		data.time1 = line1PaneView.rendererOptions();
 		data.time2 = line2PaneView.rendererOptions();
 
-		data.topLeftX = 0 as Coordinate;
+		data.topLeftY = 0 as Coordinate;
 
-		// TODO: Assuming that time1.y < time2.y
-		// Ideally we want something like data.topLeftY = Math.min([data.time1.y, data.time2.y]);
-		data.topLeftY = data.time1.y;
+		// TODO: Assuming that time1.x < time2.x
+		// Ideally we want something like data.topLeftX = Math.min([data.time1.x, data.time2.x]);
+		data.topLeftX = data.time1.x;
 
 		// We can use either time1 or time2 here
-		data.width = data.time1.width;
-		data.height = Math.abs(data.time2.y - data.time1.y);
+		data.height = data.time1.height;
+		data.width = Math.abs(data.time2.x - data.time1.x);
 		data.background = channelOptions.background;
 		data.visible = true;
 	}

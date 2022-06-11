@@ -11,7 +11,7 @@ export abstract class SeriesVerticalLinePaneView implements IPaneView {
 	protected readonly _lineRendererData: VerticalLineRendererData = {
 		width: 0,
 		height: 0,
-		y: 0 as Coordinate,
+		x: 0 as Coordinate,
 		color: 'rgba(0, 0, 0, 0)',
 		lineWidth: 1,
 		lineStyle: LineStyle.Solid,

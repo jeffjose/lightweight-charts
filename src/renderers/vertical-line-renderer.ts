@@ -1,6 +1,6 @@
 import { Coordinate } from '../model/coordinate';
 
-import { drawHorizontalLine, LineStyle, LineWidth, setLineStyle } from './draw-line';
+import { drawVerticalLine, LineStyle, LineWidth, setLineStyle } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
 
 export interface VerticalLineRendererData {
@@ -9,7 +9,7 @@ export interface VerticalLineRendererData {
 	lineStyle: LineStyle;
 	lineWidth: LineWidth;
 
-	y: Coordinate;
+	x: Coordinate;
 	visible?: boolean;
 	width: number;
 }
@@ -30,20 +30,20 @@ export class VerticalLineRenderer implements IPaneRenderer {
 			return;
 		}
 
-		const y = Math.round(this._data.y * pixelRatio);
+		const x = Math.round(this._data.x * pixelRatio);
 
-		if (y < 0 || y > Math.ceil(this._data.height * pixelRatio)) {
-			return;
-		}
+		// if (y < 0 || y > Math.ceil(this._data.height * pixelRatio)) {
+		// 	return;
+		// }
 
-		const width = Math.ceil(this._data.width * pixelRatio);
+		const height = Math.ceil(this._data.height * pixelRatio);
 		ctx.lineCap = 'butt';
 		ctx.strokeStyle = this._data.color;
 		ctx.lineWidth = Math.floor(this._data.lineWidth * pixelRatio);
 		setLineStyle(ctx, this._data.lineStyle);
 
 		// TODO: jeffjose Update
-		drawHorizontalLine(ctx, y, 0, width);
-		// drawVerticalLine(ctx, y, 0, width);
+		// drawHorizontalLine(ctx, y, 0, width);
+		drawVerticalLine(ctx, x, 0, height);
 	}
 }

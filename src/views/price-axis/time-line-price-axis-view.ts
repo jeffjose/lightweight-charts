@@ -24,6 +24,7 @@ export class TimeLinePriceAxisView extends PriceAxisView {
 		paneRendererData: PriceAxisViewRendererData,
 		commonData: PriceAxisViewRendererCommonData
 	): void {
+		// console.log(`time-line-price-axis-view: updateRendererData()`, axisRendererData, paneRendererData, commonData);
 		axisRendererData.visible = false;
 		paneRendererData.visible = false;
 
@@ -37,17 +38,17 @@ export class TimeLinePriceAxisView extends PriceAxisView {
 			return;
 		}
 
-		const y = this._timeLine.yCoord();
-		if (y === null) {
-			return;
-		}
+		// const y = this._timeLine.yCoord();
+		// if (y === null) {
+		// 	return;
+		// }
 
 		if (showPaneLabel) {
 			paneRendererData.text = options.title;
 			paneRendererData.visible = true;
 		}
 
-		paneRendererData.borderColor = series.model().backgroundColorAtYPercentFromTop(y / series.priceScale().height());
+		// paneRendererData.borderColor = series.model().backgroundColorAtYPercentFromTop(y / series.priceScale().height());
 
 		axisRendererData.text = this._formatPrice(options.time);
 		axisRendererData.visible = true;
@@ -55,7 +56,7 @@ export class TimeLinePriceAxisView extends PriceAxisView {
 		const colors = generateContrastColors(options.color);
 		commonData.background = colors.background;
 		commonData.color = colors.foreground;
-		commonData.coordinate = y;
+		// commonData.coordinate = y;
 	}
 
 	private _formatPrice(price: number): string {
