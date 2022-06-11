@@ -271,13 +271,26 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	 * ```
 	 */
 	createPriceLine(options: PriceLineOptions): IPriceLine;
+
+	/**
+	 * Removes the price line that was created before.
+	 *
+	 * @param line - A line to remove.
+	 * @example
+	 * ```js
+	 * const priceLine = series.createPriceLine({ price: 80.0 });
+	 * series.removePriceLine(priceLine);
+	 * ```
+	 */
+	removePriceLine(line: IPriceLine): void;
+
 	/**
 	 * Creates a new price channel
 	 *
 	 * @param options - Any subset of options.
 	 * @example
 	 * ```js
-	 * const priceLine = series.createPriceChannel({
+	 * const priceChannel = series.createPriceChannel({
 	 *     price1: {
 	 *         price: 80.0,
 	 *         color: 'green',
@@ -301,16 +314,16 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	createPriceChannel(options: PriceChannelOptions): IPriceChannel;
 
 	/**
-	 * Removes the price line that was created before.
+	 * Removes the price channel that was created before.
 	 *
-	 * @param line - A line to remove.
+	 * @param channel - A channel to remove.
 	 * @example
 	 * ```js
-	 * const priceLine = series.createPriceLine({ price: 80.0 });
-	 * series.removePriceLine(priceLine);
+	 * const priceChannel = series.createPriceChannel({ price1:{price:80.0},price2:{price:100.0} });
+	 * series.removePriceChannel(priceLine);
 	 * ```
 	 */
-	removePriceLine(line: IPriceLine): void;
+	removePriceChannel(channel: IPriceChannel): void;
 
 	/**
 	 * Return current series type.
