@@ -2,7 +2,7 @@
  * Default font family.
  * Must be used to generate font string when font is not specified.
  */
-export const defaultFontFamily = `'Trebuchet MS', Roboto, Ubuntu, sans-serif`;
+export const defaultFontFamily = `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`;
 
 /**
  * Generates a font string, which can be used to set in canvas' font property.
