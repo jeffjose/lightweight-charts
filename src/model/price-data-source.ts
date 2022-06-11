@@ -4,6 +4,7 @@ import { AutoscaleInfoImpl } from './autoscale-info-impl';
 import { ChartModel } from './chart-model';
 import { DataSource } from './data-source';
 import { FirstValue, IPriceDataSource } from './iprice-data-source';
+import { Color } from './layout-options';
 import { TimePointIndex } from './time-data';
 
 export abstract class PriceDataSource extends DataSource implements IPriceDataSource {
@@ -24,5 +25,5 @@ export abstract class PriceDataSource extends DataSource implements IPriceDataSo
 
 	public abstract firstValue(): FirstValue | null;
 	public abstract formatter(): IPriceFormatter;
-	public abstract priceLineColor(lastBarColor: string): string;
+	public abstract priceLineColor(lastBarColor: Color): Color;
 }

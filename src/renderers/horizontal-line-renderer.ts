@@ -1,10 +1,13 @@
+import { color2CanvasStyle } from '../gui/canvas-utils';
+
 import { Coordinate } from '../model/coordinate';
+import { Color } from '../model/layout-options';
 
 import { drawHorizontalLine, LineStyle, LineWidth, setLineStyle } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
 
 export interface HorizontalLineRendererData {
-	color: string;
+	color: Color;
 	height: number;
 	lineStyle: LineStyle;
 	lineWidth: LineWidth;
@@ -38,7 +41,7 @@ export class HorizontalLineRenderer implements IPaneRenderer {
 
 		const width = Math.ceil(this._data.width * pixelRatio);
 		ctx.lineCap = 'butt';
-		ctx.strokeStyle = this._data.color;
+		ctx.strokeStyle = color2CanvasStyle(this._data.color, ctx);
 		ctx.lineWidth = Math.floor(this._data.lineWidth * pixelRatio);
 		setLineStyle(ctx, this._data.lineStyle);
 		drawHorizontalLine(ctx, y, 0, width);

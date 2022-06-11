@@ -1,4 +1,6 @@
 
+import { CanvasStyle } from '../gui/canvas-utils';
+
 import { Coordinate } from '../model/coordinate';
 import { Color, ColorType } from '../model/layout-options';
 
@@ -54,7 +56,7 @@ export class PriceChannelRenderer implements IPaneRenderer {
 		ctx.fillStyle = this._getStyleFromColor(ctx, this._data.background, topLeftX, topLeftY, width, height);
 		ctx.fillRect(topLeftX, topLeftY, width, height);
 	}
-	private _getStyleFromColor(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+	private _getStyleFromColor(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasStyle {
 		if (typeof bg === 'string') {
 			return bg;
 		}
@@ -69,7 +71,7 @@ export class PriceChannelRenderer implements IPaneRenderer {
 	}
 
 	// eslint-disable-next-line max-params
-	private _fillStyle(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['fillStyle'] {
+	private _fillStyle(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasStyle {
 		const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
 		gradient.addColorStop(0, color1);
 		gradient.addColorStop(1, color2);

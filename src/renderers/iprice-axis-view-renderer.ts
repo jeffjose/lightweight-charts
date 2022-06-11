@@ -1,3 +1,4 @@
+import { Color } from '../model/layout-options';
 import { TextWidthCache } from '../model/text-width-cache';
 import { LineWidth } from '../renderers/draw-line';
 
@@ -14,7 +15,7 @@ export interface PriceAxisViewRendererData{
 	moveTextToInvisibleTick: boolean;
 	tickVisible: boolean;
 	visible: boolean;
-	borderColor: string;
+	borderColor: Color;
 	lineWidth?: LineWidth;
 }
 
