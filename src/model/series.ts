@@ -54,6 +54,7 @@ import {
 	SeriesPartialOptionsMap,
 	SeriesType,
 } from './series-options';
+import { TimeChannelOptions } from './time-channel-options';
 import { TimePoint, TimePointIndex } from './time-data';
 
 export interface LastValueDataResultWithoutData {
@@ -114,6 +115,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private readonly _priceLineView: SeriesPriceLinePaneView = new SeriesPriceLinePaneView(this);
 	private readonly _customPriceLines: CustomPriceLine[] = [];
 	private readonly _priceChannels: PriceChannel[] = [];
+	private readonly _timeChannels: TimeChannel[] = [];
 	private readonly _baseHorizontalLineView: SeriesHorizontalBaseLinePaneView = new SeriesHorizontalBaseLinePaneView(this);
 	private _paneView!: IUpdatablePaneView;
 	private readonly _lastPriceAnimationPaneView: SeriesLastPriceAnimationPaneView | null = null;
@@ -363,6 +365,29 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return ([] as CustomPriceLine[]).concat(...this._priceChannels.map((channel: PriceChannel) => channel.priceLines()));
 	}
 
+	public createTimeChannel(options: TimeChannelOptions): TimeChannel {
+		const result = new TimeChannel(this, options);
+		this._timeChannels.push(result);
+		this.model().updateSource(this);
+		return result;
+	}
+
+	public removeTimeChannel(channel: TimeChannel): void {
+		const index = this._timeChannels.indexOf(channel);
+		if (index !== -1) {
+			this._timeChannels.splice(index, 1);
+		}
+		this.model().updateSource(this);
+	}
+
+	public timeChannels(): TimeChannel[] {
+		return this._timeChannels;
+	}
+
+	public timeChannelsTimeLines(): TimeLine[] {
+		return ([] as TimeLine[]).concat(...this._timeChannels.map((channel: TimeChannel) => channel.timeLines()));
+	}
+
 	public seriesType(): T {
 		return this._seriesType;
 	}
@@ -450,6 +475,9 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const priceChannels = this._priceChannels.map((line: PriceChannel) => line.paneView());
 		res.push(...priceChannels);
 
+		const timeChannels = this._timeChannels.map((line: TimeChannel) => line.paneView());
+		res.push(...timeChannels);
+
 		return res;
 	}
 
@@ -460,6 +488,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		];
 
 		for (const priceChannel of this._priceChannels) {
+			result.push(...priceChannel.labelPaneView());
+		}
+
+		for (const timeChannel of this._timeChannels) {
 			result.push(...priceChannel.labelPaneView());
 		}
 
@@ -477,6 +509,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 		for (const priceChannel of this._priceChannels) {
 			result.push(...priceChannel.priceAxisView());
+		}
+
+		for (const timeChannel of this._timeChannels) {
+			result.push(...timeChannel.priceAxisView());
 		}
 		return result;
 	}
@@ -516,6 +552,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 		for (const priceChannel of this._priceChannels) {
 			priceChannel.update();
+		}
+
+		for (const timeChannel of this._timeChannels) {
+			timeChannel.update();
 		}
 
 		this._priceLineView.update();

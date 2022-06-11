@@ -18,6 +18,7 @@ import {
 	SeriesPartialOptionsMap,
 	SeriesType,
 } from '../model/series-options';
+import { TimeChannelOptions } from '../model/time-channel-options';
 import { Logical, OriginalTime, Range, Time, TimePoint, TimePointIndex } from '../model/time-data';
 import { TimeScaleVisibleRange } from '../model/time-scale-visible-range';
 
@@ -30,8 +31,10 @@ import { IPriceChannel } from './iprice-channel';
 import { IPriceLine } from './iprice-line';
 import { IPriceScaleApi } from './iprice-scale-api';
 import { BarsInfo, ISeriesApi } from './iseries-api';
+import { ITimeChannel } from './itime-channel';
 import { priceChannelOptionsDefaults } from './options/price-channel-options-defaults';
 import { priceLineOptionsDefaults } from './options/price-line-options-defaults';
+import { timeChannelOptionsDefaults } from './options/time-channel-options-defaults';
 import { PriceLine } from './price-line-api';
 
 export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSeriesType> {
@@ -217,6 +220,17 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 
 	public removePriceChannel(channel: IPriceChannel): void {
 		this._series.removePriceChannel((channel as PriceChannel).priceChannel());
+	}
+
+	public createTimeChannel(options: TimeChannelOptions): ITimeChannel {
+		checkTimeChannelOptions(options);
+
+		const strictOptions = merge(clone(timeChannelOptionsDefaults), options) as TimeChannelOptions;
+		return this._series.createTimeChannel(strictOptions);
+	}
+
+	public removeTimeChannel(channel: ITimeChannel): void {
+		this._series.removeTimeChannel((channel as TimeChannel).timeChannel());
 	}
 
 	public seriesType(): TSeriesType {
