@@ -12,12 +12,14 @@ import {
 	SeriesPartialOptionsMap,
 	SeriesType,
 } from '../model/series-options';
+import { TimeChannelOptions } from '../model/time-channel-options';
 import { Range, Time } from '../model/time-data';
 
 import { SeriesDataItemTypeMap } from './data-consumer';
 import { IPriceChannel } from './iprice-channel';
 import { IPriceLine } from './iprice-line';
 import { IPriceScaleApi } from './iprice-scale-api';
+import { ITimeChannel } from './itime-channel';
 
 /**
  * Represents a range of bars and the number of bars outside the range.
@@ -324,6 +326,47 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	 * ```
 	 */
 	removePriceChannel(channel: IPriceChannel): void;
+
+	/**
+	 * Creates a new time channel
+	 *
+	 * @param options - Any subset of options.
+	 * @example
+	 * ```js
+	 * const timeChannel = series.createTimeChannel({
+	 *     time1: {
+	 *         time: 123456,
+	 *         color: 'green',
+	 *         lineWidth: 2,
+	 *         lineStyle: LightweightCharts.LineStyle.Dotted,
+	 *         axisLabelVisible: true,
+	 *         title: 'P/L 700',
+	 *     },
+	 *     time2: {
+	 *         time: 123490,
+	 *         color: 'green',
+	 *         lineWidth: 2,
+	 *         lineStyle: LightweightCharts.LineStyle.Dotted,
+	 *         axisLabelVisible: true,
+	 *         title: 'P/L 100',
+	 *     },
+	 *     visible: true,
+	 * });
+	 * ```
+	 */
+	createTimeChannel(options: TimeChannelOptions): ITimeChannel;
+
+	/**
+	 * Removes the time channel that was created before.
+	 *
+	 * @param channel - A channel to remove.
+	 * @example
+	 * ```js
+	 * const timeChannel = series.createTimeChannel({ time1:{time:80.0},time2:{time2:100.0} });
+	 * series.removePriceChannel(priceLine);
+	 * ```
+	 */
+	removeTimeChannel(channel: ITimeChannel): void;
 
 	/**
 	 * Return current series type.
