@@ -254,9 +254,7 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	/**
 	 * Returns an array of series markers.
 	 */
-	lollipops(): SeriesLollipop<Time>[];
-
-	/**
+	lollipops(): SeriesLollipop<Time>[];/**
 	 * Creates a new price line
 	 *
 	 * @param options - Any subset of options.
@@ -272,24 +270,30 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	 * });
 	 * ```
 	 */
-	createPriceLine(options: PriceLineOptions): IPriceLine;/**
+	createPriceLine(options: PriceLineOptions): IPriceLine; /**
 	 * Creates a new price channel
 	 *
 	 * @param options - Any subset of options.
 	 * @example
 	 * ```js
 	 * const priceLine = series.createPriceChannel({
-	 *     price1: 80.0,
-	 *     price2: 100.0,
-	 *     color: 'green',
-	 *     fillColor1: 'rgba(38, 166, 154, 1)',
-	 *     fillColor2: 'rgba(239, 83, 80, 0.05)',
-	 *     lineWidth: 2,
-	 *     lineStyle: LightweightCharts.LineStyle.Dotted,
-	 *     axisLabel1Visible: true,
-	 *     axisLabel2Visible: true,
-	 *     title1: 'P/L 700',
-	 *     title2: 'P/L 500',
+	 *     price1: {
+	 *         price: 80.0,
+	 *         color: 'green',
+	 *         lineWidth: 2,
+	 *         lineStyle: LightweightCharts.LineStyle.Dotted,
+	 *         axisLabelVisible: true,
+	 *         title: 'P/L 700',
+	 *     },
+	 *     price2: {
+	 *         price: 100.0,
+	 *         color: 'green',
+	 *         lineWidth: 2,
+	 *         lineStyle: LightweightCharts.LineStyle.Dotted,
+	 *         axisLabelVisible: true,
+	 *         title: 'P/L 100',
+	 *     },
+	 *     visible: true,
 	 * });
 	 * ```
 	 */
