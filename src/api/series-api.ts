@@ -18,6 +18,7 @@ import {
 	SeriesPartialOptionsMap,
 	SeriesType,
 } from '../model/series-options';
+import { TimeChannel } from '../model/time-channel';
 import { TimeChannelOptions } from '../model/time-channel-options';
 import { Logical, OriginalTime, Range, Time, TimePoint, TimePointIndex } from '../model/time-data';
 import { TimeScaleVisibleRange } from '../model/time-scale-visible-range';
@@ -230,7 +231,7 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 	}
 
 	public removeTimeChannel(channel: ITimeChannel): void {
-		this._series.removeTimeChannel((channel as TimeChannel).timeChannel());
+		this._series.removeTimeChannel((channel as TimeChannel));
 	}
 
 	public seriesType(): TSeriesType {
