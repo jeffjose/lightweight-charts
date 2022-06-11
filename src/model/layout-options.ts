@@ -5,7 +5,10 @@ export const enum ColorType {
 	/** Solid color */
 	Solid = 'solid',
 	/** Vertical gradient color */
-	VerticalGradient = 'gradient',
+	VerticalGradient = 'vertical-gradient',
+
+	/** Horizontal gradient color */
+	HorizontalGradient = 'horizontal-gradient',
 }
 
 /**
@@ -44,9 +47,29 @@ export interface VerticalGradientColor {
 }
 
 /**
+ * Represents a horizontal gradient of two colors.
+ */
+export interface HorizontalGradientColor {
+	/**
+	 * Type of color.
+	 */
+	type: ColorType.HorizontalGradient;
+
+	/**
+	 * Left color
+	 */
+	leftColor: string;
+
+	/**
+	 * Bottom color
+	 */
+	rightColor: string;
+}
+
+/**
  * Represents the background color of the chart.
  */
-export type Background = SolidColor | VerticalGradientColor;
+export type Background = SolidColor | VerticalGradientColor | HorizontalGradientColor;
 
 /** Represents layout options */
 export interface LayoutOptions {

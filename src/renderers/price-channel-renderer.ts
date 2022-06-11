@@ -51,15 +51,17 @@ export class PriceChannelRenderer implements IPaneRenderer {
 		const height = Math.ceil(this._data.height * pixelRatio);
 
 		// Fill gradient from top to bottom
-		ctx.fillStyle = this._getColor(ctx, this._data.background, topLeftX, topLeftY, topLeftX, topLeftY + height);
+		ctx.fillStyle = this._getColor(ctx, this._data.background, topLeftX, topLeftY, width, height);
 		ctx.fillRect(topLeftX, topLeftY, width, height);
 	}
-	private _getColor(ctx: CanvasRenderingContext2D, bg: Background, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['fillStyle'] {
+	private _getColor(ctx: CanvasRenderingContext2D, bg: Background, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
 		switch (bg.type) {
 			case ColorType.Solid:
 				return bg.color;
 			case ColorType.VerticalGradient:
-				return this._fillStyle(ctx, bg.topColor, bg.bottomColor, x0, y0, x1, y1);
+				return this._fillStyle(ctx, bg.topColor, bg.bottomColor, x0, y0, x0, y0 + height);
+			case ColorType.HorizontalGradient:
+				return this._fillStyle(ctx, bg.leftColor, bg.rightColor, x0, y0, x0 + width, y0);
 		}
 	}
 
