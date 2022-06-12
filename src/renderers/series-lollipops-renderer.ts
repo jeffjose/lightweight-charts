@@ -135,7 +135,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 
 	switch (item.shape) {
 		case 'circle':
-			drawCircle(ctx, item, pixelRatio, isHovered);
+			drawCircle(ctx, item, isHovered);
 			return;
 		case 'square':
 			drawSquare(ctx, item, isHovered);
@@ -170,7 +170,7 @@ function hitTestShape(item: SeriesLollipopRendererDataItem, x: Coordinate, y: Co
 
 	switch (item.shape) {
 		case 'circle':
-			return hitTestCircle(item, x, y, false);
+			return hitTestCircle(item, x, y);
 		case 'square':
 			return hitTestSquare(item, x, y);
 		case 'fingerpost':

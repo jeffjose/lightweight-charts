@@ -58,10 +58,8 @@ export function getCenterX(item: SeriesLollipopRendererDataItem, pixelRatio: num
 export function getCenterY(item: SeriesLollipopRendererDataItem, height: number, pixelRatio: number, strokeWidth: number): number {
 	const centerTopY = item.y * pixelRatio;
 	const halfHeight = (height - 1) / 2;
-
-	// const halfStroke = strokeWidth / 2;
-
-	// return centerTopY + halfHeight + halfStroke;
+	// This needs to be strokeWidth and not strokeWidth / 2
+	// My theory is because of odd numbered size. A simple strokeWidth /2 will miss that 1 pixel
 	return centerTopY + halfHeight + strokeWidth;
 }
 
@@ -77,7 +75,8 @@ export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: nu
 // eslint-disable-next-line max-params
 export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, origShapeWidth: number, origShapeHeight: number, scaledShapeWidth: number, scaledShapeHeight: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void, pixelRatio: number): void {
 	console.log('-------');
-	console.log(`Shape size: ${origShapeWidth} ${origShapeHeight}. strokeWidth: ${strokeWidth}, scaleMultiplier: ${scaleMultiplier} pixelRatio: ${pixelRatio}`);
+	console.log(`Orig shape size: ${origShapeWidth} ${origShapeHeight}. strokeWidth: ${strokeWidth}, scaleMultiplier: ${scaleMultiplier} pixelRatio: ${pixelRatio}`);
+	console.log(`Scaled shape size: ${scaledShapeWidth} ${scaledShapeHeight}`);
 	const origShapeHalfWidth = ((origShapeWidth + 2 * strokeWidth) - 1) / 2;
 	const origShapeHalfHeight = ((origShapeHeight + 2 * strokeWidth) - 1) / 2;
 
@@ -99,11 +98,9 @@ export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: numbe
 	ctx.translate(-origShapeHalfWidth, -origShapeHalfHeight);
 
 	// Step 3: Position coordinate for drawing
-	// console.log(`moving back to draw starting @ ${origShapeHalfWidth * scaleMultiplier - scaledShapeHalfWidth}, ${origShapeHalfHeight * scaleMultiplier - scaledShapeHalfHeight}`);
+	// console.log(`moving back to draw starting @ ${Math.ceil(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier)}, ${Math.ceil(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier)}`);
 	console.log(`moving back to draw starting @ ${(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier)}, ${(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier)}`);
-	// ctx.translate(-4.5, -4.5);
-	// ctx.translate(-origShapeHalfWidth, -origShapeHalfWidth);
-	// ctx.translate(origShapeHalfWidth * scaleMultiplier - scaledShapeHalfWidth, origShapeHalfHeight * scaleMultiplier - scaledShapeHalfHeight);
+	// ctx.translate(Math.ceil(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier), Math.ceil(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier));
 	ctx.translate((pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier), (pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier));
 	// Original
 	// ctx.translate(-scaledShapeHalfWidth, -scaledShapeHalfHeight);

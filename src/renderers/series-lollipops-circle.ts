@@ -4,8 +4,6 @@ import { Coordinate } from '../model/coordinate';
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { getCenterX, getCenterY, outlineScale, scaledDraw, shapeSize } from './series-lollipops-utils';
-import { SeriesMarkerRendererDataItem } from './series-markers-renderer';
-import { resetScale } from './series-markers-utils';
 
 const CIRCLE_W = 23;
 const HALFSIZE = (CIRCLE_W - 1) / 2;
@@ -13,12 +11,12 @@ const HALFSIZE = (CIRCLE_W - 1) / 2;
 export function drawCircle(
 	ctx: CanvasRenderingContext2D,
 	item: SeriesLollipopRendererDataItem,
-	pixelRatio: number,
 	isHovered: boolean
 ): void {
+	const pixelRatio = item.pixelRatio;
 	let circleSize = shapeSize('circle', item.size);
-	circleSize = 73;
-	const circleOutlineScale = outlineScale('circle');
+	circleSize = 13;
+	const circleOutlineScale = circleSize * outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
 	const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
 
@@ -39,36 +37,32 @@ export function drawCircle(
 		verticalLineTopY = circleSize + strokeWidth;
 		verticalLineBottomY = item.paneHeight;
 	} 	else {
-		// textCenterY = centerY + HALFSIZE + 2;
+		// TODO: fix this
+		textCenterY = centerY + HALFSIZE + 2;
 
-		// verticalLineTopY = 0;
-		// verticalLineBottomY = item.paneHeight - HALFSIZE - strokeWidth;
+		verticalLineTopY = 0;
+		verticalLineBottomY = item.paneHeight - HALFSIZE - strokeWidth;
 	}
 
 	ctx.lineCap = 'round';
 	ctx.lineJoin = 'round';
 	ctx.lineWidth = strokeWidth;
 
-	ctx.strokeStyle = item.color;
+	ctx.strokeStyle = item.fillColor;
 	ctx.fillStyle = item.fillColor;
-	console.log(scaleOutlineMultipler);
-	// scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath);
+	console.log(scaleOutlineMultipler, circleOutlineScale, circleSize);
+	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
+	scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath, pixelRatio);
 
 	// Main / Visible object
+
+	ctx.strokeStyle = item.color;
+	ctx.fillStyle = item.fillColor;
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
+	console.log(scaleMultipler);
 	scaledDraw(ctx, scaleMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleSize, circleSize, strokeWidth, drawCirclePath, pixelRatio);
-
-	ctx.restore();
-
-	return;
-
-	ctx.translate(centerX - HALFSIZE, centerY);
-	drawCirclePath(ctx);
-
-	resetScale(ctx);
-	ctx.restore();
 
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
@@ -81,7 +75,9 @@ export function drawCircle(
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(item.text, item.centerX, textCenterY);
+	console.log(textCenterY);
+	// ctx.fillText(item.text, item.centerX, textCenterY);
+	ctx.restore();
 }
 
 function drawCirclePath(ctx: CanvasRenderingContext2D): void {
@@ -101,17 +97,28 @@ function drawCirclePath(ctx: CanvasRenderingContext2D): void {
 }
 
 export function hitTestCircle(
-	item: SeriesMarkerRendererDataItem | SeriesLollipopRendererDataItem,
+	item: SeriesLollipopRendererDataItem,
 	x: Coordinate,
-	y: Coordinate,
-	spotlight: boolean
+	y: Coordinate
 ): boolean {
-	const centerX = item.x;
-	const centerY = item.y;
+	const pixelRatio = item.pixelRatio;
+	const strokeWidth = 2;
+	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	// If we're in spotlight, use the bigger circle for hittest
-	const circleSize = shapeSize('circle', item.size);
-	const tolerance = 2 + circleSize / 2;
+	let circleSize = shapeSize('circle', item.size);
+	circleSize = 73;
+	const circleSizeNonPixelRatio = circleSize / pixelRatio;
+
+	// We need to scale everything by pixelRatio because of the quirkiness
+	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down
+	const centerX = item.x;
+	const centerY = item.y + (circleSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
+
+	// Radius
+	const tolerance = (circleSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
+	console.log(`center: ${centerX}, ${centerY}`);
+	console.log(`circleSize: ${circleSize}`);
+	console.log(`tolerance/radius: ${tolerance}`);
 
 	const xOffset = centerX - x;
 	const yOffset = centerY - y;
@@ -119,4 +126,11 @@ export function hitTestCircle(
 	const dist = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
 
 	return dist <= tolerance;
+
+	// const halfSize = (squareSize - 1) / 2;
+	// const left = item.x - halfSize;
+	// const top = getTopLeftY(item, squareSize) - 1; // 1 is a magic number comes from `getTopLeftY`
+
+	// return x >= left && x <= left + squareSize &&
+	// 	y * item.pixelRatio >= top && y * item.pixelRatio <= top + squareSize;
 }
