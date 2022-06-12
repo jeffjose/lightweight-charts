@@ -19,6 +19,7 @@ export function drawArrow(
 	const centerY = item.y;
 
 	const arrowSize = shapeSize('arrowUp', item.size);
+	console.log(`x: arrowSize: ${arrowSize}`);
 
 	const scaleMultipler = arrowSize / ARROWSIZE_W;
 	ctx.save();

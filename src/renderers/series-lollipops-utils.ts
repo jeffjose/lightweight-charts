@@ -77,11 +77,11 @@ export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: numbe
 	console.log('-------');
 	console.log(`Orig shape size: ${origShapeWidth} ${origShapeHeight}. strokeWidth: ${strokeWidth}, scaleMultiplier: ${scaleMultiplier} pixelRatio: ${pixelRatio}`);
 	console.log(`Scaled shape size: ${scaledShapeWidth} ${scaledShapeHeight}`);
-	const origShapeHalfWidth = ((origShapeWidth + 2 * strokeWidth) - 1) / 2;
-	const origShapeHalfHeight = ((origShapeHeight + 2 * strokeWidth) - 1) / 2;
+	const origShapeHalfWidth = getHalf(origShapeWidth, strokeWidth);
+	const origShapeHalfHeight = getHalf(origShapeHeight, strokeWidth);
 
-	const scaledShapeHalfWidth = ((scaledShapeWidth + 2 * strokeWidth) - 1) / 2;
-	const scaledShapeHalfHeight = ((scaledShapeHeight + 2 * strokeWidth) - 1) / 2;
+	const scaledShapeHalfWidth = getHalf(scaledShapeWidth, strokeWidth);
+	const scaledShapeHalfHeight = getHalf(scaledShapeHeight, strokeWidth);
 
 	ctx.save();
 	// Step 1: Translate to location
@@ -99,12 +99,15 @@ export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: numbe
 
 	// Step 3: Position coordinate for drawing
 	// console.log(`moving back to draw starting @ ${Math.ceil(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier)}, ${Math.ceil(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier)}`);
-	console.log(`moving back to draw starting @ ${(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier)}, ${(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier)}`);
-	// ctx.translate(Math.ceil(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier), Math.ceil(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier));
-	ctx.translate((pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier), (pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier));
-	// Original
-	// ctx.translate(-scaledShapeHalfWidth, -scaledShapeHalfHeight);
+	const offsetX = pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier;
+	const offsetY = pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier;
+	console.log(`moving back to draw starting @ ${offsetX}, ${offsetY}`);
+	ctx.translate(offsetX, offsetY);
 	drawFn(ctx);
 	ctx.restore();
 	ctx.restore();
+}
+
+function getHalf(dim: number, strokeWidth: number): number {
+	return ((dim + strokeWidth - 1) / 2) + 1;
 }

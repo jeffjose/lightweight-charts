@@ -15,7 +15,9 @@ export function drawCircle(
 ): void {
 	const pixelRatio = item.pixelRatio;
 	let circleSize = shapeSize('circle', item.size);
-	circleSize = 13;
+	console.log(`x: circleSize (before): ${circleSize}`);
+	circleSize = 33;
+	console.log(`x: circleSize (after): ${circleSize}`);
 	const circleOutlineScale = circleSize * outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
 	const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
@@ -106,7 +108,7 @@ export function hitTestCircle(
 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
 	let circleSize = shapeSize('circle', item.size);
-	circleSize = 73;
+	circleSize = 53;
 	const circleSizeNonPixelRatio = circleSize / pixelRatio;
 
 	// We need to scale everything by pixelRatio because of the quirkiness
@@ -116,10 +118,10 @@ export function hitTestCircle(
 
 	// Radius
 	const tolerance = (circleSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
-	console.log(`center: ${centerX}, ${centerY}`);
-	console.log(`circleSize: ${circleSize}`);
-	console.log(`tolerance/radius: ${tolerance}`);
-
+// 	console.log(`center: ${centerX}, ${centerY}`);
+// 	console.log(`circleSize: ${circleSize}`);
+// 	console.log(`tolerance/radius: ${tolerance}`);
+//
 	const xOffset = centerX - x;
 	const yOffset = centerY - y;
 
