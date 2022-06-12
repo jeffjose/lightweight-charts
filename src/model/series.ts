@@ -58,6 +58,7 @@ import { TimeChannel } from './time-channel';
 import { TimeChannelOptions } from './time-channel-options';
 import { TimePoint, TimePointIndex } from './time-data';
 import { TimeLine } from './time-line';
+import { TimeLineOptions } from './time-line-options';
 
 export interface LastValueDataResultWithoutData {
 	noData: true;
@@ -117,6 +118,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private readonly _priceLineView: SeriesPriceLinePaneView = new SeriesPriceLinePaneView(this);
 	private readonly _customPriceLines: CustomPriceLine[] = [];
 	private readonly _priceChannels: PriceChannel[] = [];
+	private readonly _timeLines: TimeLine[] = [];
 	private readonly _timeChannels: TimeChannel[] = [];
 	private readonly _baseHorizontalLineView: SeriesHorizontalBaseLinePaneView = new SeriesHorizontalBaseLinePaneView(this);
 	private _paneView!: IUpdatablePaneView;
@@ -365,6 +367,21 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 	public priceChannelsPriceLines(): CustomPriceLine[] {
 		return ([] as CustomPriceLine[]).concat(...this._priceChannels.map((channel: PriceChannel) => channel.priceLines()));
+	}
+
+	public createTimeLine(options: TimeLineOptions): TimeLine {
+		const result = new TimeLine(this, options);
+		this._timeLines.push(result);
+		this.model().updateSource(this);
+		return result;
+	}
+
+	public removeTimeLine(line: TimeLine): void {
+		const index = this._timeLines.indexOf(line);
+		if (index !== -1) {
+			this._timeLines.splice(index, 1);
+		}
+		this.model().updateSource(this);
 	}
 
 	public createTimeChannel(options: TimeChannelOptions): TimeChannel {

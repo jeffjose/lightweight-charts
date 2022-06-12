@@ -14,12 +14,14 @@ import {
 } from '../model/series-options';
 import { TimeChannelOptions } from '../model/time-channel-options';
 import { Range, Time } from '../model/time-data';
+import { TimeLineOptions } from '../model/time-line-options';
 
 import { SeriesDataItemTypeMap } from './data-consumer';
 import { IPriceChannel } from './iprice-channel';
 import { IPriceLine } from './iprice-line';
 import { IPriceScaleApi } from './iprice-scale-api';
 import { ITimeChannel } from './itime-channel';
+import { ITimeLine } from './itime-line';
 
 /**
  * Represents a range of bars and the number of bars outside the range.
@@ -326,6 +328,36 @@ export interface ISeriesApi<TSeriesType extends SeriesType> {
 	 * ```
 	 */
 	removePriceChannel(channel: IPriceChannel): void;
+
+	 /**
+	 * Creates a new time line
+	 *
+	 * @param options - Any subset of options.
+	 * @example
+	 * ```js
+	 * const timeLine = series.createTimeLine({
+	 *     time: 12345566,
+	 *     color: 'green',
+	 *     lineWidth: 2,
+	 *     lineStyle: LightweightCharts.LineStyle.Dotted,
+	 *     axisLabelVisible: true,
+	 *     title: 'P/L 500',
+	 * });
+	 * ```
+	 */
+	createTimeLine(options: TimeLineOptions): ITimeLine;
+
+	/**
+	 * Removes the time line that was created before.
+	 *
+	 * @param line - A line to remove.
+	 * @example
+	 * ```js
+	 * const timeLine = series.createTimeLine({ time: 1234455 });
+	 * series.removeTimeLine(timeLine);
+	 * ```
+	 */
+	removeTimeLine(line: ITimeLine): void;
 
 	/**
 	 * Creates a new time channel

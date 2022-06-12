@@ -21,21 +21,25 @@ import {
 import { TimeChannel } from '../model/time-channel';
 import { TimeChannelOptions } from '../model/time-channel-options';
 import { Logical, OriginalTime, Range, Time, TimePoint, TimePointIndex } from '../model/time-data';
+import { TimeLine } from '../model/time-line';
+import { TimeLineOptions } from '../model/time-line-options';
 import { TimeScaleVisibleRange } from '../model/time-scale-visible-range';
 
 import { IPriceScaleApiProvider } from './chart-api';
 import { DataUpdatesConsumer, SeriesDataItemTypeMap } from './data-consumer';
 import { convertTime } from './data-layer';
-import { checkItemsAreOrdered, checkPriceChannelOptions, checkPriceLineOptions, checkSeriesValuesType, checkTimeChannelOptions } from './data-validators';
+import { checkItemsAreOrdered, checkPriceChannelOptions, checkPriceLineOptions, checkSeriesValuesType, checkTimeChannelOptions, checkTimeLineOptions } from './data-validators';
 import { getSeriesDataCreator } from './get-series-data-creator';
 import { IPriceChannel } from './iprice-channel';
 import { IPriceLine } from './iprice-line';
 import { IPriceScaleApi } from './iprice-scale-api';
 import { BarsInfo, ISeriesApi } from './iseries-api';
 import { ITimeChannel } from './itime-channel';
+import { ITimeLine } from './itime-line';
 import { priceChannelOptionsDefaults } from './options/price-channel-options-defaults';
 import { priceLineOptionsDefaults } from './options/price-line-options-defaults';
 import { timeChannelOptionsDefaults } from './options/time-channel-options-defaults';
+import { timeLineOptionsDefaults } from './options/time-line-options-defaults';
 import { PriceLine } from './price-line-api';
 
 export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSeriesType> {
@@ -221,6 +225,17 @@ export class SeriesApi<TSeriesType extends SeriesType> implements ISeriesApi<TSe
 
 	public removePriceChannel(channel: IPriceChannel): void {
 		this._series.removePriceChannel((channel as PriceChannel));
+	}
+
+	public createTimeLine(options: TimeLineOptions): ITimeLine {
+		checkTimeLineOptions(options);
+
+		const strictOptions = merge(clone(timeLineOptionsDefaults), options) as TimeLineOptions;
+		return this._series.createTimeLine(strictOptions);
+	}
+
+	public removeTimeLine(line: ITimeLine): void {
+		this._series.removeTimeLine(line as TimeLine);
 	}
 
 	public createTimeChannel(options: TimeChannelOptions): ITimeChannel {

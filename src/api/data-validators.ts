@@ -6,6 +6,7 @@ import { SeriesMarker } from '../model/series-markers';
 import { SeriesType } from '../model/series-options';
 import { TimeChannelOptions } from '../model/time-channel-options';
 import { Time } from '../model/time-data';
+import { TimeLineOptions } from '../model/time-line-options';
 
 import { isFulfilledData, SeriesDataItemTypeMap } from './data-consumer';
 import { convertTime } from './data-layer';
@@ -28,6 +29,15 @@ export function checkPriceChannelOptions(options: PriceChannelOptions): void {
 	assert(typeof options.price1.price === 'number', `the type of 'price' price line's property must be a number, got '${typeof options.price1.price}'`);
 	// eslint-disable-next-line @typescript-eslint/tslint/config
 	assert(typeof options.price2.price === 'number', `the type of 'price' price line's property must be a number, got '${typeof options.price2.price}'`);
+}
+
+export function checkTimeLineOptions(options: TimeLineOptions): void {
+	if (process.env.NODE_ENV === 'production') {
+		return;
+	}
+
+	// eslint-disable-next-line @typescript-eslint/tslint/config
+	assert(typeof options.time === 'number', `the type of 'time' time line's property must be a number, got '${typeof options.time}'`);
 }
 
 export function checkTimeChannelOptions(options: TimeChannelOptions): void {
