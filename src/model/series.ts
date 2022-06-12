@@ -21,7 +21,7 @@ import { SeriesLastPriceAnimationPaneView } from '../views/pane/series-last-pric
 import { SeriesLollipopsPaneView } from '../views/pane/series-lollipops-pane-view';
 import { SeriesMarkersPaneView } from '../views/pane/series-markers-pane-view';
 import { SeriesPriceLinePaneView } from '../views/pane/series-price-line-pane-view';
-import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
+import { SeriesTimeLinePaneView } from '../views/pane/series-time-line-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 import { SeriesPriceAxisView } from '../views/price-axis/series-price-axis-view';
 
@@ -119,7 +119,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private readonly _priceLineView: SeriesPriceLinePaneView = new SeriesPriceLinePaneView(this);
 	private readonly _customPriceLines: CustomPriceLine[] = [];
 	private readonly _priceChannels: PriceChannel[] = [];
-	private readonly _timeLineView: TimeLinePaneView = new TimeLinePaneView(this);
+	private readonly _timeLineView: SeriesTimeLinePaneView = new SeriesTimeLinePaneView(this);
 	private readonly _timeLines: TimeLine[] = [];
 	private readonly _timeChannels: TimeChannel[] = [];
 	private readonly _baseHorizontalLineView: SeriesHorizontalBaseLinePaneView = new SeriesHorizontalBaseLinePaneView(this);
