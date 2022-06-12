@@ -21,6 +21,7 @@ import { SeriesLastPriceAnimationPaneView } from '../views/pane/series-last-pric
 import { SeriesLollipopsPaneView } from '../views/pane/series-lollipops-pane-view';
 import { SeriesMarkersPaneView } from '../views/pane/series-markers-pane-view';
 import { SeriesPriceLinePaneView } from '../views/pane/series-price-line-pane-view';
+import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
 import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 import { SeriesPriceAxisView } from '../views/price-axis/series-price-axis-view';
 
@@ -118,6 +119,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private readonly _priceLineView: SeriesPriceLinePaneView = new SeriesPriceLinePaneView(this);
 	private readonly _customPriceLines: CustomPriceLine[] = [];
 	private readonly _priceChannels: PriceChannel[] = [];
+	private readonly _timeLineView: TimeLinePaneView = new TimeLinePaneView(this);
 	private readonly _timeLines: TimeLine[] = [];
 	private readonly _timeChannels: TimeChannel[] = [];
 	private readonly _baseHorizontalLineView: SeriesHorizontalBaseLinePaneView = new SeriesHorizontalBaseLinePaneView(this);
@@ -361,6 +363,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		this.model().updateSource(this);
 	}
 
+	public timeLines(): TimeLine[] {
+		return this._timeLines;
+	}
+
 	public priceChannels(): PriceChannel[] {
 		return this._priceChannels;
 	}
@@ -484,6 +490,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		res.push(
 			this._paneView,
 			this._priceLineView,
+			this._timeLineView,
 			this._markersPaneView,
 			this._lollipopsPaneView
 		);
@@ -493,6 +500,9 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 		const priceChannels = this._priceChannels.map((line: PriceChannel) => line.paneView());
 		res.push(...priceChannels);
+
+		const timeLineViews = this._timeLines.map((line: TimeLine) => line.paneView());
+		res.push(...timeLineViews);
 
 		const timeChannels = this._timeChannels.map((line: TimeChannel) => line.paneView());
 		res.push(...timeChannels);
@@ -504,6 +514,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const result = [
 			this._panePriceAxisView,
 			...this._customPriceLines.map((line: CustomPriceLine) => line.labelPaneView()),
+			...this._timeLines.map((line: TimeLine) => line.labelPaneView()),
 		];
 
 		for (const priceChannel of this._priceChannels) {
@@ -524,6 +535,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const result = [...this._priceAxisViews];
 		for (const customPriceLine of this._customPriceLines) {
 			result.push(customPriceLine.priceAxisView());
+		}
+
+		for (const timeLine of this._timeLines) {
+			result.push(timeLine.priceAxisView());
 		}
 
 		for (const priceChannel of this._priceChannels) {
@@ -573,11 +588,16 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			priceChannel.update();
 		}
 
+		for (const timeLine of this._timeLines) {
+			timeLine.update();
+		}
+
 		for (const timeChannel of this._timeChannels) {
 			timeChannel.update();
 		}
 
 		this._priceLineView.update();
+		this._timeLineView.update();
 		this._baseHorizontalLineView.update();
 		this._lastPriceAnimationPaneView?.update();
 	}
