@@ -3,7 +3,6 @@ import { ceiledEven, ceiledOdd } from '../helpers/mathex';
 import { SeriesLollipopShape } from '../model/series-lollipops';
 
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { resetScale, setScale } from './series-markers-utils';
 
 const enum Constants {
 	MinShapeSize = 40,
@@ -74,23 +73,35 @@ export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: nu
 }
 
 // eslint-disable-next-line max-params
-export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, shapeWidth: number, shapeHeight: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
-	console.log(`Shape size: ${shapeWidth} ${shapeHeight}`);
-	const shapeHalfWidth = (strokeWidth / 2) + (shapeWidth - 1) / 2;
-	const shapeHalfHeight = (strokeWidth / 2) + (shapeHeight - 1) / 2;
+export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, origShapeWidth: number, origShapeHeight: number, scaledShapeWidth: number, scaledShapeHeight: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
+	console.log('-------');
+	console.log(`Shape size: ${origShapeWidth} ${origShapeHeight}`);
+	const origShapeHalfWidth = (strokeWidth / 2) + (origShapeWidth - 1) / 2;
+	const origShapeHalfHeight = (strokeWidth / 2) + (origShapeHeight - 1) / 2;
+
+	const scaledShapeHalfWidth = (strokeWidth / 2) + (scaledShapeWidth - 1) / 2;
+	const scaledShapeHalfHeight = (strokeWidth / 2) + (scaledShapeHeight - 1) / 2;
 
 	ctx.save();
 	// Step 1: Translate to location
 	console.log(`drawCenter: ${drawCenterX} ${drawCenterY}`);
 	ctx.translate(drawCenterX, drawCenterY);
+	console.log(`go back to local 0,0 : ${-scaledShapeHalfWidth} ${-scaledShapeHalfHeight}`);
 
-	// Step 2: Scale with object halfSize
-	setScale(ctx, scaleMultiplier, shapeHalfWidth, shapeHalfHeight);
+	// Step 2: Scale from object's center (using object's halfSize)
+	console.log(`Scaling based on sizes: ${origShapeHalfWidth}, ${origShapeHalfHeight}`);
+	ctx.save();
+	ctx.translate(origShapeHalfWidth, origShapeHalfHeight);
+	ctx.scale(scaleMultiplier, scaleMultiplier);
+	ctx.translate(-origShapeHalfWidth, -origShapeHalfHeight);
 
 	// Step 3: Position coordinate for drawing
-	console.log(`moving back to ${-shapeHalfWidth}, ${-shapeHalfHeight}`);
-	ctx.translate(-shapeHalfWidth, -shapeHalfHeight);
+	console.log(`moving back to draw starting @ ${-scaledShapeHalfWidth}, ${-scaledShapeHalfHeight}`);
+	// ctx.translate(-4.5, -4.5);
+	ctx.translate(-origShapeHalfWidth, -origShapeHalfWidth);
+	// Original
+	//ctx.translate(-scaledShapeHalfWidth, -scaledShapeHalfHeight);
 	drawFn(ctx);
-	resetScale(ctx);
+	ctx.restore();
 	ctx.restore();
 }

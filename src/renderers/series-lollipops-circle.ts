@@ -17,13 +17,16 @@ export function drawCircle(
 	isHovered: boolean
 ): void {
 	const circleSize = shapeSize('circle', item.size);
+	// circleSize = 53;
 	const circleOutlineScale = outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
 	const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
 
 	const strokeWidth = 2;
 	const centerX = getCenterX(item, pixelRatio, strokeWidth);
-	const centerY = getCenterY(item, CIRCLE_W, pixelRatio, strokeWidth);
+	const centerY = getCenterY(item, circleSize, pixelRatio, strokeWidth);
+
+	console.log(`Draw center: ${centerX}, ${centerY}`);
 
 	ctx.save();
 
@@ -55,7 +58,7 @@ export function drawCircle(
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
-	scaledDraw(ctx, scaleMultipler, centerX, centerY, circleSize, circleSize, strokeWidth, drawCirclePath);
+	scaledDraw(ctx, scaleMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleSize, circleSize, strokeWidth, drawCirclePath);
 
 	ctx.restore();
 
