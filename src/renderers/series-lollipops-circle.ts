@@ -16,8 +16,8 @@ export function drawCircle(
 	pixelRatio: number,
 	isHovered: boolean
 ): void {
-	const circleSize = shapeSize('circle', item.size);
-	// circleSize = 53;
+	let circleSize = shapeSize('circle', item.size);
+	circleSize = 73;
 	const circleOutlineScale = outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
 	const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
@@ -58,7 +58,7 @@ export function drawCircle(
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
-	scaledDraw(ctx, scaleMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleSize, circleSize, strokeWidth, drawCirclePath);
+	scaledDraw(ctx, scaleMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleSize, circleSize, strokeWidth, drawCirclePath, pixelRatio);
 
 	ctx.restore();
 

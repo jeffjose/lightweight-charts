@@ -51,56 +51,62 @@ export function shapeMargin(barSpacing: number): number {
 }
 
 export function getCenterX(item: SeriesLollipopRendererDataItem, pixelRatio: number, strokeWidth: number): number {
-	return (item.x * pixelRatio) + strokeWidth / 2;
+	// return (item.x * pixelRatio) + strokeWidth / 2;
+	return (item.x * pixelRatio);
 }
 
 export function getCenterY(item: SeriesLollipopRendererDataItem, height: number, pixelRatio: number, strokeWidth: number): number {
 	const centerTopY = item.y * pixelRatio;
 	const halfHeight = (height - 1) / 2;
 
-	const halfStroke = strokeWidth / 2;
+	// const halfStroke = strokeWidth / 2;
 
-	return centerTopY + halfHeight + halfStroke;
+	// return centerTopY + halfHeight + halfStroke;
+	return centerTopY + halfHeight + strokeWidth;
 }
 
 export function getTopLeftX(item: SeriesLollipopRendererDataItem, width: number, pixelRatio: number, strokeWidth: number): number {
-	const halfWidth = (width - 1) / 2;
+	const halfWidth = (width + (2 * strokeWidth) - 1) / 2;
 	return getCenterX(item, pixelRatio, strokeWidth) - halfWidth;
 }
 
 export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: number, strokeWidth: number): number {
-	return (item.y * pixelRatio) + (strokeWidth / 2);
+	return (item.y * pixelRatio);
 }
 
 // eslint-disable-next-line max-params
-export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, origShapeWidth: number, origShapeHeight: number, scaledShapeWidth: number, scaledShapeHeight: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
+export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, origShapeWidth: number, origShapeHeight: number, scaledShapeWidth: number, scaledShapeHeight: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void, pixelRatio: number): void {
 	console.log('-------');
-	console.log(`Shape size: ${origShapeWidth} ${origShapeHeight}`);
-	const origShapeHalfWidth = (strokeWidth / 2) + (origShapeWidth - 1) / 2;
-	const origShapeHalfHeight = (strokeWidth / 2) + (origShapeHeight - 1) / 2;
+	console.log(`Shape size: ${origShapeWidth} ${origShapeHeight}. strokeWidth: ${strokeWidth}, scaleMultiplier: ${scaleMultiplier} pixelRatio: ${pixelRatio}`);
+	const origShapeHalfWidth = ((origShapeWidth + 2 * strokeWidth) - 1) / 2;
+	const origShapeHalfHeight = ((origShapeHeight + 2 * strokeWidth) - 1) / 2;
 
-	const scaledShapeHalfWidth = (strokeWidth / 2) + (scaledShapeWidth - 1) / 2;
-	const scaledShapeHalfHeight = (strokeWidth / 2) + (scaledShapeHeight - 1) / 2;
+	const scaledShapeHalfWidth = ((scaledShapeWidth + 2 * strokeWidth) - 1) / 2;
+	const scaledShapeHalfHeight = ((scaledShapeHeight + 2 * strokeWidth) - 1) / 2;
 
 	ctx.save();
 	// Step 1: Translate to location
 	console.log(`drawCenter: ${drawCenterX} ${drawCenterY}`);
 	ctx.translate(drawCenterX, drawCenterY);
-	console.log(`go back to local 0,0 : ${-scaledShapeHalfWidth} ${-scaledShapeHalfHeight}`);
+	console.log(`go back to local 0,0: ${-scaledShapeHalfWidth} ${-scaledShapeHalfHeight}`);
+	ctx.translate(-scaledShapeHalfWidth, -scaledShapeHalfHeight);
 
 	// Step 2: Scale from object's center (using object's halfSize)
-	console.log(`Scaling based on sizes: ${origShapeHalfWidth}, ${origShapeHalfHeight}`);
+	console.log(`Scaling based on half-sizes: ${origShapeHalfWidth}, ${origShapeHalfHeight}`);
 	ctx.save();
 	ctx.translate(origShapeHalfWidth, origShapeHalfHeight);
 	ctx.scale(scaleMultiplier, scaleMultiplier);
 	ctx.translate(-origShapeHalfWidth, -origShapeHalfHeight);
 
 	// Step 3: Position coordinate for drawing
-	console.log(`moving back to draw starting @ ${-scaledShapeHalfWidth}, ${-scaledShapeHalfHeight}`);
+	// console.log(`moving back to draw starting @ ${origShapeHalfWidth * scaleMultiplier - scaledShapeHalfWidth}, ${origShapeHalfHeight * scaleMultiplier - scaledShapeHalfHeight}`);
+	console.log(`moving back to draw starting @ ${(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier)}, ${(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier)}`);
 	// ctx.translate(-4.5, -4.5);
-	ctx.translate(-origShapeHalfWidth, -origShapeHalfWidth);
+	// ctx.translate(-origShapeHalfWidth, -origShapeHalfWidth);
+	// ctx.translate(origShapeHalfWidth * scaleMultiplier - scaledShapeHalfWidth, origShapeHalfHeight * scaleMultiplier - scaledShapeHalfHeight);
+	ctx.translate((pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier), (pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier));
 	// Original
-	//ctx.translate(-scaledShapeHalfWidth, -scaledShapeHalfHeight);
+	// ctx.translate(-scaledShapeHalfWidth, -scaledShapeHalfHeight);
 	drawFn(ctx);
 	ctx.restore();
 	ctx.restore();
