@@ -9,9 +9,9 @@ import { SeriesItemsIndexesRange, TimedValue, TimePoint } from '../model/time-da
 
 import { LineStyle, LineWidth } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
+import { drawCircle, hitTestCircle } from './series-lollipops-circle';
 import { drawFingerpost, hitTestFingerpost } from './series-lollipops-fingerpost';
 import { drawSquare, hitTestSquare } from './series-lollipops-square';
-import { drawCircle, hitTestCircle } from './series-markers-circle';
 
 export interface SeriesLollipopRendererDataItem extends TimedValue {
 	object: SeriesLollipop<TimePoint>;
@@ -135,7 +135,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 
 	switch (item.shape) {
 		case 'circle':
-			drawCircle(ctx, item, false);
+			drawCircle(ctx, item, pixelRatio, isHovered);
 			return;
 		case 'square':
 			drawSquare(ctx, item, isHovered);

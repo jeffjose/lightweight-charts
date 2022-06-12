@@ -26,7 +26,7 @@ function size(barSpacing: number, coeff: number): number {
 export function shapeSize(shape: SeriesLollipopShape, originalSize: number): number {
 	switch (shape) {
 		case 'circle':
-			return size(originalSize, 0.8);
+			return size(originalSize, 0.65);
 		case 'square':
 			return size(originalSize, 0.60);
 		case 'fingerpost':
@@ -37,7 +37,7 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 export function outlineScale(shape: SeriesLollipopShape): ShapeOutlineScaleData {
 	switch (shape) {
 		case 'circle':
-			return { x: 1, y: 1 };
+			return { x: 1.2, y: 1.2 };
 		case 'square':
 			return { x: 1.1, y: 1.1 };
 		case 'fingerpost':
