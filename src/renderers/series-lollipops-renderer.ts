@@ -101,6 +101,9 @@ export class SeriesLollipopsRenderer implements IPaneRenderer {
 			item.paneHeight = Math.ceil(this._paneHeight * pixelRatio);
 			item.centerX = Math.round(item.x * pixelRatio);
 			item.pixelRatio = pixelRatio;
+			if (item.shape == 'circle') {
+				console.log('xx-l', item);
+			}
 			// isHovered is true for every item, so also check against the index
 			drawItem(item, ctx, pixelRatio, isHovered && hitTestData === i);
 		}

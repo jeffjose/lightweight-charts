@@ -52,7 +52,7 @@ export function shapeMargin(barSpacing: number): number {
 
 export function getCenterX(item: SeriesLollipopRendererDataItem, pixelRatio: number, strokeWidth: number): number {
 	// return (item.x * pixelRatio) + strokeWidth / 2;
-	return (item.x * pixelRatio);
+	return Math.round(item.x * pixelRatio);
 }
 
 export function getCenterY(item: SeriesLollipopRendererDataItem, height: number, pixelRatio: number, strokeWidth: number): number {
@@ -99,8 +99,9 @@ export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: numbe
 
 	// Step 3: Position coordinate for drawing
 	// console.log(`moving back to draw starting @ ${Math.ceil(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier)}, ${Math.ceil(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier)}`);
-	const offsetX = pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier;
-	const offsetY = pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier;
+	const offsetX = Math.abs(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier);
+	const offsetY = Math.abs(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier);
+	console.log(` pixelRatio: ${pixelRatio} * (scaledShapeHalfWidth: ${scaledShapeHalfWidth} - origShapeHalfWidth: ${origShapeHalfWidth} ) / scaleMultiplier: ${scaleMultiplier}`);
 	console.log(`moving back to draw starting @ ${offsetX}, ${offsetY}`);
 	ctx.translate(offsetX, offsetY);
 	drawFn(ctx);

@@ -15,8 +15,8 @@ export function drawCircle(
 ): void {
 	const pixelRatio = item.pixelRatio;
 	let circleSize = shapeSize('circle', item.size);
-	console.log(`x: circleSize (before): ${circleSize}`);
-	circleSize = 33;
+	console.log(`x: circleSize (before): ${circleSize} with ${item.size}`);
+	circleSize = 23;
 	console.log(`x: circleSize (after): ${circleSize}`);
 	const circleOutlineScale = circleSize * outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
@@ -27,6 +27,7 @@ export function drawCircle(
 	const centerY = getCenterY(item, circleSize, pixelRatio, strokeWidth);
 
 	console.log(`Draw center: ${centerX}, ${centerY}`);
+	console.log(`item.centerX: ${item.centerX}`);
 
 	ctx.save();
 
