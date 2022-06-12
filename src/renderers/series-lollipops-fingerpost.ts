@@ -74,7 +74,7 @@ export function drawFingerpost(
 		ctx.save();
 		ctx.strokeStyle = item.fillColor;
 		ctx.translate(CENTER_X, CENTER_Y);
-		ctx.scale(1.11, 1.11);
+		ctx.scale(fingerpostOutlineScale.x, fingerpostOutlineScale.y);
 		ctx.translate(-CENTER_X, -CENTER_Y);
 		drawFingerpostDownPath(ctx);
 		ctx.restore();
