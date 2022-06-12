@@ -3,9 +3,9 @@ import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { outlineScale, shapeSize } from './series-lollipops-utils';
+import { getCenterX, getCenterY, outlineScale, scaledDraw, shapeSize } from './series-lollipops-utils';
 import { SeriesMarkerRendererDataItem } from './series-markers-renderer';
-import { resetScale, setScale } from './series-markers-utils';
+import { resetScale } from './series-markers-utils';
 
 const CIRCLE_W = 23;
 const HALFSIZE = (CIRCLE_W - 1) / 2;
@@ -16,52 +16,51 @@ export function drawCircle(
 	pixelRatio: number,
 	isHovered: boolean
 ): void {
-	const centerX = Math.round(item.x * pixelRatio);
-	const centerY = Math.round(item.y * pixelRatio);
-
 	const circleSize = shapeSize('circle', item.size);
 	const circleOutlineScale = outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
-
-	ctx.save();
-	setScale(ctx, scaleMultipler, centerX, centerY);
+	const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
 
 	const strokeWidth = 2;
+	const centerX = getCenterX(item, pixelRatio, strokeWidth);
+	const centerY = getCenterY(item, CIRCLE_W, pixelRatio, strokeWidth);
+
+	ctx.save();
 
 	let textCenterY;
 	let verticalLineTopY;
 	let verticalLineBottomY;
 	if (item.position === 'top') {
-		textCenterY = centerY + HALFSIZE + 2; // 2 is a magic number to position the text in the middle
+		textCenterY = centerY + 2; // 2 is a magic number to position the text in the middle
 
 		verticalLineTopY = circleSize + strokeWidth;
 		verticalLineBottomY = item.paneHeight;
 	} 	else {
-		textCenterY = centerY + HALFSIZE + 2;
+		// textCenterY = centerY + HALFSIZE + 2;
 
-		verticalLineTopY = 0;
-		verticalLineBottomY = item.paneHeight - HALFSIZE - strokeWidth;
+		// verticalLineTopY = 0;
+		// verticalLineBottomY = item.paneHeight - HALFSIZE - strokeWidth;
 	}
 
 	ctx.lineCap = 'round';
 	ctx.lineJoin = 'round';
 	ctx.lineWidth = strokeWidth;
+
 	ctx.strokeStyle = item.color;
 	ctx.fillStyle = item.fillColor;
+	console.log(scaleOutlineMultipler);
+	// scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath);
 
-	ctx.save();
-	ctx.translate(centerX, centerY);
-	ctx.scale(circleOutlineScale.x, circleOutlineScale.y);
-	ctx.translate(-centerX, -centerY);
-	ctx.strokeStyle = item.fillColor;
-	ctx.translate(centerX - HALFSIZE, centerY - 2);
-	drawCirclePath(ctx);
-	ctx.restore();
-
-		// Main / Visible object
+	// Main / Visible object
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
+	scaledDraw(ctx, scaleMultipler, centerX, centerY, circleSize, circleSize, strokeWidth, drawCirclePath);
+
+	ctx.restore();
+
+	return;
+
 	ctx.translate(centerX - HALFSIZE, centerY);
 	drawCirclePath(ctx);
 

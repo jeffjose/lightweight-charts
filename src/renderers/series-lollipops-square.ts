@@ -48,7 +48,7 @@ export function drawSquare(
 	ctx.save();
 	ctx.strokeStyle = item.fillColor;
 	ctx.translate(halfSize, halfSize);
-	ctx.scale(squareOutlineSize.x, squareOutlineSize.y);
+	ctx.scale(squareOutlineSize, squareOutlineSize);
 	ctx.translate(-halfSize, -halfSize);
 	drawSquarePath(ctx);
 	ctx.restore();

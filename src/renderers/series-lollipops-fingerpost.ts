@@ -4,6 +4,7 @@ import { Coordinate } from '../model/coordinate';
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { getStrokeWidth, outlineScale, shapeSize } from './series-lollipops-utils';
+import { resetScale, setScale } from './series-markers-utils';
 
 const CENTER_X = 12;
 const CENTER_Y = 13;
@@ -36,6 +37,9 @@ export function drawFingerpost(
 		centerY = topLeftY + halfSize + 5; // 5 is a magic number to position the text in the middle
 	}
 
+	ctx.save();
+	setScale(ctx, 1.1, centerX, centerY);
+
 	ctx.strokeStyle = item.color;
 	ctx.lineJoin = 'round';
 	ctx.lineWidth = strokeWidth;
@@ -57,7 +61,7 @@ export function drawFingerpost(
 		ctx.save();
 		ctx.strokeStyle = item.fillColor;
 		ctx.translate(CENTER_X, CENTER_Y);
-		ctx.scale(fingerpostOutlineScale.x, fingerpostOutlineScale.y);
+		ctx.scale(fingerpostOutlineScale, fingerpostOutlineScale);
 		ctx.translate(-CENTER_X, -CENTER_Y);
 		drawFingerpostUpPath(ctx);
 		ctx.restore();
@@ -74,7 +78,7 @@ export function drawFingerpost(
 		ctx.save();
 		ctx.strokeStyle = item.fillColor;
 		ctx.translate(CENTER_X, CENTER_Y);
-		ctx.scale(fingerpostOutlineScale.x, fingerpostOutlineScale.y);
+		ctx.scale(fingerpostOutlineScale, fingerpostOutlineScale);
 		ctx.translate(-CENTER_X, -CENTER_Y);
 		drawFingerpostDownPath(ctx);
 		ctx.restore();
@@ -88,6 +92,8 @@ export function drawFingerpost(
 
 	ctx.restore();
 
+	resetScale(ctx);
+	ctx.restore();
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
 		ctx.strokeStyle = item.color;
