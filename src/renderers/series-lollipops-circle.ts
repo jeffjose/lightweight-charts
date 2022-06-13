@@ -3,7 +3,7 @@ import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { getCenterX, getCenterY, scaledDraw, shapeSize } from './series-lollipops-utils';
+import { getPosForPositionBottom, getPosForPositionTop, scaledDraw, shapeSize } from './series-lollipops-utils';
 
 const CIRCLE_W = 23;
 const HALFSIZE = (CIRCLE_W - 1) / 2;
@@ -13,29 +13,41 @@ export function drawCircle(
 	item: SeriesLollipopRendererDataItem,
 	isHovered: boolean
 ): void {
-	const pixelRatio = item.pixelRatio;
+	const top = item.position === 'top';
+	// const pixelRatio = item.pixelRatio;
 	const circleSize = shapeSize('circle', item.size);
+	// circleSize = 73;
 	// const circleOutlineScale = circleSize * outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
 	// const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
 
 	const strokeWidth = 2;
-	const centerX = getCenterX(item, pixelRatio, strokeWidth);
-	const centerY = getCenterY(item, circleSize, pixelRatio, strokeWidth);
 
 	ctx.save();
 
+	let pos;
+	let centerX;
+	let centerY;
 	let textCenterX;
 	let textCenterY;
 	let verticalLineTopY;
 	let verticalLineBottomY;
-	if (item.position === 'top') {
+	if (top) {
+		pos = getPosForPositionTop(item, circleSize, strokeWidth);
+
+		centerX = pos.centerX;
+		centerY = pos.centerY;
+
 		textCenterX = centerX + 1; // 1 is magic number
 		textCenterY = centerY + 2; // 2 is a magic number to position the text in the middle
 
 		verticalLineTopY = circleSize + strokeWidth;
 		verticalLineBottomY = item.paneHeight;
 	} 	else {
+		pos = getPosForPositionBottom(item, circleSize, strokeWidth);
+
+		centerX = pos.centerX;
+		centerY = pos.centerY;
 		// TODO: fix this
 		textCenterX = centerX;
 		textCenterY = centerY + HALFSIZE + 2;
@@ -51,7 +63,7 @@ export function drawCircle(
 	ctx.strokeStyle = item.fillColor;
 	ctx.fillStyle = item.fillColor;
 	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
-	scaledDraw(ctx, scaleMultipler, centerX, circleSize, strokeWidth, drawCirclePath);
+	scaledDraw(ctx, item, scaleMultipler, centerX, centerY, circleSize, strokeWidth, drawCirclePath);
 
 	// Main / Visible object
 
@@ -61,7 +73,8 @@ export function drawCircle(
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
-	scaledDraw(ctx, scaleMultipler, centerX, circleSize, strokeWidth, drawCirclePath);
+	console.log(drawCirclePath);
+	scaledDraw(ctx, item, scaleMultipler, centerX, centerY, circleSize, strokeWidth, drawCirclePath);
 
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
@@ -74,7 +87,7 @@ export function drawCircle(
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	console.log(textCenterY);
+	console.log(textCenterX, textCenterY);
 	ctx.fillText(item.text, textCenterX, textCenterY);
 	ctx.restore();
 }

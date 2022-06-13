@@ -1,5 +1,7 @@
+
 import { ceiledEven, ceiledOdd } from '../helpers/mathex';
 
+import { Coordinate } from '../model/coordinate';
 import { SeriesLollipopShape } from '../model/series-lollipops';
 
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
@@ -56,12 +58,35 @@ export function getCenterX(item: SeriesLollipopRendererDataItem, pixelRatio: num
 	return item.x * pixelRatio;
 }
 
-export function getCenterY(item: SeriesLollipopRendererDataItem, height: number, pixelRatio: number, strokeWidth: number): number {
-	const centerTopY = item.y * pixelRatio;
-	const halfHeight = (height - 1) / 2;
-	// This needs to be strokeWidth and not strokeWidth / 2
-	// My theory is because of odd numbered size. A simple strokeWidth /2 will miss that 1 pixel
-	return centerTopY + halfHeight + strokeWidth;
+export interface LollipopPositionData {
+	centerX: Coordinate;
+	centerY: Coordinate;
+	centerTopY: Coordinate;
+	centerTopX: Coordinate;
+}
+
+export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionData {
+	const centerX = item.x * item.pixelRatio as Coordinate;
+	const centerTopX = centerX;
+
+	const centerTopY = item.y * item.pixelRatio as Coordinate;
+	const halfHeight = (height - 1) / 2 as Coordinate;
+	const centerY = centerTopY + halfHeight + strokeWidth as Coordinate;
+
+	return { centerX, centerY, centerTopY, centerTopX };
+}
+
+export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionData {
+	const topPosData = getPosForPositionTop(item, height, strokeWidth);
+
+	const centerX = topPosData.centerX;
+	const centerTopX = topPosData.centerTopX;
+
+	const centerTopY = (item.paneHeight - height) as Coordinate;
+	const halfHeight = (height - 1) / 2 as Coordinate;
+	const centerY = (item.paneHeight - halfHeight) as Coordinate;
+
+	return { centerX, centerY, centerTopY, centerTopX };
 }
 
 export function getTopLeftX(item: SeriesLollipopRendererDataItem, width: number, pixelRatio: number, strokeWidth: number): number {
@@ -73,14 +98,19 @@ export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: nu
 	return (item.y * pixelRatio);
 }
 
-export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, scaledShapeWidth: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
+export function scaledDraw(ctx: CanvasRenderingContext2D, item: SeriesLollipopRendererDataItem, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, scaledShapeWidth: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
 	ctx.save();
 
 	// Step 1: Adjust a bit
-	ctx.translate(2, 2);
+	if (item.position === 'top') {
+		ctx.translate(2, 2);
+	} else {
+		ctx.translate(2, -3);
+	}
 
 	// Step 2: Translate to topLeftx, topLeftY using scaled size
-	ctx.translate(drawCenterX - ((scaledShapeWidth + strokeWidth - 1) / 2), 0);
+	const halfSize = ((scaledShapeWidth + strokeWidth - 1) / 2);
+	ctx.translate(drawCenterX - halfSize, drawCenterY - halfSize);
 
 	// Step 3: Scale
 	ctx.scale(scaleMultiplier, scaleMultiplier);
