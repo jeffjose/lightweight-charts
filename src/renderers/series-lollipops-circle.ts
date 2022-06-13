@@ -6,7 +6,6 @@ import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { getPosForPositionBottom, getPosForPositionTop, scaledDraw, shapeSize } from './series-lollipops-utils';
 
 const CIRCLE_W = 23;
-const HALFSIZE = (CIRCLE_W - 1) / 2;
 
 export function drawCircle(
 	ctx: CanvasRenderingContext2D,
@@ -49,7 +48,7 @@ export function drawCircle(
 		textCenterY = pos.textCenterY;
 
 		verticalLineTopY = 0;
-		verticalLineBottomY = item.paneHeight - HALFSIZE - strokeWidth;
+		verticalLineBottomY = item.paneHeight - circleSize - strokeWidth;
 	}
 
 	ctx.lineCap = 'round';
