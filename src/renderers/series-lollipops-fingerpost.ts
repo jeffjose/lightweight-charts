@@ -81,34 +81,6 @@ export function drawFingerpost(
 	ctx.restore();
 }
 
-// export function hitTestCircle(
-// 	item: SeriesLollipopRendererDataItem,
-// 	x: Coordinate,
-// 	y: Coordinate
-// ): boolean {
-// 	const pixelRatio = item.pixelRatio;
-// 	const strokeWidth = 2;
-// 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
-//
-// 	const circleSize = shapeSize('circle', item.size);
-// 	const circleSizeNonPixelRatio = circleSize / pixelRatio;
-//
-// 	const pos = item.position === 'top' ? getPosForPositionTop(item, circleSize, strokeWidth) : getPosForPositionBottom(item, circleSize, strokeWidth);
-//
-// 	// We need to scale everything by pixelRatio because of the quirkiness
-// 	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down
-//
-// 	// Radius
-// 	const radius = (circleSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
-//
-// 	const xOffset = (pos.centerX / pixelRatio) - x;
-// 	const yOffset = (pos.centerY / pixelRatio) - y;
-//
-// 	const dist = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
-//
-// 	return dist <= radius;
-// }
-
 function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
 	ctx.beginPath();
 	ctx.moveTo(21.5017, 18.8603);
