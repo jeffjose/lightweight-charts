@@ -12,6 +12,14 @@ const enum Constants {
 	MinShapeMargin = 3,
 	StrokeWidth = 2,
 }
+export interface LollipopPositionRenderDims {
+	centerX: Coordinate;
+	centerY: Coordinate;
+	centerTopY: Coordinate;
+	centerTopX: Coordinate;
+	textCenterX: Coordinate;
+	textCenterY: Coordinate;
+}
 
 export function getStrokeWidth(): number {
 	return Constants.StrokeWidth;
@@ -56,15 +64,6 @@ export function getCenterX(item: SeriesLollipopRendererDataItem, pixelRatio: num
 	// return (item.x * pixelRatio) + strokeWidth / 2;
 	// return Math.round(item.x * pixelRatio);
 	return item.x * pixelRatio;
-}
-
-export interface LollipopPositionRenderDims {
-	centerX: Coordinate;
-	centerY: Coordinate;
-	centerTopY: Coordinate;
-	centerTopX: Coordinate;
-	textCenterX: Coordinate;
-	textCenterY: Coordinate;
 }
 
 export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionRenderDims {
