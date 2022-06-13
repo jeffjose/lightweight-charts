@@ -37,6 +37,7 @@ export function drawCircle(
 		verticalLineBottomY = item.paneHeight;
 	} 	else {
 		// TODO: fix this
+		textCenterX = centerX;
 		textCenterY = centerY + HALFSIZE + 2;
 
 		verticalLineTopY = 0;
@@ -45,15 +46,16 @@ export function drawCircle(
 
 	ctx.lineCap = 'round';
 	ctx.lineJoin = 'round';
-	ctx.lineWidth = strokeWidth;
+	ctx.lineWidth = strokeWidth * 4;
 
 	ctx.strokeStyle = item.fillColor;
 	ctx.fillStyle = item.fillColor;
 	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
-	// scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath2, pixelRatio);
+	scaledDraw(ctx, scaleMultipler, centerX, circleSize, strokeWidth, drawCirclePath);
 
 	// Main / Visible object
 
+	ctx.lineWidth = strokeWidth;
 	ctx.strokeStyle = item.color;
 	ctx.fillStyle = item.fillColor;
 	if (isHovered) {
@@ -73,7 +75,7 @@ export function drawCircle(
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
 	console.log(textCenterY);
-	ctx.fillText(item.text, centerX + 1, textCenterY);
+	ctx.fillText(item.text, textCenterX, textCenterY);
 	ctx.restore();
 }
 
