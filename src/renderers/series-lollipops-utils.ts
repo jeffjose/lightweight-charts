@@ -86,7 +86,7 @@ export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, he
 	const centerX = topPosData.centerX;
 	const centerTopX = topPosData.centerTopX;
 
-	const diffInSides = Math.abs(origHeight - origWidth);
+	const diffInSides = Math.abs(origHeight - origWidth) * item.pixelRatio;
 
 	const centerTopY = (item.paneHeight - height - diffInSides) as Coordinate;
 	const halfHeight = (height - 1) / 2 as Coordinate;
