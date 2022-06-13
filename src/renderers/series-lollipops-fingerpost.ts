@@ -126,7 +126,7 @@ export function hitTestFingerpost(
 	const strokeWidth = 2;
 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	const fingerpostSize = shapeSize('fingerpost', item.size);
+	const fingerpostSize = shapeSize('fingerpost', item.size) * 1.1;
 	const fingerpostSizeNonPixelRatio = fingerpostSize / pixelRatio;
 
 	const pos = item.position === 'top' ? getPosForPositionTop(item, fingerpostSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, fingerpostSize, strokeWidth, WIDTH, WIDTH);

@@ -93,7 +93,7 @@ export function hitTestCircle(
 	const strokeWidth = 2;
 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	const circleSize = shapeSize('circle', item.size);
+	const circleSize = shapeSize('circle', item.size) * 1.1;
 	const circleSizeNonPixelRatio = circleSize / pixelRatio;
 
 	const pos = item.position === 'top' ? getPosForPositionTop(item, circleSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, circleSize, strokeWidth, WIDTH, WIDTH);

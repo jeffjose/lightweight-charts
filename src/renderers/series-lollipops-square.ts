@@ -93,7 +93,7 @@ export function hitTestSquare(
 	const strokeWidth = 2;
 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	const squareSize = shapeSize('square', item.size);
+	const squareSize = shapeSize('square', item.size) * 1.1;
 	const squareSizeNonPixelRatio = squareSize / pixelRatio;
 
 	const pos = item.position === 'top' ? getPosForPositionTop(item, squareSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, squareSize, strokeWidth, WIDTH, WIDTH);
