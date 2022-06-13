@@ -58,7 +58,7 @@ export function getCenterX(item: SeriesLollipopRendererDataItem, pixelRatio: num
 	return item.x * pixelRatio;
 }
 
-export interface LollipopPositionData {
+export interface LollipopPositionRenderDims {
 	centerX: Coordinate;
 	centerY: Coordinate;
 	centerTopY: Coordinate;
@@ -67,7 +67,7 @@ export interface LollipopPositionData {
 	textCenterY: Coordinate;
 }
 
-export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionData {
+export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionRenderDims {
 	const centerX = item.x * item.pixelRatio as Coordinate;
 	const centerTopX = centerX;
 
@@ -81,7 +81,7 @@ export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, heigh
 	return { centerX, centerY, centerTopY, centerTopX, textCenterX, textCenterY };
 }
 
-export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionData {
+export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionRenderDims {
 	const topPosData = getPosForPositionTop(item, height, strokeWidth);
 
 	const centerX = topPosData.centerX;
@@ -106,7 +106,7 @@ export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: nu
 	return (item.y * pixelRatio);
 }
 
-export function scaledDraw(ctx: CanvasRenderingContext2D, item: SeriesLollipopRendererDataItem, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, scaledShapeWidth: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
+export function scaledDraw(ctx: CanvasRenderingContext2D, item: SeriesLollipopRendererDataItem, scaleMultiplier: number, pos: LollipopPositionRenderDims, scaledShapeWidth: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
 	ctx.save();
 
 	// Step 1: Adjust a bit
@@ -118,7 +118,7 @@ export function scaledDraw(ctx: CanvasRenderingContext2D, item: SeriesLollipopRe
 
 	// Step 2: Translate to topLeftx, topLeftY using scaled size
 	const halfSize = ((scaledShapeWidth + strokeWidth - 1) / 2);
-	ctx.translate(drawCenterX - halfSize, drawCenterY - halfSize);
+	ctx.translate(pos.centerX - halfSize, pos.centerY - halfSize);
 
 	// Step 3: Scale
 	ctx.scale(scaleMultiplier, scaleMultiplier);

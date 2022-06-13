@@ -21,31 +21,15 @@ export function drawCircle(
 	ctx.save();
 
 	let pos;
-	let centerX;
-	let centerY;
-	let textCenterX;
-	let textCenterY;
 	let verticalLineTopY;
 	let verticalLineBottomY;
 	if (top) {
 		pos = getPosForPositionTop(item, circleSize, strokeWidth);
 
-		centerX = pos.centerX;
-		centerY = pos.centerY;
-
-		textCenterX = pos.textCenterX;
-		textCenterY = pos.textCenterY;
-
 		verticalLineTopY = circleSize + strokeWidth;
 		verticalLineBottomY = item.paneHeight;
 	} 	else {
 		pos = getPosForPositionBottom(item, circleSize, strokeWidth);
-
-		centerX = pos.centerX;
-		centerY = pos.centerY;
-
-		textCenterX = pos.textCenterX;
-		textCenterY = pos.textCenterY;
 
 		verticalLineTopY = 0;
 		verticalLineBottomY = item.paneHeight - circleSize - strokeWidth;
@@ -58,7 +42,7 @@ export function drawCircle(
 	ctx.strokeStyle = item.fillColor;
 	ctx.fillStyle = item.fillColor;
 	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
-	scaledDraw(ctx, item, scaleMultipler, centerX, centerY, circleSize, strokeWidth, drawCirclePath);
+	scaledDraw(ctx, item, scaleMultipler, pos, circleSize, strokeWidth, drawCirclePath);
 
 	// Main / Visible object
 	ctx.lineWidth = strokeWidth;
@@ -67,7 +51,7 @@ export function drawCircle(
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
-	scaledDraw(ctx, item, scaleMultipler, centerX, centerY, circleSize, strokeWidth, drawCirclePath);
+	scaledDraw(ctx, item, scaleMultipler, pos, circleSize, strokeWidth, drawCirclePath);
 
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
@@ -80,7 +64,7 @@ export function drawCircle(
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(item.text, textCenterX, textCenterY);
+	ctx.fillText(item.text, pos.textCenterX, pos.textCenterY);
 	ctx.restore();
 }
 
