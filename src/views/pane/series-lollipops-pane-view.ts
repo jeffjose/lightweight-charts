@@ -30,7 +30,6 @@ function fillSizeAndY(
 ): void {
 	const sizeMultiplier = isNumber(lollipop.size) ? Math.max(lollipop.size, 0) : 1;
 	const shapeSize = calculateShapeHeight(timeScale.barSpacing()) * sizeMultiplier;
-	console.log(`lollipop pane view = ${shapeSize}`)
 	rendererItem.size = shapeSize;
 }
 

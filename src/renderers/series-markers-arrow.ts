@@ -15,16 +15,13 @@ export function drawArrow(
 	item: SeriesMarkerRendererDataItem | SeriesLollipopRendererDataItem
 
 ): void {
-	console.group();
 	const centerX = item.x;
 	const centerY = item.y;
 
 	const arrowSize = shapeSize('arrowUp', item.size);
-	console.log(`x: arrowSize: ${arrowSize}`);
 
 	const scaleMultipler = arrowSize / ARROWSIZE_W;
 	ctx.save();
-	console.log(`setting scale to ${scaleMultipler} @ ${centerX} ${centerY}`);
 	setScale(ctx, scaleMultipler, centerX, centerY);
 
 	const strokeWidth = 2;
@@ -58,7 +55,6 @@ export function drawArrow(
 
 	resetScale(ctx);
 	ctx.restore();
-	console.groupEnd();
 }
 
 export function hitTestArrow(

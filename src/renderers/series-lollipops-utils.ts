@@ -36,7 +36,8 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 			return size(originalSize, 0.70);
 		case 'square':
 			return size(originalSize, 0.70);
-		case 'fingerpost':
+		case 'fingerpostDown':
+		case 'fingerpostUp':
 			return size(originalSize, 0.70);
 	}
 }
@@ -47,7 +48,8 @@ export function outlineScale(shape: SeriesLollipopShape): number {
 			return 1.2;
 		case 'square':
 			return 1.2;
-		case 'fingerpost':
+		case 'fingerpostDown':
+		case 'fingerpostUp':
 			return 1.2;
 	}
 }
@@ -107,6 +109,7 @@ export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: nu
 	return (item.y * pixelRatio);
 }
 
+// eslint-disable-next-line max-params
 export function scaledDraw(ctx: CanvasRenderingContext2D, item: SeriesLollipopRendererDataItem, scaleMultiplier: number, pos: LollipopPositionRenderDims, scaledShapeWidth: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
 	ctx.save();
 

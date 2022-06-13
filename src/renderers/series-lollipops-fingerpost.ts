@@ -5,16 +5,17 @@ import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { getPosForPositionBottom, getPosForPositionTop, scaledDraw, shapeSize } from './series-lollipops-utils';
 
-const WIDTH = 23; // picking the longest edge (width is only 23)
-const HEIGHT = 27;
+const WIDTH = 23;
+const HEIGHT = 24;
 
 export function drawFingerpost(
 	ctx: CanvasRenderingContext2D,
 	item: SeriesLollipopRendererDataItem,
-	isHovered: boolean
+	isHovered: boolean,
+	up: boolean
 ): void {
 	const top = item.position === 'top';
-	const fingerpostSize = shapeSize('fingerpost', item.size);
+	const fingerpostSize = shapeSize('fingerpostUp', item.size);
 	const scaleMultipler = fingerpostSize / WIDTH;
 
 	const strokeWidth = 2;
@@ -42,11 +43,14 @@ export function drawFingerpost(
 
 	ctx.strokeStyle = item.fillColor;
 	ctx.fillStyle = item.fillColor;
+
+	const drawFn = item.shape === 'fingerpostUp' ? drawFingerpostUpPath : drawFingerpostDownPath;
+
 	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
 	if (item.position === 'top') {
-		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostDownPath);
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFn);
 	} else {
-		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostUpPath);
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFn);
 	}
 
 	// Main / Visible object
@@ -57,9 +61,9 @@ export function drawFingerpost(
 		ctx.fillStyle = item.hoverColor;
 	}
 	if (item.position === 'top') {
-		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostDownPath);
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFn);
 	} else {
-		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostUpPath);
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFn);
 	}
 
 	if (item.lineVisible || isHovered) {
@@ -83,17 +87,17 @@ export function drawFingerpost(
 
 function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
 	ctx.beginPath();
-	ctx.moveTo(21.5017, 18.8603);
-	ctx.lineTo(13.0017, 25.2464);
-	ctx.bezierCurveTo(12.1121, 25.9147, 10.8879, 25.9147, 9.99833, 25.2464);
-	ctx.lineTo(1.49833, 18.8603);
-	ctx.bezierCurveTo(0.869799, 18.3881, 0.500001, 17.6477, 0.500001, 16.8616);
-	ctx.lineTo(0.500002, 3);
-	ctx.bezierCurveTo(0.500002, 1.61929, 1.61929, 0.499996, 3, 0.499996);
-	ctx.lineTo(20, 0.499998);
-	ctx.bezierCurveTo(21.3807, 0.499998, 22.5, 1.61929, 22.5, 3);
-	ctx.lineTo(22.5, 16.8616);
-	ctx.bezierCurveTo(22.5, 17.6477, 22.1302, 18.3881, 21.5017, 18.8603);
+	ctx.moveTo(21.3884, 16.795);
+	ctx.lineTo(12.8884, 22.4715);
+	ctx.bezierCurveTo(12.0479, 23.0328, 10.9521, 23.0328, 10.1116, 22.4715);
+	ctx.lineTo(1.61158, 16.795);
+	ctx.bezierCurveTo(0.917046, 16.3312, 0.499999, 15.5512, 0.499999, 14.716);
+	ctx.lineTo(0.5, 3);
+	ctx.bezierCurveTo(0.5, 1.61929, 1.61929, 0.5, 3, 0.5);
+	ctx.lineTo(20, 0.500002);
+	ctx.bezierCurveTo(21.3807, 0.500002, 22.5, 1.61929, 22.5, 3);
+	ctx.lineTo(22.5, 14.716);
+	ctx.bezierCurveTo(22.5, 15.5512, 22.083, 16.3312, 21.3884, 16.795);
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
@@ -101,17 +105,17 @@ function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
 
 function drawFingerpostUpPath(ctx: CanvasRenderingContext2D): void {
 	ctx.beginPath();
-	ctx.moveTo(1.49833, 8.13969);
-	ctx.lineTo(9.99833, 1.7536);
-	ctx.bezierCurveTo(10.8879, 1.08527, 12.1121, 1.08527, 13.0017, 1.7536);
-	ctx.lineTo(21.5017, 8.13969);
-	ctx.bezierCurveTo(22.1302, 8.61191, 22.5, 9.35228, 22.5, 10.1384);
-	ctx.lineTo(22.5, 24);
-	ctx.bezierCurveTo(22.5, 25.3807, 21.3807, 26.5, 20, 26.5);
-	ctx.lineTo(3, 26.5);
-	ctx.bezierCurveTo(1.61929, 26.5, 0.5, 25.3807, 0.5, 24);
-	ctx.lineTo(0.5, 10.1384);
-	ctx.bezierCurveTo(0.5, 9.35228, 0.869798, 8.61191, 1.49833, 8.13969);
+	ctx.moveTo(1.61158, 7.20499);
+	ctx.lineTo(10.1116, 1.52847);
+	ctx.bezierCurveTo(10.9521, 0.967153, 12.0479, 0.967153, 12.8884, 1.52847);
+	ctx.lineTo(21.3884, 7.20499);
+	ctx.bezierCurveTo(22.083, 7.66882, 22.5, 8.44883, 22.5, 9.284);
+	ctx.lineTo(22.5, 21);
+	ctx.bezierCurveTo(22.5, 22.3807, 21.3807, 23.5, 20, 23.5);
+	ctx.lineTo(3, 23.5);
+	ctx.bezierCurveTo(1.61929, 23.5, 0.5, 22.3807, 0.5, 21);
+	ctx.lineTo(0.5, 9.284);
+	ctx.bezierCurveTo(0.5, 8.44883, 0.917048, 7.66882, 1.61158, 7.20499);
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
@@ -126,7 +130,7 @@ export function hitTestFingerpost(
 	const strokeWidth = 2;
 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	const fingerpostSize = shapeSize('fingerpost', item.size) * 1.1;
+	const fingerpostSize = shapeSize('fingerpostUp', item.size) * 1.1;
 	const fingerpostSizeNonPixelRatio = fingerpostSize / pixelRatio;
 
 	const pos = item.position === 'top' ? getPosForPositionTop(item, fingerpostSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, fingerpostSize, strokeWidth, WIDTH, WIDTH);

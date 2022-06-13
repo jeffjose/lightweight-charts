@@ -24,7 +24,6 @@ export class TimeLinePriceAxisView extends PriceAxisView {
 		paneRendererData: PriceAxisViewRendererData,
 		commonData: PriceAxisViewRendererCommonData
 	): void {
-		// console.log(`time-line-price-axis-view: updateRendererData()`, axisRendererData, paneRendererData, commonData);
 		axisRendererData.visible = false;
 		paneRendererData.visible = false;
 

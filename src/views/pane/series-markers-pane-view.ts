@@ -51,7 +51,6 @@ function fillSizeAndY(
 	const sizeMultiplier = isNumber(marker.size) ? Math.max(marker.size, 0) : 1;
 	const shapeSize = calculateShapeHeight(timeScale.barSpacing()) * sizeMultiplier;
 	const halfSize = shapeSize / 2;
-	console.log(`marker pane view = ${shapeSize}`);
 	rendererItem.size = shapeSize;
 
 	switch (marker.position) {
@@ -211,9 +210,6 @@ export class SeriesMarkersPaneView implements IUpdatablePaneView {
 					width: 0,
 					height: 0,
 				};
-			}
-			if (rendererItem.shape === 'arrowUp') {
-				console.log('xx-m', rendererItem);
 			}
 			const dataAt = this._series.dataAt(marker.time);
 			if (dataAt === null) {
