@@ -25,10 +25,12 @@ export function drawCircle(
 
 	ctx.save();
 
+	let textCenterX;
 	let textCenterY;
 	let verticalLineTopY;
 	let verticalLineBottomY;
 	if (item.position === 'top') {
+		textCenterX = centerX + 1; // 1 is magic number
 		textCenterY = centerY + 2; // 2 is a magic number to position the text in the middle
 
 		verticalLineTopY = circleSize + strokeWidth;
@@ -57,7 +59,7 @@ export function drawCircle(
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
-	scaledDraw(ctx, scaleMultipler, centerX, circleSize, strokeWidth, drawCirclePath2);
+	scaledDraw(ctx, scaleMultipler, centerX, circleSize, strokeWidth, drawCirclePath);
 
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
@@ -71,7 +73,7 @@ export function drawCircle(
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
 	console.log(textCenterY);
-	// ctx.fillText(item.text, item.centerX, textCenterY);
+	ctx.fillText(item.text, centerX + 1, textCenterY);
 	ctx.restore();
 }
 
@@ -124,7 +126,7 @@ export function hitTestCircle(
 	circleSize = 53;
 	const circleSizeNonPixelRatio = circleSize / pixelRatio;
 
-	console.log(drawCirclePath);
+	console.log(drawCirclePath2);
 
 	// We need to scale everything by pixelRatio because of the quirkiness
 	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down
