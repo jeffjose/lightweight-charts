@@ -63,6 +63,8 @@ export interface LollipopPositionData {
 	centerY: Coordinate;
 	centerTopY: Coordinate;
 	centerTopX: Coordinate;
+	textCenterX: Coordinate;
+	textCenterY: Coordinate;
 }
 
 export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionData {
@@ -73,7 +75,10 @@ export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, heigh
 	const halfHeight = (height - 1) / 2 as Coordinate;
 	const centerY = centerTopY + halfHeight + strokeWidth as Coordinate;
 
-	return { centerX, centerY, centerTopY, centerTopX };
+	const textCenterX = centerX + 1 as Coordinate; // 1 is a magic number
+	const textCenterY = centerY + 2 as Coordinate; // 2 is a magic number
+
+	return { centerX, centerY, centerTopY, centerTopX, textCenterX, textCenterY };
 }
 
 export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionData {
@@ -86,7 +91,10 @@ export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, he
 	const halfHeight = (height - 1) / 2 as Coordinate;
 	const centerY = (item.paneHeight - halfHeight) as Coordinate;
 
-	return { centerX, centerY, centerTopY, centerTopX };
+	const textCenterX = centerX + 1 as Coordinate; // 1 is a magic number
+	const textCenterY = centerY - 2 as Coordinate; // 2 is a magic number
+
+	return { centerX, centerY, centerTopY, centerTopX, textCenterX, textCenterY };
 }
 
 export function getTopLeftX(item: SeriesLollipopRendererDataItem, width: number, pixelRatio: number, strokeWidth: number): number {
