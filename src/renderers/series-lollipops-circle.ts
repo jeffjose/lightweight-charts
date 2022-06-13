@@ -16,7 +16,6 @@ export function drawCircle(
 	const pixelRatio = item.pixelRatio;
 	let circleSize = shapeSize('circle', item.size);
 	console.log(`x: circleSize (before): ${circleSize} with ${item.size}`);
-	circleSize = 73;
 	console.log(`x: circleSize (after): ${circleSize}`);
 	const circleOutlineScale = circleSize * outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
@@ -57,7 +56,7 @@ export function drawCircle(
 	console.log(scaleOutlineMultipler, circleOutlineScale, circleSize);
 	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
 	console.log(drawCirclePath, drawCirclePath2);
-	scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath2, pixelRatio);
+	// scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath2, pixelRatio);
 
 	// Main / Visible object
 

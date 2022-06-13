@@ -75,59 +75,11 @@ export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: nu
 
 // eslint-disable-next-line max-params
 export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, origShapeWidth: number, origShapeHeight: number, scaledShapeWidth: number, scaledShapeHeight: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void, pixelRatio: number): void {
-	console.log('-------');
-	console.log(`Orig shape size: ${origShapeWidth} ${origShapeHeight}. strokeWidth: ${strokeWidth}, scaleMultiplier: ${scaleMultiplier} pixelRatio: ${pixelRatio}`);
-	console.log(`Scaled shape size: ${scaledShapeWidth} ${scaledShapeHeight}`);
-	const origShapeHalfWidth = getHalf(origShapeWidth, strokeWidth);
-	const origShapeHalfHeight = getHalf(origShapeHeight, strokeWidth);
-
-	let scaledShapeHalfWidth = getHalf(scaledShapeWidth, strokeWidth);
-	scaledShapeHalfWidth = (scaledShapeWidth - 1) / 2;
-	const scaledShapeHalfHeight = getHalf(scaledShapeHeight, strokeWidth);
-	console.log(scaledShapeHalfWidth, scaledShapeHalfHeight);
-
-	// Step 1: Translate to location
-	// console.log(`drawCenter: ${drawCenterX} ${drawCenterY}`);
-	// ctx.translate(drawCenterX, drawCenterY);
-	// console.log(`go back to local 0,0: ${-origShapeHalfWidth} ${-origShapeHalfHeight}`);
-	// ctx.translate(-scaledShapeHalfWidth, -scaledShapeHalfHeight);
-
-	// Step 2: Scale from object's center (using object's halfSize)
-	console.log(`Scaling based on half-sizes: ${origShapeHalfWidth}, ${origShapeHalfHeight}`);
 	ctx.save();
-	// ctx.translate(origShapeHalfWidth, origShapeHalfHeight);
+	ctx.translate(drawCenterX - ((scaledShapeWidth + strokeWidth - 1) / 2), 0);
 	ctx.translate(2, 2);
-	// ctx.translate(-origShapeHalfWidth, -origShapeHalfHeight);
 	ctx.scale(scaleMultiplier, scaleMultiplier);
 
-	const justWidth = pixelRatio * 23;
-	const justStrokeWidth = pixelRatio * strokeWidth;
-
-	const halfWidth = (justWidth + justStrokeWidth - pixelRatio) / 2;
-	console.log(`justWidth: ${justWidth} justStrokeWidth: ${justStrokeWidth} -- halfWidth: ${halfWidth}`);
-
-	drawCenterY = halfWidth / scaleMultiplier;
-	// console.log(`drawCenter: ${drawCenterX} ${drawCenterY}`);
-	// ctx.translate(drawCenterX, drawCenterY);
-	// 53
-	// ctx.translate(drawCenterX, 8);
-	// 73
-	// ctx.translate(drawCenterX, 0);
-	// console.log(`go back to local 0,0, still using orig size: 0 ${-origShapeHalfHeight}`);
-	// ctx.translate(0, -origShapeHalfHeight);
-
-	// // Step 3: Position coordinate for drawing
-	// // console.log(`moving back to draw starting @ ${Math.ceil(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier)}, ${Math.ceil(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier)}`);
-	// const offsetX = Math.abs(pixelRatio * (scaledShapeHalfWidth - origShapeHalfWidth) / scaleMultiplier);
-	// const offsetY = Math.abs(pixelRatio * (scaledShapeHalfHeight - origShapeHalfHeight) / scaleMultiplier);
-	// console.log(` pixelRatio: ${pixelRatio} * (scaledShapeHalfWidth: ${scaledShapeHalfWidth} - origShapeHalfWidth: ${origShapeHalfWidth} ) / scaleMultiplier: ${scaleMultiplier}`);
-	// console.log(`moving back to draw starting @ ${offsetX}, ${offsetY}`);
-	// ctx.translate(offsetX, offsetY);
 	drawFn(ctx);
 	ctx.restore();
-	ctx.translate(drawCenterX - ((73 + 2 - 1) / 2), 0);
-}
-
-function getHalf(dim: number, strokeWidth: number): number {
-	return ((dim + strokeWidth - 1) / 2) + 1;
 }
