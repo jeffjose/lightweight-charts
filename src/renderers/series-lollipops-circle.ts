@@ -24,12 +24,12 @@ export function drawCircle(
 	let verticalLineTopY;
 	let verticalLineBottomY;
 	if (top) {
-		pos = getPosForPositionTop(item, circleSize, strokeWidth);
+		pos = getPosForPositionTop(item, circleSize, strokeWidth, WIDTH, WIDTH);
 
 		verticalLineTopY = circleSize + strokeWidth;
 		verticalLineBottomY = item.paneHeight;
 	} 	else {
-		pos = getPosForPositionBottom(item, circleSize, strokeWidth);
+		pos = getPosForPositionBottom(item, circleSize, strokeWidth, WIDTH, WIDTH);
 
 		verticalLineTopY = 0;
 		verticalLineBottomY = item.paneHeight - circleSize - strokeWidth;
@@ -96,7 +96,7 @@ export function hitTestCircle(
 	const circleSize = shapeSize('circle', item.size);
 	const circleSizeNonPixelRatio = circleSize / pixelRatio;
 
-	const pos = item.position === 'top' ? getPosForPositionTop(item, circleSize, strokeWidth) : getPosForPositionBottom(item, circleSize, strokeWidth);
+	const pos = item.position === 'top' ? getPosForPositionTop(item, circleSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, circleSize, strokeWidth, WIDTH, WIDTH);
 
 	// We need to scale everything by pixelRatio because of the quirkiness
 	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down

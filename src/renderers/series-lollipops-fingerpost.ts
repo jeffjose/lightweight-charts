@@ -3,111 +3,113 @@ import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { getStrokeWidth, outlineScale, shapeSize } from './series-lollipops-utils';
-import { resetScale, setScale } from './series-markers-utils';
+import { getPosForPositionBottom, getPosForPositionTop, scaledDraw, shapeSize } from './series-lollipops-utils';
 
-const CENTER_X = 12;
-const CENTER_Y = 13;
+const WIDTH = 23; // picking the longest edge (width is only 23)
+const HEIGHT = 27;
 
 export function drawFingerpost(
 	ctx: CanvasRenderingContext2D,
 	item: SeriesLollipopRendererDataItem,
-	pixelRatio: number,
 	isHovered: boolean
 ): void {
-	const fingerpostSize = shapeSize('fingerpost', item.size); // This should be 25
-	const fingerpostOutlineScale = outlineScale('fingerpost');
+	const top = item.position === 'top';
+	const fingerpostSize = shapeSize('fingerpost', item.size);
+	const scaleMultipler = fingerpostSize / WIDTH;
 
-	const halfSize = (fingerpostSize - 1) / 2;
-
-	const centerX = Math.round(item.x * pixelRatio);
-	const height = item.paneHeight;
-
-	const strokeWidth = getStrokeWidth();
-
-	let topLeftX;
-	let centerY;
-
-	const topLeftY = getTopLeftY(item, fingerpostSize);
-	if (item.position === 'top') {
-		topLeftX = centerX - halfSize;
-		centerY = topLeftY + halfSize + 2; // 2 is a magic number to position the text in the middle
-	} 	else {
-		topLeftX = centerX - halfSize;
-		centerY = topLeftY + halfSize + 5; // 5 is a magic number to position the text in the middle
-	}
+	const strokeWidth = 2;
 
 	ctx.save();
-	setScale(ctx, 1.1, centerX, centerY);
 
-	ctx.strokeStyle = item.color;
-	ctx.lineJoin = 'round';
-	ctx.lineWidth = strokeWidth;
-	ctx.fillStyle = item.fillColor;
-	setLineStyle(ctx, LineStyle.Solid);
-
-	// Export SVG of stroke=1 + inside from figma
-
-	ctx.save();
-	ctx.translate(topLeftX, topLeftY);
-
+	let pos;
 	let verticalLineTopY;
 	let verticalLineBottomY;
+	if (top) {
+		pos = getPosForPositionTop(item, fingerpostSize, strokeWidth, WIDTH, HEIGHT);
 
-	if (item.position === 'top') {
 		verticalLineTopY = fingerpostSize + strokeWidth;
-		verticalLineBottomY = height;
+		verticalLineBottomY = item.paneHeight;
+	} 	else {
+		pos = getPosForPositionBottom(item, fingerpostSize, strokeWidth, WIDTH, HEIGHT);
 
-		ctx.save();
-		ctx.strokeStyle = item.fillColor;
-		ctx.translate(CENTER_X, CENTER_Y);
-		ctx.scale(fingerpostOutlineScale, fingerpostOutlineScale);
-		ctx.translate(-CENTER_X, -CENTER_Y);
-		drawFingerpostUpPath(ctx);
-		ctx.restore();
-
-		// Main / Visible object
-		if (isHovered) {
-			ctx.fillStyle = item.hoverColor;
-		}
-		drawFingerpostUpPath(ctx);
-	} else {
 		verticalLineTopY = 0;
-		verticalLineBottomY = height - fingerpostSize - strokeWidth;
-
-		ctx.save();
-		ctx.strokeStyle = item.fillColor;
-		ctx.translate(CENTER_X, CENTER_Y);
-		ctx.scale(fingerpostOutlineScale, fingerpostOutlineScale);
-		ctx.translate(-CENTER_X, -CENTER_Y);
-		drawFingerpostDownPath(ctx);
-		ctx.restore();
-
-		// Main / Visible object
-		if (isHovered) {
-			ctx.fillStyle = item.hoverColor;
-		}
-		drawFingerpostDownPath(ctx);
+		verticalLineBottomY = item.paneHeight - fingerpostSize - strokeWidth;
 	}
 
-	ctx.restore();
+	ctx.lineCap = 'round';
+	ctx.lineJoin = 'round';
+	ctx.lineWidth = strokeWidth * 4;
 
-	resetScale(ctx);
-	ctx.restore();
+	ctx.strokeStyle = item.fillColor;
+	ctx.fillStyle = item.fillColor;
+	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
+	if (item.position === 'top') {
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostDownPath);
+	} else {
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostUpPath);
+	}
+
+	// Main / Visible object
+	ctx.lineWidth = strokeWidth;
+	ctx.strokeStyle = item.color;
+	ctx.fillStyle = item.fillColor;
+	if (isHovered) {
+		ctx.fillStyle = item.hoverColor;
+	}
+	if (item.position === 'top') {
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostDownPath);
+	} else {
+		scaledDraw(ctx, item, scaleMultipler, pos, fingerpostSize, strokeWidth, drawFingerpostUpPath);
+	}
+
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
 		ctx.strokeStyle = item.color;
 		ctx.lineWidth = item.lineWidth;
 		setLineStyle(ctx, LineStyle.LargeDashed);
-		drawVerticalLine(ctx, centerX, verticalLineTopY, verticalLineBottomY);
+		drawVerticalLine(ctx, item.centerX, verticalLineTopY, verticalLineBottomY);
 	}
+
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(item.text, centerX, centerY);
+	if (item.position === 'top') {
+		ctx.fillText(item.text, pos.textCenterX, pos.textCenterY);
+	} else {
+		ctx.fillText(item.text, pos.textCenterX, pos.textCenterY);
+	}
+	ctx.restore();
 }
 
-function drawFingerpostUpPath(ctx: CanvasRenderingContext2D): void {
+// export function hitTestCircle(
+// 	item: SeriesLollipopRendererDataItem,
+// 	x: Coordinate,
+// 	y: Coordinate
+// ): boolean {
+// 	const pixelRatio = item.pixelRatio;
+// 	const strokeWidth = 2;
+// 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
+//
+// 	const circleSize = shapeSize('circle', item.size);
+// 	const circleSizeNonPixelRatio = circleSize / pixelRatio;
+//
+// 	const pos = item.position === 'top' ? getPosForPositionTop(item, circleSize, strokeWidth) : getPosForPositionBottom(item, circleSize, strokeWidth);
+//
+// 	// We need to scale everything by pixelRatio because of the quirkiness
+// 	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down
+//
+// 	// Radius
+// 	const radius = (circleSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
+//
+// 	const xOffset = (pos.centerX / pixelRatio) - x;
+// 	const yOffset = (pos.centerY / pixelRatio) - y;
+//
+// 	const dist = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
+//
+// 	return dist <= radius;
+// }
+
+function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
 	ctx.beginPath();
 	ctx.moveTo(21.5017, 18.8603);
 	ctx.lineTo(13.0017, 25.2464);
@@ -125,7 +127,7 @@ function drawFingerpostUpPath(ctx: CanvasRenderingContext2D): void {
 	ctx.stroke();
 }
 
-function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
+function drawFingerpostUpPath(ctx: CanvasRenderingContext2D): void {
 	ctx.beginPath();
 	ctx.moveTo(1.49833, 8.13969);
 	ctx.lineTo(9.99833, 1.7536);
@@ -143,25 +145,18 @@ function drawFingerpostDownPath(ctx: CanvasRenderingContext2D): void {
 	ctx.stroke();
 }
 
-function getTopLeftY(item: SeriesLollipopRendererDataItem, fingerpostSize: number): number {
-	if (item.position === 'top') {
-		return 0;
-	} 	else {
-		return item.paneHeight - fingerpostSize - getStrokeWidth() - 3; // 3 is a magic number.
-	}
-}
-
 export function hitTestFingerpost(
 	item: SeriesLollipopRendererDataItem,
 	x: Coordinate,
 	y: Coordinate
 ): boolean {
-	const fingerpostSize = 25; // This was arrived by looking at the actual coordinates of the shape we're drawing.
-	// We do not use getLeftTopX here since drawing coordinates and actual mouse coordinates are different
-	const halfSize = (fingerpostSize - 1) / 2;
-	const left = item.x - halfSize;
-	const top = getTopLeftY(item, fingerpostSize);
+	return false;
+	// const fingerpostSize = 25; // This was arrived by looking at the actual coordinates of the shape we're drawing.
+	// // We do not use getLeftTopX here since drawing coordinates and actual mouse coordinates are different
+	// const halfSize = (fingerpostSize - 1) / 2;
+	// const left = item.x - halfSize;
+	// const top = getTopLeftY(item, fingerpostSize);
 
-	return x >= left && x <= left + fingerpostSize &&
-		y * item.pixelRatio >= top && y * item.pixelRatio <= top + fingerpostSize;
+	// return x >= left && x <= left + fingerpostSize &&
+	// 	y * item.pixelRatio >= top && y * item.pixelRatio <= top + fingerpostSize;
 }

@@ -144,7 +144,7 @@ function drawShape(item: SeriesLollipopRendererDataItem, ctx: CanvasRenderingCon
 			drawSquare(ctx, item, isHovered);
 			return;
 		case 'fingerpost':
-			drawFingerpost(ctx, item, pixelRatio, isHovered);
+			drawFingerpost(ctx, item, isHovered);
 			return;
 	}
 

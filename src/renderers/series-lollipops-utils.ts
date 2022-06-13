@@ -37,7 +37,7 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 		case 'square':
 			return size(originalSize, 0.60);
 		case 'fingerpost':
-			return size(originalSize, 0.60);
+			return size(originalSize, 0.70);
 	}
 }
 
@@ -66,7 +66,7 @@ export function getCenterX(item: SeriesLollipopRendererDataItem, pixelRatio: num
 	return item.x * pixelRatio;
 }
 
-export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionRenderDims {
+export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number, origWidth: number, origHeight: number): LollipopPositionRenderDims {
 	const centerX = item.x * item.pixelRatio as Coordinate;
 	const centerTopX = centerX;
 
@@ -80,18 +80,20 @@ export function getPosForPositionTop(item: SeriesLollipopRendererDataItem, heigh
 	return { centerX, centerY, centerTopY, centerTopX, textCenterX, textCenterY };
 }
 
-export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number): LollipopPositionRenderDims {
-	const topPosData = getPosForPositionTop(item, height, strokeWidth);
+export function getPosForPositionBottom(item: SeriesLollipopRendererDataItem, height: number, strokeWidth: number, origWidth: number, origHeight: number): LollipopPositionRenderDims {
+	const topPosData = getPosForPositionTop(item, height, strokeWidth, origWidth, origHeight);
 
 	const centerX = topPosData.centerX;
 	const centerTopX = topPosData.centerTopX;
 
-	const centerTopY = (item.paneHeight - height) as Coordinate;
+	const diffInSides = Math.abs(origHeight - origWidth);
+
+	const centerTopY = (item.paneHeight - height - diffInSides) as Coordinate;
 	const halfHeight = (height - 1) / 2 as Coordinate;
-	const centerY = (item.paneHeight - halfHeight) as Coordinate;
+	const centerY = (item.paneHeight - halfHeight - diffInSides) as Coordinate;
 
 	const textCenterX = centerX + 1 as Coordinate; // 1 is a magic number
-	const textCenterY = centerY - 2 as Coordinate; // 2 is a magic number
+	const textCenterY = centerY - 2 + diffInSides as Coordinate; // 2 is a magic number
 
 	return { centerX, centerY, centerTopY, centerTopX, textCenterX, textCenterY };
 }
