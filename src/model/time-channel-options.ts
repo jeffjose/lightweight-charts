@@ -1,4 +1,4 @@
-import { Background } from './layout-options';
+import { Color } from './layout-options';
 import { TimeLineOptions } from './time-line-options';
 
 /**
@@ -29,6 +29,6 @@ export interface TimeChannelOptions {
 	 * Channel area color
 	 *
 	 */
-	background: Background;
+	background: Color;
 
 }
