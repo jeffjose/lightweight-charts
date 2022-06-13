@@ -16,7 +16,7 @@ export function drawCircle(
 	const pixelRatio = item.pixelRatio;
 	let circleSize = shapeSize('circle', item.size);
 	console.log(`x: circleSize (before): ${circleSize} with ${item.size}`);
-	circleSize = 23;
+	circleSize = 73;
 	console.log(`x: circleSize (after): ${circleSize}`);
 	const circleOutlineScale = circleSize * outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
@@ -26,8 +26,9 @@ export function drawCircle(
 	const centerX = getCenterX(item, pixelRatio, strokeWidth);
 	const centerY = getCenterY(item, circleSize, pixelRatio, strokeWidth);
 
-	console.log(`Draw center: ${centerX}, ${centerY}`);
-	console.log(`item.centerX: ${item.centerX}`);
+	console.log(`xx-l Draw center: ${centerX}, ${centerY}`);
+	console.log(`xx-l item.centerX: ${item.centerX}`);
+	console.log(`xx-l item.x: ${item.x}`);
 
 	ctx.save();
 
@@ -55,7 +56,8 @@ export function drawCircle(
 	ctx.fillStyle = item.fillColor;
 	console.log(scaleOutlineMultipler, circleOutlineScale, circleSize);
 	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
-	scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath, pixelRatio);
+	console.log(drawCirclePath, drawCirclePath2);
+	scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath2, pixelRatio);
 
 	// Main / Visible object
 
@@ -65,7 +67,7 @@ export function drawCircle(
 		ctx.fillStyle = item.hoverColor;
 	}
 	console.log(scaleMultipler);
-	scaledDraw(ctx, scaleMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleSize, circleSize, strokeWidth, drawCirclePath, pixelRatio);
+	scaledDraw(ctx, scaleMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleSize, circleSize, strokeWidth, drawCirclePath2, pixelRatio);
 
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
@@ -97,6 +99,26 @@ function drawCirclePath(ctx: CanvasRenderingContext2D): void {
 	ctx.closePath();
 	ctx.fill();
 	ctx.stroke();
+}
+
+function drawCirclePath2(ctx: CanvasRenderingContext2D): void {
+	ctx.beginPath();
+	ctx.moveTo(11.5, 0.5);
+	ctx.lineTo(11.5, 0.5);
+	ctx.bezierCurveTo(17.57513224813873, 0.5, 22.5, 5.424867751861271, 22.5, 11.5);
+	ctx.lineTo(22.5, 11.5);
+	ctx.bezierCurveTo(22.5, 17.57513224813873, 17.57513224813873, 22.5, 11.5, 22.5);
+	ctx.lineTo(11.5, 22.5);
+	ctx.bezierCurveTo(5.424867751861271, 22.5, 0.5, 17.57513224813873, 0.5, 11.5);
+	ctx.lineTo(0.5, 11.5);
+	ctx.bezierCurveTo(0.5, 5.424867751861271, 5.424867751861271, 0.5, 11.5, 0.5);
+	ctx.closePath();
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.moveTo(11.5, 2.18557e-8);
+	ctx.lineTo(11.5, 23);
+	ctx.stroke();
+	ctx.fill();
 }
 
 export function hitTestCircle(
