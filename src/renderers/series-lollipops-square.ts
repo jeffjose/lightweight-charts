@@ -1,65 +1,57 @@
+
 import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { getStrokeWidth, outlineScale, shapeSize } from './series-lollipops-utils';
+import { getPosForPositionBottom, getPosForPositionTop, scaledDraw, shapeSize } from './series-lollipops-utils';
+
+const WIDTH = 23;
 
 export function drawSquare(
 	ctx: CanvasRenderingContext2D,
 	item: SeriesLollipopRendererDataItem,
 	isHovered: boolean
 ): void {
-	const squareOutlineSize = outlineScale('square');
-	const squareSize = shapeSize('square', item.size); // This should be 25
-	const halfSize = (squareSize - 1) / 2;
+	const top = item.position === 'top';
+	const squareSize = shapeSize('square', item.size);
+	const scaleMultipler = squareSize / WIDTH;
 
-	const strokeWidth = getStrokeWidth();
+	const strokeWidth = 2;
 
-	let centerY;
+	ctx.save();
+
+	let pos;
 	let verticalLineTopY;
 	let verticalLineBottomY;
-
-	const topLeftX = getTopLeftX(item, halfSize);
-	const topLeftY = getTopLeftY(item, squareSize);
-
-	if (item.position === 'top') {
-		centerY = topLeftY + halfSize + 2; // 2 is a magic number to position the text in the middle
+	if (top) {
+		pos = getPosForPositionTop(item, squareSize, strokeWidth, WIDTH, WIDTH);
 
 		verticalLineTopY = squareSize + strokeWidth;
 		verticalLineBottomY = item.paneHeight;
 	} 	else {
-		centerY = topLeftY + halfSize + 2;
+		pos = getPosForPositionBottom(item, squareSize, strokeWidth, WIDTH, WIDTH);
 
 		verticalLineTopY = 0;
 		verticalLineBottomY = item.paneHeight - squareSize - strokeWidth;
 	}
 
-	ctx.strokeStyle = item.color;
+	ctx.lineCap = 'round';
 	ctx.lineJoin = 'round';
-	ctx.lineWidth = strokeWidth;
-	ctx.fillStyle = item.fillColor;
-	setLineStyle(ctx, LineStyle.Solid);
+	ctx.lineWidth = strokeWidth * 4;
 
-	// Export SVG of stroke=1 + inside from figma
-
-	ctx.save();
-	ctx.translate(topLeftX, topLeftY);
-
-	ctx.save();
 	ctx.strokeStyle = item.fillColor;
-	ctx.translate(halfSize, halfSize);
-	ctx.scale(squareOutlineSize, squareOutlineSize);
-	ctx.translate(-halfSize, -halfSize);
-	drawSquarePath(ctx);
-	ctx.restore();
+	ctx.fillStyle = item.fillColor;
+	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
+	scaledDraw(ctx, item, scaleMultipler, pos, squareSize, strokeWidth, drawSquarePath);
 
 	// Main / Visible object
+	ctx.lineWidth = strokeWidth;
+	ctx.strokeStyle = item.color;
+	ctx.fillStyle = item.fillColor;
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
-	drawSquarePath(ctx);
-
-	ctx.restore();
+	scaledDraw(ctx, item, scaleMultipler, pos, squareSize, strokeWidth, drawSquarePath);
 
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
@@ -72,7 +64,8 @@ export function drawSquare(
 	ctx.fillStyle = item.color;
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
-	ctx.fillText(item.text, item.centerX, centerY);
+	ctx.fillText(item.text, pos.textCenterX, pos.textCenterY);
+	ctx.restore();
 }
 
 function drawSquarePath(ctx: CanvasRenderingContext2D): void {
@@ -91,33 +84,30 @@ function drawSquarePath(ctx: CanvasRenderingContext2D): void {
 	ctx.stroke();
 }
 
-function getTopLeftX(item: SeriesLollipopRendererDataItem, halfSize: number): number {
-	if (item.position === 'top') {
-		return item.centerX - halfSize;
-	} 	else {
-		return item.centerX - halfSize;
-	}
-}
-
-function getTopLeftY(item: SeriesLollipopRendererDataItem, squareSize: number): number {
-	if (item.position === 'top') {
-		return 1; // 1 is a magic number
-	} 	else {
-		return item.paneHeight - squareSize - 1;
-	}
-}
-
 export function hitTestSquare(
 	item: SeriesLollipopRendererDataItem,
 	x: Coordinate,
 	y: Coordinate
 ): boolean {
-	const squareSize = 22; // This was arrived by looking at the actual coordinates of the shape we're drawing.
-	// We do not use getLeftTopX here since drawing coordinates and actual mouse coordinates are different
-	const halfSize = (squareSize - 1) / 2;
-	const left = item.x - halfSize;
-	const top = getTopLeftY(item, squareSize) - 1; // 1 is a magic number comes from `getTopLeftY`
+	const pixelRatio = item.pixelRatio;
+	const strokeWidth = 2;
+	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	return x >= left && x <= left + squareSize &&
-		y * item.pixelRatio >= top && y * item.pixelRatio <= top + squareSize;
+	const circleSize = shapeSize('circle', item.size);
+	const circleSizeNonPixelRatio = circleSize / pixelRatio;
+
+	const pos = item.position === 'top' ? getPosForPositionTop(item, circleSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, circleSize, strokeWidth, WIDTH, WIDTH);
+
+	// We need to scale everything by pixelRatio because of the quirkiness
+	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down
+
+	// Radius
+	const radius = (circleSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
+
+	const xOffset = (pos.centerX / pixelRatio) - x;
+	const yOffset = (pos.centerY / pixelRatio) - y;
+
+	const dist = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
+
+	return dist <= radius;
 }

@@ -35,7 +35,7 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 		case 'circle':
 			return size(originalSize, 0.70);
 		case 'square':
-			return size(originalSize, 0.60);
+			return size(originalSize, 0.70);
 		case 'fingerpost':
 			return size(originalSize, 0.70);
 	}
@@ -46,9 +46,9 @@ export function outlineScale(shape: SeriesLollipopShape): number {
 		case 'circle':
 			return 1.2;
 		case 'square':
-			return 1.1;
+			return 1.2;
 		case 'fingerpost':
-			return 1.1;
+			return 1.2;
 	}
 }
 
