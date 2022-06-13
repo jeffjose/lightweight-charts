@@ -150,13 +150,19 @@ export function hitTestFingerpost(
 	x: Coordinate,
 	y: Coordinate
 ): boolean {
-	return false;
-	// const fingerpostSize = 25; // This was arrived by looking at the actual coordinates of the shape we're drawing.
-	// // We do not use getLeftTopX here since drawing coordinates and actual mouse coordinates are different
-	// const halfSize = (fingerpostSize - 1) / 2;
-	// const left = item.x - halfSize;
-	// const top = getTopLeftY(item, fingerpostSize);
+	const pixelRatio = item.pixelRatio;
+	const strokeWidth = 2;
+	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	// return x >= left && x <= left + fingerpostSize &&
-	// 	y * item.pixelRatio >= top && y * item.pixelRatio <= top + fingerpostSize;
+	const fingerpostSize = shapeSize('fingerpost', item.size);
+	const fingerpostSizeNonPixelRatio = fingerpostSize / pixelRatio;
+
+	const pos = item.position === 'top' ? getPosForPositionTop(item, fingerpostSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, fingerpostSize, strokeWidth, WIDTH, WIDTH);
+
+	const halfSize = (fingerpostSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
+
+	const left = (pos.centerX / pixelRatio) - halfSize;
+	const top = pos.centerTopY;
+
+	return x >= left && x <= left + fingerpostSize && y * item.pixelRatio >= top && y * item.pixelRatio <= top + fingerpostSize;
 }

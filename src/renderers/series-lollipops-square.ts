@@ -93,21 +93,18 @@ export function hitTestSquare(
 	const strokeWidth = 2;
 	const strokeWidthNonPixelRatio = strokeWidth / pixelRatio;
 
-	const circleSize = shapeSize('circle', item.size);
-	const circleSizeNonPixelRatio = circleSize / pixelRatio;
+	const squareSize = shapeSize('square', item.size);
+	const squareSizeNonPixelRatio = squareSize / pixelRatio;
 
-	const pos = item.position === 'top' ? getPosForPositionTop(item, circleSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, circleSize, strokeWidth, WIDTH, WIDTH);
+	const pos = item.position === 'top' ? getPosForPositionTop(item, squareSize, strokeWidth, WIDTH, WIDTH) : getPosForPositionBottom(item, squareSize, strokeWidth, WIDTH, WIDTH);
 
 	// We need to scale everything by pixelRatio because of the quirkiness
 	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down
 
-	// Radius
-	const radius = (circleSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
+	const halfSize = (squareSizeNonPixelRatio - 1) / 2 + strokeWidthNonPixelRatio;
 
-	const xOffset = (pos.centerX / pixelRatio) - x;
-	const yOffset = (pos.centerY / pixelRatio) - y;
+	const left = (pos.centerX / pixelRatio) - halfSize;
+	const top = pos.centerTopY;
 
-	const dist = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
-
-	return dist <= radius;
+	return x >= left && x <= left + squareSize && y * item.pixelRatio >= top && y * item.pixelRatio <= top + squareSize;
 }
