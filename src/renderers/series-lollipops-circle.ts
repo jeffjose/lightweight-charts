@@ -5,7 +5,7 @@ import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
 import { getPosForPositionBottom, getPosForPositionTop, scaledDraw, shapeSize } from './series-lollipops-utils';
 
-const CIRCLE_W = 23;
+const WIDTH = 23;
 
 export function drawCircle(
 	ctx: CanvasRenderingContext2D,
@@ -14,7 +14,7 @@ export function drawCircle(
 ): void {
 	const top = item.position === 'top';
 	const circleSize = shapeSize('circle', item.size);
-	const scaleMultipler = circleSize / CIRCLE_W;
+	const scaleMultipler = circleSize / WIDTH;
 
 	const strokeWidth = 2;
 
