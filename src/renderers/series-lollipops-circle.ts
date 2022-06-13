@@ -3,7 +3,7 @@ import { Coordinate } from '../model/coordinate';
 
 import { drawVerticalLine, LineStyle, setLineStyle } from './draw-line';
 import { SeriesLollipopRendererDataItem } from './series-lollipops-renderer';
-import { getCenterX, getCenterY, outlineScale, scaledDraw, shapeSize } from './series-lollipops-utils';
+import { getCenterX, getCenterY, scaledDraw, shapeSize } from './series-lollipops-utils';
 
 const CIRCLE_W = 23;
 const HALFSIZE = (CIRCLE_W - 1) / 2;
@@ -14,20 +14,14 @@ export function drawCircle(
 	isHovered: boolean
 ): void {
 	const pixelRatio = item.pixelRatio;
-	let circleSize = shapeSize('circle', item.size);
-	console.log(`x: circleSize (before): ${circleSize} with ${item.size}`);
-	console.log(`x: circleSize (after): ${circleSize}`);
-	const circleOutlineScale = circleSize * outlineScale('circle');
+	const circleSize = shapeSize('circle', item.size);
+	// const circleOutlineScale = circleSize * outlineScale('circle');
 	const scaleMultipler = circleSize / CIRCLE_W;
-	const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
+	// const scaleOutlineMultipler = circleOutlineScale / CIRCLE_W;
 
 	const strokeWidth = 2;
 	const centerX = getCenterX(item, pixelRatio, strokeWidth);
 	const centerY = getCenterY(item, circleSize, pixelRatio, strokeWidth);
-
-	console.log(`xx-l Draw center: ${centerX}, ${centerY}`);
-	console.log(`xx-l item.centerX: ${item.centerX}`);
-	console.log(`xx-l item.x: ${item.x}`);
 
 	ctx.save();
 
@@ -53,9 +47,7 @@ export function drawCircle(
 
 	ctx.strokeStyle = item.fillColor;
 	ctx.fillStyle = item.fillColor;
-	console.log(scaleOutlineMultipler, circleOutlineScale, circleSize);
 	// outline/shadow shape is positioned properly because we use centerX, centerY which is based on actual (non outline/shadow)
-	console.log(drawCirclePath, drawCirclePath2);
 	// scaledDraw(ctx, scaleOutlineMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleOutlineScale, circleOutlineScale, strokeWidth, drawCirclePath2, pixelRatio);
 
 	// Main / Visible object
@@ -65,8 +57,7 @@ export function drawCircle(
 	if (isHovered) {
 		ctx.fillStyle = item.hoverColor;
 	}
-	console.log(scaleMultipler);
-	scaledDraw(ctx, scaleMultipler, centerX, centerY, CIRCLE_W, CIRCLE_W, circleSize, circleSize, strokeWidth, drawCirclePath2, pixelRatio);
+	scaledDraw(ctx, scaleMultipler, centerX, circleSize, strokeWidth, drawCirclePath2);
 
 	if (item.lineVisible || isHovered) {
 		ctx.lineCap = 'butt';
@@ -132,6 +123,8 @@ export function hitTestCircle(
 	let circleSize = shapeSize('circle', item.size);
 	circleSize = 53;
 	const circleSizeNonPixelRatio = circleSize / pixelRatio;
+
+	console.log(drawCirclePath);
 
 	// We need to scale everything by pixelRatio because of the quirkiness
 	// in draw() we scale everything by pixelRatio. Here absolute numbers in draw() like circleSize, strokeRadius needs to be scaled down

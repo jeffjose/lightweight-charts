@@ -73,13 +73,19 @@ export function getTopLeftY(item: SeriesLollipopRendererDataItem, pixelRatio: nu
 	return (item.y * pixelRatio);
 }
 
-// eslint-disable-next-line max-params
-export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, drawCenterY: number, origShapeWidth: number, origShapeHeight: number, scaledShapeWidth: number, scaledShapeHeight: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void, pixelRatio: number): void {
+export function scaledDraw(ctx: CanvasRenderingContext2D, scaleMultiplier: number, drawCenterX: number, scaledShapeWidth: number, strokeWidth: number, drawFn: (ctx: CanvasRenderingContext2D) => void): void {
 	ctx.save();
-	ctx.translate(drawCenterX - ((scaledShapeWidth + strokeWidth - 1) / 2), 0);
+
+	// Step 1: Adjust a bit
 	ctx.translate(2, 2);
+
+	// Step 2: Translate to topLeftx, topLeftY using scaled size
+	ctx.translate(drawCenterX - ((scaledShapeWidth + strokeWidth - 1) / 2), 0);
+
+	// Step 3: Scale
 	ctx.scale(scaleMultiplier, scaleMultiplier);
 
+	// Step 4: Draw
 	drawFn(ctx);
 	ctx.restore();
 }
