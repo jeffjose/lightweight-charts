@@ -39,6 +39,8 @@ export function shapeSize(shape: SeriesLollipopShape, originalSize: number): num
 		case 'fingerpostDown':
 		case 'fingerpostUp':
 			return size(originalSize, 0.70);
+		case 'diamond':
+			return size(originalSize, 0.70);
 	}
 }
 
@@ -50,6 +52,8 @@ export function outlineScale(shape: SeriesLollipopShape): number {
 			return 1.2;
 		case 'fingerpostDown':
 		case 'fingerpostUp':
+			return 1.2;
+		case 'diamond':
 			return 1.2;
 	}
 }
