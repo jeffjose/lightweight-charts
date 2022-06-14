@@ -1,3 +1,6 @@
+import { interpolateCubehelix } from 'd3-interpolate';
+
+import { TimePointIndex } from '../model/time-data';
 
 import { Nominal } from './nominal';
 
@@ -426,5 +429,23 @@ export function getColorString(color: Color): string {
 		case ColorType.HorizontalGradient:
 			// FIXME: This is fake. Ideally pick a representative color from the gradient
 			return '#FF00FF';
+	}
+}
+
+export function interpolate(startColor: string, endColor: string, barIndex: TimePointIndex, numBars: number): string {
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+	return interpolateCubehelix(startColor, endColor)(barIndex / numBars);
+}
+
+export function getColor(barIndex: TimePointIndex, numBar: number, color: Color): string {
+	if (typeof color === 'string') {
+		return color;
+	}
+
+	switch (color.type) {
+		case ColorType.HorizontalGradient:
+			return interpolate(color.leftColor, color.rightColor, barIndex, 1000);
+		default:
+			return interpolate('pink', 'lime', barIndex, 1000);
 	}
 }

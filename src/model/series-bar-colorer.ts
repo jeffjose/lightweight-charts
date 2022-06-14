@@ -1,5 +1,6 @@
+
 import { ensure, ensureNotNull } from '../helpers/assertions';
-import { Color } from '../helpers/color';
+import { Color, getColor } from '../helpers/color';
 
 import { PlotRowValueIndex } from './plot-data';
 import { Series } from './series';
@@ -33,6 +34,7 @@ const emptyResult: BarColorerStyle = {
 
 export class SeriesBarColorer {
 	private _series: Series;
+	private _cachedBarColorStyles: BarColorerStyle[] = [];
 
 	public constructor(series: Series) {
 		this._series = series;
@@ -42,27 +44,42 @@ export class SeriesBarColorer {
 		// precomputedBars: {value: [Array BarValues], previousValue: [Array BarValues] | undefined}
 		// Used to avoid binary search if bars are already known
 
+		// eslint-disable-next-line @typescript-eslint/tslint/config
+		if (this._cachedBarColorStyles.length >= 0 && this._cachedBarColorStyles[barIndex] !== undefined) {
+			return this._cachedBarColorStyles[barIndex];
+		}
+
+		let barColorStyle;
 		const targetType = this._series.seriesType();
 		const seriesOptions = this._series.options();
 		switch (targetType) {
 			case 'Line':
-				return this._lineStyle(seriesOptions as LineStyleOptions, barIndex, precomputedBars);
+				barColorStyle = this._lineStyle(seriesOptions as LineStyleOptions, barIndex, precomputedBars);
+				break;
 
 			case 'Area':
-				return this._areaStyle(seriesOptions as AreaStyleOptions);
+				barColorStyle = this._areaStyle(seriesOptions as AreaStyleOptions);
+				break;
 
 			case 'Baseline':
-				return this._baselineStyle(seriesOptions as BaselineStyleOptions, barIndex, precomputedBars);
+				barColorStyle = this._baselineStyle(seriesOptions as BaselineStyleOptions, barIndex, precomputedBars);
+				break;
 
 			case 'Bar':
-				return this._barStyle(seriesOptions as BarStyleOptions, barIndex, precomputedBars);
+				barColorStyle = this._barStyle(seriesOptions as BarStyleOptions, barIndex, precomputedBars);
+				break;
 
 			case 'Candlestick':
-				return this._candleStyle(seriesOptions as CandlestickStyleOptions, barIndex, precomputedBars);
+				barColorStyle = this._candleStyle(seriesOptions as CandlestickStyleOptions, barIndex, precomputedBars);
+				break;
 
 			case 'Histogram':
-				return this._histogramStyle(seriesOptions as HistogramStyleOptions, barIndex, precomputedBars);
+				barColorStyle = this._histogramStyle(seriesOptions as HistogramStyleOptions, barIndex, precomputedBars);
+				break;
 		}
+
+		this._cachedBarColorStyles[barIndex] = barColorStyle;
+		return barColorStyle;
 
 		throw new Error('Unknown chart style');
 	}
@@ -132,7 +149,7 @@ export class SeriesBarColorer {
 
 		return {
 			...emptyResult,
-			barColor: currentBar.color ?? lineStyle.color,
+			barColor: currentBar.color ?? getColor(barIndex, this._series.bars().size(), lineStyle.color),
 		};
 	}
 
