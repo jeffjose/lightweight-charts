@@ -434,7 +434,8 @@ export function getColorString(color: Color): string {
 }
 
 function interpolateHorizontal(startColor: string, endColor: string, barIndex: TimePointIndex, numBars: number): string {
-	return interpolateCubehelix.gamma(2.2)(startColor, endColor)(barIndex / numBars);
+	const percentage = barIndex / numBars;
+	return interpolateCubehelix.gamma(2.2)(startColor, endColor)(percentage);
 }
 
 function interpolateVertical(startColor: string, endColor: string, value: PlotRowValue | undefined, minValue: PlotRowValue, maxValue: PlotRowValue): string {
