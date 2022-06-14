@@ -34,10 +34,12 @@ const emptyResult: BarColorerStyle = {
 
 export class SeriesBarColorer {
 	private _series: Series;
+	private _numBars: number;
 	private _cachedBarColorStyles: BarColorerStyle[] = [];
 
 	public constructor(series: Series) {
 		this._series = series;
+		this._numBars = series.bars().size();
 	}
 
 	public barStyle(barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
@@ -149,14 +151,14 @@ export class SeriesBarColorer {
 
 		return {
 			...emptyResult,
-			barColor: currentBar.color ?? getColor(barIndex, this._series.bars().size(), lineStyle.color),
+			barColor: currentBar.color ?? getColor(barIndex, this._numBars, lineStyle.color),
 		};
 	}
 
 	private _histogramStyle(histogramStyle: HistogramStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
 		const result: BarColorerStyle = { ...emptyResult };
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Histogram'>;
-		result.barColor = currentBar.color !== undefined ? currentBar.color : histogramStyle.color;
+		result.barColor = currentBar.color !== undefined ? currentBar.color : getColor(barIndex, this._numBars, histogramStyle.color);
 		return result;
 	}
 
