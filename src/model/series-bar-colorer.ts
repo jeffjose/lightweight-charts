@@ -149,16 +149,21 @@ export class SeriesBarColorer {
 	private _lineStyle(lineStyle: LineStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Line'>;
 
+		const currValue = this._series.bars().valueAt(barIndex)?.value;
+
 		return {
 			...emptyResult,
-			barColor: currentBar.color ?? getColor(barIndex, this._numBars, lineStyle.color),
+			barColor: currentBar.color ?? getColor(barIndex, currValue, this._series.minValue(), this._series.maxValue(), this._numBars, lineStyle.color),
 		};
 	}
 
 	private _histogramStyle(histogramStyle: HistogramStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
 		const result: BarColorerStyle = { ...emptyResult };
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Histogram'>;
-		result.barColor = currentBar.color !== undefined ? currentBar.color : getColor(barIndex, this._numBars, histogramStyle.color);
+
+		const currValue = this._series.bars().valueAt(barIndex)?.value;
+
+		result.barColor = currentBar.color !== undefined ? currentBar.color : getColor(barIndex, currValue, this._series.minValue(), this._series.maxValue(), this._numBars, histogramStyle.color);
 		return result;
 	}
 

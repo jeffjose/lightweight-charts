@@ -34,7 +34,7 @@ import { CustomPriceLine } from './custom-price-line';
 import { isDefaultPriceScale } from './default-price-scale';
 import { FirstValue } from './iprice-data-source';
 import { Pane } from './pane';
-import { PlotRowValueIndex } from './plot-data';
+import { PlotRowValue, PlotRowValueIndex } from './plot-data';
 import { MismatchDirection } from './plot-list';
 import { PriceChannel } from './price-channel';
 import { PriceChannelOptions } from './price-channel-options';
@@ -442,6 +442,14 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 
 	public bars(): SeriesPlotList<T> {
 		return this._data;
+	}
+
+	public minValue(): PlotRowValue {
+		return this._data.minValue();
+	}
+
+	public maxValue(): PlotRowValue {
+		return this._data.maxValue();
 	}
 
 	public dataAt(time: TimePointIndex): SeriesDataAtTypeMap[SeriesType] | null {

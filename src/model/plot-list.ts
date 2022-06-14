@@ -2,7 +2,7 @@ import { lowerbound, upperbound } from '../helpers/algorithms';
 import { ensureNotNull } from '../helpers/assertions';
 import { Nominal } from '../helpers/nominal';
 
-import { PlotRow, PlotRowValueIndex } from '../model/plot-data';
+import { PlotRow, PlotRowValue, PlotRowValueIndex } from '../model/plot-data';
 import { TimePointIndex } from '../model/time-data';
 
 /**
@@ -53,6 +53,38 @@ export class PlotList<PlotRowType extends PlotRow = PlotRow> {
 
 	public lastIndex(): TimePointIndex | null {
 		return this.size() > 0 ? this._indexAt((this._items.length - 1) as PlotRowIndex) : null;
+	}
+
+	public minValue(): PlotRowValue {
+		let minSeriesValue: PlotRowValue = this._items[0].value;
+
+		for (let i = 0; i < this.size(); i++) {
+			const item = this._items[i];
+
+			// FIXME: double check what line renderer is using
+			// Use the first item
+			if (item.value[0] < minSeriesValue[0]) {
+				minSeriesValue = item.value;
+			}
+		}
+
+		return minSeriesValue;
+	}
+
+	public maxValue(): PlotRowValue {
+		let maxSeriesValue: PlotRowValue = this._items[0].value;
+
+		for (let i = 0; i < this.size(); i++) {
+			const item = this._items[i];
+
+			// FIXME: double check what line renderer is using
+			// Use the first item
+			if (item.value[0] > maxSeriesValue[0]) {
+				maxSeriesValue = item.value;
+			}
+		}
+
+		return maxSeriesValue;
 	}
 
 	public size(): number {

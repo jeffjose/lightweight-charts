@@ -1,5 +1,6 @@
 import { interpolateCubehelix } from 'd3-interpolate';
 
+import { PlotRowValue } from '../model/plot-data';
 import { TimePointIndex } from '../model/time-data';
 
 import { Nominal } from './nominal';
@@ -432,20 +433,32 @@ export function getColorString(color: Color): string {
 	}
 }
 
-export function interpolate(startColor: string, endColor: string, barIndex: TimePointIndex, numBars: number): string {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-member-access
+function interpolateHorizontal(startColor: string, endColor: string, barIndex: TimePointIndex, numBars: number): string {
 	return interpolateCubehelix.gamma(2.2)(startColor, endColor)(barIndex / numBars);
 }
 
-export function getColor(barIndex: TimePointIndex, numBars: number, color: Color): string {
+function interpolateVertical(startColor: string, endColor: string, value: PlotRowValue | undefined, minValue: PlotRowValue, maxValue: PlotRowValue): string {
+	let v;
+	if (value === undefined) {
+		v = 0;
+	} else {
+		v = value[0];
+	}
+	const percentage: number = (v - minValue[0]) / (maxValue[0] - minValue[0]);
+	return interpolateCubehelix.gamma(2.2)(startColor, endColor)(percentage);
+}
+
+export function getColor(barIndex: TimePointIndex, value: PlotRowValue | undefined, minValue: PlotRowValue, maxValue: PlotRowValue, numBars: number, color: Color): string {
 	if (typeof color === 'string') {
 		return color;
 	}
 
 	switch (color.type) {
 		case ColorType.HorizontalGradient:
-			return interpolate(color.leftColor, color.rightColor, barIndex, 1000);
+			return interpolateHorizontal(color.leftColor, color.rightColor, barIndex, numBars);
+		case ColorType.VerticalGradient:
+			return interpolateVertical(color.topColor, color.bottomColor, value, minValue, maxValue);
 		default:
-			return interpolate('pink', 'lime', barIndex, numBars);
+			return interpolateHorizontal('pink', 'lime', barIndex, numBars);
 	}
 }
