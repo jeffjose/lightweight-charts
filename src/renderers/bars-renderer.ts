@@ -1,4 +1,4 @@
-import { CanvasStyle, color2CanvasStyle } from '../gui/canvas-utils';
+import { CanvasStyle, getStrokeStyle } from '../gui/canvas-utils';
 
 import { ensureNotNull } from '../helpers/assertions';
 import { Color } from '../helpers/color';
@@ -26,11 +26,13 @@ export interface PaneRendererBarsData {
 
 export class PaneRendererBars implements IPaneRenderer {
 	private _data: PaneRendererBarsData | null = null;
+	private _numBars: number = 0;
 	private _barWidth: number = 0;
 	private _barLineWidth: number = 0;
 
 	public setData(data: PaneRendererBarsData): void {
 		this._data = data;
+		this._numBars = data.bars.length;
 	}
 
 	// eslint-disable-next-line complexity
@@ -60,8 +62,8 @@ export class PaneRendererBars implements IPaneRenderer {
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; ++i) {
 			const bar = this._data.bars[i];
 			if (prevColor !== bar.color) {
-				ctx.fillStyle = color2CanvasStyle(bar.color, ctx);
-				prevColor = color2CanvasStyle(bar.color, ctx);
+				ctx.fillStyle = getStrokeStyle(ctx, bar.color, i, this._numBars);
+				prevColor = getStrokeStyle(ctx, bar.color, i, this._numBars);
 			}
 
 			const bodyWidthHalf = Math.floor(this._barLineWidth * 0.5);

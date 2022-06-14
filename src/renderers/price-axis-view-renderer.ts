@@ -1,4 +1,4 @@
-import { color2CanvasStyle } from '../gui/canvas-utils';
+import { getStrokeStyle } from '../gui/canvas-utils';
 
 import { drawScaled } from '../helpers/canvas-helpers';
 
@@ -118,7 +118,7 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 			ctx.fill();
 
 			// draw border
-			ctx.fillStyle = color2CanvasStyle(this._data.borderColor, ctx);
+			ctx.fillStyle = getStrokeStyle(ctx, this._data.borderColor);
 			ctx.fillRect(alignRight ? rightScaled - horzBorderScaled : 0, yTopScaled, horzBorderScaled, yBottomScaled - yTopScaled);
 
 			if (this._data.tickVisible) {

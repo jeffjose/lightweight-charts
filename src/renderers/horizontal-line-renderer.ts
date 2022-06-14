@@ -1,4 +1,4 @@
-import { color2CanvasStyle } from '../gui/canvas-utils';
+import { getStrokeStyle } from '../gui/canvas-utils';
 
 import { Color } from '../helpers/color';
 
@@ -42,7 +42,7 @@ export class HorizontalLineRenderer implements IPaneRenderer {
 
 		const width = Math.ceil(this._data.width * pixelRatio);
 		ctx.lineCap = 'butt';
-		ctx.strokeStyle = color2CanvasStyle(this._data.color, ctx);
+		ctx.strokeStyle = getStrokeStyle(ctx, this._data.color);
 		ctx.lineWidth = Math.floor(this._data.lineWidth * pixelRatio);
 		setLineStyle(ctx, this._data.lineStyle);
 		drawHorizontalLine(ctx, y, 0, width);

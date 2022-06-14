@@ -428,3 +428,4 @@ export function getColorString(color: Color): string {
 			return '#FF00FF';
 	}
 }
+

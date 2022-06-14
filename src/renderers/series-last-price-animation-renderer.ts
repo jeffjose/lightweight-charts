@@ -1,4 +1,4 @@
-import { color2CanvasStyle } from '../gui/canvas-utils';
+import { getStrokeStyle } from '../gui/canvas-utils';
 
 import { Color } from '../helpers/color';
 
@@ -40,19 +40,19 @@ export class SeriesLastPriceAnimationRenderer implements IPaneRenderer {
 		const centerX = Math.round(data.center.x * pixelRatio) + correction; // correct x coordinate only
 		const centerY = data.center.y * pixelRatio;
 
-		ctx.fillStyle = color2CanvasStyle(data.seriesLineColor, ctx);
+		ctx.fillStyle = getStrokeStyle(ctx, data.seriesLineColor);
 		ctx.beginPath();
 		const centerPointRadius = Math.max(2, data.seriesLineWidth * 1.5) * pixelRatio;
 		ctx.arc(centerX, centerY, centerPointRadius, 0, 2 * Math.PI, false);
 		ctx.fill();
 
-		ctx.fillStyle = color2CanvasStyle(data.fillColor, ctx);
+		ctx.fillStyle = getStrokeStyle(ctx, data.seriesLineColor);
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, data.radius * pixelRatio, 0, 2 * Math.PI, false);
 		ctx.fill();
 
 		ctx.lineWidth = tickWidth;
-		ctx.strokeStyle = color2CanvasStyle(data.strokeColor, ctx);
+		ctx.fillStyle = getStrokeStyle(ctx, data.seriesLineColor);
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, data.radius * pixelRatio + tickWidth / 2, 0, 2 * Math.PI, false);
 		ctx.stroke();

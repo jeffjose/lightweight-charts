@@ -1,4 +1,4 @@
-import { color2CanvasStyle } from '../gui/canvas-utils';
+import { getStrokeStyle } from '../gui/canvas-utils';
 
 import { Color } from '../helpers/color';
 
@@ -26,9 +26,11 @@ export interface PaneRendererLineDataBase {
 
 export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBase> extends ScaledRenderer {
 	protected _data: TData | null = null;
+	protected _numBars: number = 0;
 
 	public setData(data: TData): void {
 		this._data = data;
+		this._numBars = data.items.length;
 	}
 
 	protected _drawImpl(ctx: CanvasRenderingContext2D): void {
@@ -41,7 +43,7 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 
 		setLineStyle(ctx, this._data.lineStyle);
 
-		ctx.strokeStyle = this._strokeStyle(ctx);
+		ctx.strokeStyle = this._strokeStyle(ctx, 0);
 		ctx.lineJoin = 'round';
 
 		if (this._data.items.length === 1) {
@@ -52,7 +54,7 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 			ctx.lineTo(point.x + this._data.barWidth / 2, point.y);
 
 			if (point.color !== undefined) {
-				ctx.strokeStyle = color2CanvasStyle(point.color, ctx);
+				ctx.strokeStyle = getStrokeStyle(ctx, point.color, 0, this._data.items.length);
 			}
 
 			ctx.stroke();
@@ -67,7 +69,7 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 		ctx.stroke();
 	}
 
-	protected abstract _strokeStyle(ctx: CanvasRenderingContext2D): CanvasRenderingContext2D['strokeStyle'];
+	protected abstract _strokeStyle(ctx: CanvasRenderingContext2D, index: number): CanvasRenderingContext2D['strokeStyle'];
 }
 
 export interface PaneRendererLineData extends PaneRendererLineDataBase {
@@ -91,18 +93,18 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		ctx.moveTo(firstItem.x, firstItem.y);
 
 		let prevStrokeStyle = firstItem.color ?? lineColor;
-		ctx.strokeStyle = color2CanvasStyle(prevStrokeStyle, ctx);
+		ctx.strokeStyle = getStrokeStyle(ctx, prevStrokeStyle, visibleRange.from, this._numBars);
 
-		const changeColor = (color: Color) => {
+		const changeColor = (color: Color, index: number, numBars: number) => {
 			ctx.stroke();
 			ctx.beginPath();
-			ctx.strokeStyle = color2CanvasStyle(color, ctx);
+			ctx.strokeStyle = getStrokeStyle(ctx, color, index, numBars);
 			prevStrokeStyle = color;
 		};
 
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
-			const currentStrokeStyle = currItem.color ?? lineColor;
+			const currentStrokeStyle = getStrokeStyle(ctx, currItem.color ?? lineColor, i, this._numBars);
 
 			switch (lineType) {
 				case LineType.Simple:
@@ -112,7 +114,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 					ctx.lineTo(currItem.x, items[i - 1].y);
 
 					if (currentStrokeStyle !== prevStrokeStyle) {
-						changeColor(currentStrokeStyle);
+						changeColor(currentStrokeStyle, i, this._numBars);
 						ctx.lineTo(currItem.x, items[i - 1].y);
 					}
 
@@ -131,14 +133,14 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 					ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 
 					if (currentStrokeStyle !== prevStrokeStyle) {
-						changeColor(currentStrokeStyle);
+						changeColor(currentStrokeStyle, i, this._numBars);
 						ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 					}
 
 					ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
 
 					if (currentStrokeStyle !== prevStrokeStyle) {
-						changeColor(currentStrokeStyle);
+						changeColor(currentStrokeStyle, i, this._numBars);
 						ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
 					}
 
@@ -148,12 +150,12 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			}
 
 			if (lineType !== LineType.WithSteps && currentStrokeStyle !== prevStrokeStyle) {
-				changeColor(currentStrokeStyle);
+				changeColor(currentStrokeStyle, i, this._numBars);
 				ctx.moveTo(currItem.x, currItem.y);
 			}
 
 			if (lineType !== LineType.WithBreaks && currentStrokeStyle !== prevStrokeStyle) {
-				changeColor(currentStrokeStyle);
+				changeColor(currentStrokeStyle, i, this._numBars);
 				ctx.moveTo(currItem.x, currItem.y);
 			}
 		}
@@ -161,8 +163,8 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		ctx.stroke();
 	}
 
-	protected _strokeStyle(ctx: CanvasRenderingContext2D): CanvasRenderingContext2D['strokeStyle'] {
+	protected _strokeStyle(ctx: CanvasRenderingContext2D, index: number): CanvasRenderingContext2D['strokeStyle'] {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return color2CanvasStyle(this._data!.lineColor, ctx);
+		return getStrokeStyle(ctx, this._data!.lineColor, index, this._data!.items.length);
 	}
 }

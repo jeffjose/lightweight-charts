@@ -1,3 +1,4 @@
+import { interpolateCubehelix } from 'd3-interpolate';
 import { Binding as CanvasCoordinateSpaceBinding, bindToDevicePixelRatio } from 'fancy-canvas/coordinate-space';
 
 import { ensureNotNull } from '../helpers/assertions';
@@ -5,7 +6,7 @@ import { Color, ColorType } from '../helpers/color';
 
 export type CanvasStyle = string | CanvasPattern | CanvasGradient;
 
-export function color2CanvasStyle(color: Color, ctx: CanvasRenderingContext2D): CanvasStyle {
+export function getStrokeStyle(ctx: CanvasRenderingContext2D, color: Color, index: number = 1, numBars: number = 1): string {
 	if (typeof color === 'string') {
 		return color;
 	}
@@ -13,19 +14,21 @@ export function color2CanvasStyle(color: Color, ctx: CanvasRenderingContext2D): 
 		case ColorType.Solid:
 			return color.color;
 		case ColorType.VerticalGradient:
-			return fillStyle(ctx, color.topColor, color.bottomColor, 0, 0, 0, 0 + ctx.canvas.height);
+			// return fillStyle(ctx, color.topColor, color.bottomColor, 0, 0, 0, 0 + ctx.canvas.height);
+			return '#f0f';
 		case ColorType.HorizontalGradient:
-			return fillStyle(ctx, color.leftColor, color.rightColor, 0, 0, 0 + ctx.canvas.width, 0);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+			return interpolateCubehelix(color.leftColor, color.rightColor)(index / numBars) as string;
 	}
 }
 
-	// eslint-disable-next-line max-params
-function fillStyle(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasStyle {
-	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
-	gradient.addColorStop(0, color1);
-	gradient.addColorStop(1, color2);
-	return gradient;
-}
+// 	// eslint-disable-next-line max-params
+// function fillStyle(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasStyle {
+// 	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+// 	gradient.addColorStop(0, color1);
+// 	gradient.addColorStop(1, color2);
+// 	return gradient;
+// }
 
 export class Size {
 	public h: number;
