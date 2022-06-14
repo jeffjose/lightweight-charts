@@ -1,5 +1,5 @@
 
-import { CanvasStyle } from '../gui/canvas-utils';
+import { CanvasStyle, createCanvasGradient } from '../gui/canvas-utils';
 
 import { Color, ColorType } from '../helpers/color';
 
@@ -65,17 +65,9 @@ export class PriceChannelRenderer implements IPaneRenderer {
 			case ColorType.Solid:
 				return bg.color;
 			case ColorType.VerticalGradient:
-				return this._fillStyle(ctx, bg.color1, bg.color2, x0, y0, x0, y0 + height);
+				return createCanvasGradient(ctx, bg.color1, bg.color2, x0, y0, x0, y0 + height);
 			case ColorType.HorizontalGradient:
-				return this._fillStyle(ctx, bg.color1, bg.color2, x0, y0, x0 + width, y0);
+				return createCanvasGradient(ctx, bg.color1, bg.color2, x0, y0, x0 + width, y0);
 		}
-	}
-
-	// eslint-disable-next-line max-params
-	private _fillStyle(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasStyle {
-		const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
-		gradient.addColorStop(0, color1);
-		gradient.addColorStop(1, color2);
-		return gradient;
 	}
 }

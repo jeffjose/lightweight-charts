@@ -1,4 +1,4 @@
-import { CanvasStyle, getStrokeStyle } from '../gui/canvas-utils';
+import { CanvasStyle, getColorValueAt } from '../gui/canvas-utils';
 
 import { fillRectInnerBorder } from '../helpers/canvas-helpers';
 import { Color } from '../helpers/color';
@@ -187,10 +187,10 @@ export class PaneRendererCandlesticks implements IPaneRenderer {
 			let left = Math.round(bar.x * pixelRatio) - Math.floor(this._barWidth * 0.5);
 			let right = left + this._barWidth - 1;
 
-			if (getStrokeStyle(bar.color, i, this._numBars) !== prevBarColor) {
+			if (getColorValueAt(bar.color, i, this._numBars) !== prevBarColor) {
 				const barColor = bar.color;
-				ctx.fillStyle = getStrokeStyle(barColor, i, this._numBars);
-				prevBarColor = getStrokeStyle(barColor, i, this._numBars);
+				ctx.fillStyle = getColorValueAt(barColor, i, this._numBars);
+				prevBarColor = getColorValueAt(barColor, i, this._numBars);
 			}
 
 			if (this._data.borderVisible) {

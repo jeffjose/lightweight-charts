@@ -1,4 +1,4 @@
-import { getStrokeStyle } from '../gui/canvas-utils';
+import { getColorValueAt } from '../gui/canvas-utils';
 
 import { Color } from '../helpers/color';
 
@@ -42,10 +42,10 @@ export class PaneRendererMarks extends ScaledRenderer {
 			ctx.fill();
 		};
 
-		ctx.fillStyle = getStrokeStyle(data.backColor);
+		ctx.fillStyle = getColorValueAt(data.backColor);
 		draw(data.radius + 2);
 
-		ctx.fillStyle = getStrokeStyle(data.lineColor);
+		ctx.fillStyle = getColorValueAt(data.lineColor);
 		draw(data.radius);
 	}
 }

@@ -1,4 +1,4 @@
-import { getStrokeStyle } from '../gui/canvas-utils';
+import { getColorValueAt } from '../gui/canvas-utils';
 
 import { Color } from '../helpers/color';
 
@@ -59,7 +59,7 @@ export class PaneRendererHistogram implements IPaneRenderer {
 			const item = this._data.items[i];
 			const current = this._precalculatedCache[i - this._data.visibleRange.from];
 			const y = Math.round(item.y * pixelRatio);
-			ctx.fillStyle = getStrokeStyle(item.color, i, this._numBars);
+			ctx.fillStyle = getColorValueAt(item.color, i, this._numBars);
 
 			let top: number;
 			let bottom: number;
