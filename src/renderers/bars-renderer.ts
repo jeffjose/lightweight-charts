@@ -1,9 +1,9 @@
 import { CanvasStyle, color2CanvasStyle } from '../gui/canvas-utils';
 
 import { ensureNotNull } from '../helpers/assertions';
+import { Color } from '../helpers/color';
 
 import { BarCoordinates, BarPrices } from '../model/bar';
-import { Color } from '../model/layout-options';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
 import { IPaneRenderer } from './ipane-renderer';

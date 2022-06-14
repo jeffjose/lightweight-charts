@@ -1,8 +1,7 @@
 import { Binding as CanvasCoordinateSpaceBinding, bindToDevicePixelRatio } from 'fancy-canvas/coordinate-space';
 
 import { ensureNotNull } from '../helpers/assertions';
-
-import { Color, ColorType } from '../model/layout-options';
+import { Color, ColorType } from '../helpers/color';
 
 export type CanvasStyle = string | CanvasPattern | CanvasGradient;
 

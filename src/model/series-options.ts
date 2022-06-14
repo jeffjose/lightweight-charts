@@ -1,9 +1,9 @@
+import { Color } from '../helpers/color';
 import { DeepPartial } from '../helpers/strict-type-checks';
 
 import { LineStyle, LineType, LineWidth } from '../renderers/draw-line';
 
 import { AutoScaleMargins } from './autoscale-info-impl';
-import { Color } from './layout-options';
 import { PriceFormatterFn } from './price-formatter-fn';
 
 /**

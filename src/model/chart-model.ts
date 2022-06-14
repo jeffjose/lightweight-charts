@@ -3,7 +3,7 @@
 import { ChartWidget } from '../gui/chart-widget';
 
 import { assert, ensureNotNull } from '../helpers/assertions';
-import { gradientColorAtPercent } from '../helpers/color';
+import { ColorType, gradientColorAtPercent } from '../helpers/color';
 import { Delegate } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
 import { ISubscription } from '../helpers/isubscription';
@@ -19,7 +19,7 @@ import { DefaultPriceScaleId, isDefaultPriceScale } from './default-price-scale'
 import { GridOptions } from './grid';
 import { InvalidateMask, InvalidationLevel } from './invalidate-mask';
 import { IPriceDataSource } from './iprice-data-source';
-import { ColorType, LayoutOptions } from './layout-options';
+import { LayoutOptions } from './layout-options';
 import { LocalizationOptions } from './localization-options';
 import { Magnet } from './magnet';
 import { DEFAULT_STRETCH_FACTOR, Pane, PaneInfo } from './pane';

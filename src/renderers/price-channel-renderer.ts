@@ -1,8 +1,9 @@
 
 import { CanvasStyle } from '../gui/canvas-utils';
 
+import { Color, ColorType } from '../helpers/color';
+
 import { Coordinate } from '../model/coordinate';
-import { Color, ColorType } from '../model/layout-options';
 
 import { HorizontalLineRendererData } from './horizontal-line-renderer';
 import { IPaneRenderer } from './ipane-renderer';

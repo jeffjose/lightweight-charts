@@ -1,6 +1,6 @@
 import { ensure, ensureNotNull } from '../helpers/assertions';
+import { Color } from '../helpers/color';
 
-import { Color } from './layout-options';
 import { PlotRowValueIndex } from './plot-data';
 import { Series } from './series';
 import { SeriesPlotRow } from './series-data';

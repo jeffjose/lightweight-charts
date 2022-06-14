@@ -1,6 +1,7 @@
 import { color2CanvasStyle } from '../gui/canvas-utils';
 
-import { Color } from '../model/layout-options';
+import { Color } from '../helpers/color';
+
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 

@@ -1,7 +1,6 @@
 import { assert } from '../../helpers/assertions';
-import { applyAlpha, getColorString } from '../../helpers/color';
+import { applyAlpha, Color, getColorString } from '../../helpers/color';
 
-import { Color } from '../../model/layout-options';
 import { Point } from '../../model/point';
 import { Series } from '../../model/series';
 import { LastPriceAnimationMode } from '../../model/series-options';

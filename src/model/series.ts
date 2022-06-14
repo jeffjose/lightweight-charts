@@ -4,6 +4,7 @@ import { PriceFormatter } from '../formatters/price-formatter';
 import { VolumeFormatter } from '../formatters/volume-formatter';
 
 import { ensureNotNull } from '../helpers/assertions';
+import { Color } from '../helpers/color';
 import { IDestroyable } from '../helpers/idestroyable';
 import { DeepPartial, isInteger, merge } from '../helpers/strict-type-checks';
 
@@ -32,7 +33,6 @@ import { Coordinate } from './coordinate';
 import { CustomPriceLine } from './custom-price-line';
 import { isDefaultPriceScale } from './default-price-scale';
 import { FirstValue } from './iprice-data-source';
-import { Color } from './layout-options';
 import { Pane } from './pane';
 import { PlotRowValueIndex } from './plot-data';
 import { MismatchDirection } from './plot-list';

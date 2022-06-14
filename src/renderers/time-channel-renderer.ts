@@ -1,6 +1,7 @@
 
+import { Color, ColorType } from '../helpers/color';
+
 import { Coordinate } from '../model/coordinate';
-import { Color, ColorType } from '../model/layout-options';
 
 import { IPaneRenderer } from './ipane-renderer';
 import { VerticalLineRendererData } from './vertical-line-renderer';

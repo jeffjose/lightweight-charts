@@ -1,6 +1,7 @@
 import { color2CanvasStyle } from '../gui/canvas-utils';
 
-import { Color } from '../model/layout-options';
+import { Color } from '../helpers/color';
+
 import { Point } from '../model/point';
 
 import { IPaneRenderer } from './ipane-renderer';

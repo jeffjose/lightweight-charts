@@ -1,8 +1,8 @@
 import { CanvasStyle, color2CanvasStyle } from '../gui/canvas-utils';
 
 import { fillRectInnerBorder } from '../helpers/canvas-helpers';
+import { Color } from '../helpers/color';
 
-import { Color } from '../model/layout-options';
 import { SeriesItemsIndexesRange } from '../model/time-data';
 
 import { BarCandlestickItemBase } from './bars-renderer';

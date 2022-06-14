@@ -1,4 +1,3 @@
-import { Color, ColorType } from '../model/layout-options';
 
 import { Nominal } from './nominal';
 
@@ -27,6 +26,80 @@ type BlueComponent = Nominal<number, 'BlueComponent'>;
 type AlphaComponent = Nominal<number, 'AlphaComponent'>;
 
 type Rgba = [RedComponent, GreenComponent, BlueComponent, AlphaComponent];
+
+/**
+ * Represents a type of color.
+ */
+export const enum ColorType {
+	/** Solid color */
+	Solid = 'solid',
+
+	/** Vertical gradient color */
+	VerticalGradient = 'vertical-gradient',
+
+	/** Horizontal gradient color */
+	HorizontalGradient = 'horizontal-gradient',
+}
+
+/**
+ * Represents a solid color.
+ */
+export interface SolidColor {
+	/**
+	 * Type of color.
+	 */
+	type: ColorType.Solid;
+
+	/**
+	 * Color.
+	 */
+	color: string;
+}
+
+/**
+ * Represents a vertical gradient of two colors.
+ */
+export interface VerticalGradientColor {
+	/**
+	 * Type of color.
+	 */
+	type: ColorType.VerticalGradient;
+
+	/**
+	 * Top color
+	 */
+	topColor: string;
+
+	/**
+	 * Bottom color
+	 */
+	bottomColor: string;
+}
+
+/**
+ * Represents a horizontal gradient of two colors.
+ */
+export interface HorizontalGradientColor {
+	/**
+	 * Type of color.
+	 */
+	type: ColorType.HorizontalGradient;
+
+	/**
+	 * Left color
+	 */
+	leftColor: string;
+
+	/**
+	 * Bottom color
+	 */
+	rightColor: string;
+}
+
+/**
+ * Represents the background color of the chart.
+ */
+export type Color = string | SolidColor | VerticalGradientColor | HorizontalGradientColor;
 
 /**
  * Note this object should be explicitly marked as public so that dts-bundle-generator does not mangle the property names.

@@ -1,4 +1,5 @@
-import { Color } from './layout-options';
+import { Color } from '../helpers/color';
+
 import { TimeLineOptions } from './time-line-options';
 
 /**

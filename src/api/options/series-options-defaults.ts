@@ -1,4 +1,5 @@
-import { ColorType } from '../../model/layout-options';
+import { ColorType } from '../../helpers/color';
+
 import {
 	AreaStyleOptions,
 	BarStyleOptions,

@@ -1,10 +1,11 @@
 import { IPriceFormatter } from '../formatters/iprice-formatter';
 
+import { Color } from '../helpers/color';
+
 import { AutoscaleInfoImpl } from './autoscale-info-impl';
 import { ChartModel } from './chart-model';
 import { DataSource } from './data-source';
 import { FirstValue, IPriceDataSource } from './iprice-data-source';
-import { Color } from './layout-options';
 import { TimePointIndex } from './time-data';
 
 export abstract class PriceDataSource extends DataSource implements IPriceDataSource {

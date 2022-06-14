@@ -1,4 +1,5 @@
-import { ColorType } from '../../model/layout-options';
+import { ColorType } from '../../helpers/color';
+
 import { TimeChannelOptions } from '../../model/time-channel-options';
 import { LineStyle } from '../../renderers/draw-line';
 

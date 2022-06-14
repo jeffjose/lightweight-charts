@@ -1,4 +1,5 @@
-import { Color } from '../model/layout-options';
+import { Color } from '../helpers/color';
+
 import { TextWidthCache } from '../model/text-width-cache';
 import { LineWidth } from '../renderers/draw-line';
 

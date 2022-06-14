@@ -1,7 +1,8 @@
 import { color2CanvasStyle } from '../gui/canvas-utils';
 
+import { Color } from '../helpers/color';
+
 import { Coordinate } from '../model/coordinate';
-import { Color } from '../model/layout-options';
 
 import { drawHorizontalLine, LineStyle, LineWidth, setLineStyle } from './draw-line';
 import { IPaneRenderer } from './ipane-renderer';
