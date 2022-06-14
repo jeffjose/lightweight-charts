@@ -46,13 +46,13 @@ export class SeriesLastPriceAnimationRenderer implements IPaneRenderer {
 		ctx.arc(centerX, centerY, centerPointRadius, 0, 2 * Math.PI, false);
 		ctx.fill();
 
-		ctx.fillStyle = getColorValueAt(data.seriesLineColor);
+		ctx.fillStyle = getColorValueAt(data.fillColor);
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, data.radius * pixelRatio, 0, 2 * Math.PI, false);
 		ctx.fill();
 
 		ctx.lineWidth = tickWidth;
-		ctx.fillStyle = getColorValueAt(data.seriesLineColor);
+		ctx.fillStyle = getColorValueAt(data.strokeColor);
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, data.radius * pixelRatio + tickWidth / 2, 0, 2 * Math.PI, false);
 		ctx.stroke();
