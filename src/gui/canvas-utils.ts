@@ -17,8 +17,8 @@ export function getStrokeStyle(color: Color, index: number = 1, numBars: number 
 			// return fillStyle(ctx, color.topColor, color.bottomColor, 0, 0, 0, 0 + ctx.canvas.height);
 			return '#f0f';
 		case ColorType.HorizontalGradient:
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-			return interpolateCubehelix(color.leftColor, color.rightColor)(index / numBars) as string;
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+			return interpolateCubehelix(color.leftColor, color.rightColor)(index / numBars);
 	}
 }
 
