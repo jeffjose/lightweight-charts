@@ -6,7 +6,7 @@ import { Color, ColorType } from '../helpers/color';
 
 export type CanvasStyle = string | CanvasPattern | CanvasGradient;
 
-export function getStrokeStyle(color: Color, index: number = 1, numBars: number = 1): string {
+export function getStrokeStyle(color: Color, index: number = 1, numBars: number = 1, value: number = 0, minValue: number = 0, maxValue: number = 0): string {
 	if (typeof color === 'string') {
 		return color;
 	}
@@ -14,8 +14,8 @@ export function getStrokeStyle(color: Color, index: number = 1, numBars: number 
 		case ColorType.Solid:
 			return color.color;
 		case ColorType.VerticalGradient:
-			// return fillStyle(ctx, color.topColor, color.bottomColor, 0, 0, 0, 0 + ctx.canvas.height);
-			return '#f0f';
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+			return interpolateCubehelix(color.bottomColor, color.topColor)((value - minValue) / (maxValue - minValue));
 		case ColorType.HorizontalGradient:
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
 			return interpolateCubehelix(color.leftColor, color.rightColor)(index / numBars);
