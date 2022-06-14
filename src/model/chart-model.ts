@@ -1045,12 +1045,12 @@ export class ChartModel implements IDestroyable {
 				return layoutOptions.background.color;
 			case ColorType.VerticalGradient:
 				return side === BackgroundColorSide.Top ?
-				layoutOptions.background.topColor :
-				layoutOptions.background.bottomColor;
+				layoutOptions.background.color1 :
+				layoutOptions.background.color2;
 			case ColorType.HorizontalGradient:
 				return side === BackgroundColorSide.Left ?
-				layoutOptions.background.leftColor :
-				layoutOptions.background.rightColor;
+				layoutOptions.background.color1 :
+				layoutOptions.background.color2;
 		}
 	}
 

@@ -68,12 +68,12 @@ export interface VerticalGradientColor {
 	/**
 	 * Top color
 	 */
-	topColor: string;
+	color1: string;
 
 	/**
 	 * Bottom color
 	 */
-	bottomColor: string;
+	color2: string;
 }
 
 /**
@@ -88,12 +88,12 @@ export interface HorizontalGradientColor {
 	/**
 	 * Left color
 	 */
-	leftColor: string;
+	color1: string;
 
 	/**
 	 * Bottom color
 	 */
-	rightColor: string;
+	color2: string;
 }
 
 /**
@@ -428,4 +428,3 @@ export function getColorString(color: Color): string {
 			return '#FF00FF';
 	}
 }
-

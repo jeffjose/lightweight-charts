@@ -15,10 +15,10 @@ export function getStrokeStyle(color: Color, index: number = 1, numBars: number 
 			return color.color;
 		case ColorType.VerticalGradient:
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-			return interpolateCubehelix(color.bottomColor, color.topColor)((value - minValue) / (maxValue - minValue));
+			return interpolateCubehelix(color.color1, color.color2)((value - minValue) / (maxValue - minValue));
 		case ColorType.HorizontalGradient:
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
-			return interpolateCubehelix(color.leftColor, color.rightColor)(index / numBars);
+			return interpolateCubehelix(color.color1, color.color2)(index / numBars);
 	}
 }
 

@@ -63,9 +63,9 @@ export class TimeChannelRenderer implements IPaneRenderer {
 			case ColorType.Solid:
 				return bg.color;
 			case ColorType.VerticalGradient:
-				return this._fillStyle(ctx, bg.topColor, bg.bottomColor, x0, y0, x0, y0 + height);
+				return this._fillStyle(ctx, bg.color1, bg.color2, x0, y0, x0, y0 + height);
 			case ColorType.HorizontalGradient:
-				return this._fillStyle(ctx, bg.leftColor, bg.rightColor, x0, y0, x0 + width, y0);
+				return this._fillStyle(ctx, bg.color1, bg.color2, x0, y0, x0 + width, y0);
 		}
 	}
 
