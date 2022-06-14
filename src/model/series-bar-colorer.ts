@@ -1,6 +1,6 @@
 
 import { ensure, ensureNotNull } from '../helpers/assertions';
-import { Color, getColor } from '../helpers/color';
+import { getColor } from '../helpers/color';
 
 import { PlotRowValueIndex } from './plot-data';
 import { Series } from './series';
@@ -21,7 +21,7 @@ export interface PrecomputedBars {
 }
 
 export interface BarColorerStyle {
-	barColor: Color;
+	barColor: string;
 	barBorderColor: string; // Used in Candlesticks
 	barWickColor: string; // Used in Candlesticks
 }

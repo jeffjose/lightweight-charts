@@ -433,11 +433,11 @@ export function getColorString(color: Color): string {
 }
 
 export function interpolate(startColor: string, endColor: string, barIndex: TimePointIndex, numBars: number): string {
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
-	return interpolateCubehelix(startColor, endColor)(barIndex / numBars);
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return,  @typescript-eslint/no-unsafe-member-access
+	return interpolateCubehelix.gamma(2.2)(startColor, endColor)(barIndex / numBars);
 }
 
-export function getColor(barIndex: TimePointIndex, numBar: number, color: Color): string {
+export function getColor(barIndex: TimePointIndex, numBars: number, color: Color): string {
 	if (typeof color === 'string') {
 		return color;
 	}
@@ -446,6 +446,6 @@ export function getColor(barIndex: TimePointIndex, numBar: number, color: Color)
 		case ColorType.HorizontalGradient:
 			return interpolate(color.leftColor, color.rightColor, barIndex, 1000);
 		default:
-			return interpolate('pink', 'lime', barIndex, 1000);
+			return interpolate('pink', 'lime', barIndex, numBars);
 	}
 }
