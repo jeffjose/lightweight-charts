@@ -54,7 +54,7 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 			ctx.lineTo(point.x + this._data.barWidth / 2, point.y);
 
 			if (point.color !== undefined) {
-				ctx.strokeStyle = getStrokeStyle(ctx, point.color, 0, this._data.items.length);
+				ctx.strokeStyle = getStrokeStyle(point.color, 0, this._data.items.length);
 			}
 
 			ctx.stroke();
@@ -93,18 +93,18 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		ctx.moveTo(firstItem.x, firstItem.y);
 
 		let prevStrokeStyle = firstItem.color ?? lineColor;
-		ctx.strokeStyle = getStrokeStyle(ctx, prevStrokeStyle, visibleRange.from, this._numBars);
+		ctx.strokeStyle = getStrokeStyle(prevStrokeStyle, visibleRange.from, this._numBars);
 
 		const changeColor = (color: Color, index: number, numBars: number) => {
 			ctx.stroke();
 			ctx.beginPath();
-			ctx.strokeStyle = getStrokeStyle(ctx, color, index, numBars);
+			ctx.strokeStyle = getStrokeStyle(color, index, numBars);
 			prevStrokeStyle = color;
 		};
 
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
-			const currentStrokeStyle = getStrokeStyle(ctx, currItem.color ?? lineColor, i, this._numBars);
+			const currentStrokeStyle = getStrokeStyle(currItem.color ?? lineColor, i, this._numBars);
 
 			switch (lineType) {
 				case LineType.Simple:
@@ -165,6 +165,6 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 
 	protected _strokeStyle(ctx: CanvasRenderingContext2D, index: number): CanvasRenderingContext2D['strokeStyle'] {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return getStrokeStyle(ctx, this._data!.lineColor, index, this._data!.items.length);
+		return getStrokeStyle(this._data!.lineColor, index, this._data!.items.length);
 	}
 }

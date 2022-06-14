@@ -62,8 +62,8 @@ export class PaneRendererBars implements IPaneRenderer {
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; ++i) {
 			const bar = this._data.bars[i];
 			if (prevColor !== bar.color) {
-				ctx.fillStyle = getStrokeStyle(ctx, bar.color, i, this._numBars);
-				prevColor = getStrokeStyle(ctx, bar.color, i, this._numBars);
+				ctx.fillStyle = getStrokeStyle(bar.color, i, this._numBars);
+				prevColor = getStrokeStyle(bar.color, i, this._numBars);
 			}
 
 			const bodyWidthHalf = Math.floor(this._barLineWidth * 0.5);

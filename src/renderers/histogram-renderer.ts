@@ -1,3 +1,7 @@
+import { getStrokeStyle } from '../gui/canvas-utils';
+
+import { Color } from '../helpers/color';
+
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue, TimePointIndex } from '../model/time-data';
 
@@ -7,7 +11,7 @@ const showSpacingMinimalBarWidth = 1;
 const alignToMinimalWidthLimit = 4;
 
 export interface HistogramItem extends PricedValue, TimedValue {
-	color: string;
+	color: Color;
 }
 
 export interface PaneRendererHistogramData {
@@ -29,10 +33,12 @@ interface PrecalculatedItemCoordinates {
 
 export class PaneRendererHistogram implements IPaneRenderer {
 	private _data: PaneRendererHistogramData | null = null;
+	private _numBars: number = 0;
 	private _precalculatedCache: PrecalculatedItemCoordinates[] = [];
 
 	public setData(data: PaneRendererHistogramData): void {
 		this._data = data;
+		this._numBars = data.items.length;
 		this._precalculatedCache = [];
 	}
 
@@ -53,7 +59,7 @@ export class PaneRendererHistogram implements IPaneRenderer {
 			const item = this._data.items[i];
 			const current = this._precalculatedCache[i - this._data.visibleRange.from];
 			const y = Math.round(item.y * pixelRatio);
-			ctx.fillStyle = item.color;
+			ctx.fillStyle = getStrokeStyle(item.color, i, this._numBars);
 
 			let top: number;
 			let bottom: number;

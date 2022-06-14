@@ -42,10 +42,10 @@ export class PaneRendererMarks extends ScaledRenderer {
 			ctx.fill();
 		};
 
-		ctx.fillStyle = getStrokeStyle(ctx, data.backColor);
+		ctx.fillStyle = getStrokeStyle(data.backColor);
 		draw(data.radius + 2);
 
-		ctx.fillStyle = getStrokeStyle(ctx, data.lineColor);
+		ctx.fillStyle = getStrokeStyle(data.lineColor);
 		draw(data.radius);
 	}
 }

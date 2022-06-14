@@ -417,7 +417,7 @@ export interface HistogramStyleOptions {
 	 *
 	 * @defaultValue `'#26a69a'`
 	 */
-	color: string;
+	color: Color;
 
 	/**
 	 * Initial level of histogram columns.

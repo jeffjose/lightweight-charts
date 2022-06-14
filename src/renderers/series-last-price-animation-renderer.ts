@@ -40,19 +40,19 @@ export class SeriesLastPriceAnimationRenderer implements IPaneRenderer {
 		const centerX = Math.round(data.center.x * pixelRatio) + correction; // correct x coordinate only
 		const centerY = data.center.y * pixelRatio;
 
-		ctx.fillStyle = getStrokeStyle(ctx, data.seriesLineColor);
+		ctx.fillStyle = getStrokeStyle(data.seriesLineColor);
 		ctx.beginPath();
 		const centerPointRadius = Math.max(2, data.seriesLineWidth * 1.5) * pixelRatio;
 		ctx.arc(centerX, centerY, centerPointRadius, 0, 2 * Math.PI, false);
 		ctx.fill();
 
-		ctx.fillStyle = getStrokeStyle(ctx, data.seriesLineColor);
+		ctx.fillStyle = getStrokeStyle(data.seriesLineColor);
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, data.radius * pixelRatio, 0, 2 * Math.PI, false);
 		ctx.fill();
 
 		ctx.lineWidth = tickWidth;
-		ctx.fillStyle = getStrokeStyle(ctx, data.seriesLineColor);
+		ctx.fillStyle = getStrokeStyle(data.seriesLineColor);
 		ctx.beginPath();
 		ctx.arc(centerX, centerY, data.radius * pixelRatio + tickWidth / 2, 0, 2 * Math.PI, false);
 		ctx.stroke();

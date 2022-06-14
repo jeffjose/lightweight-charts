@@ -118,7 +118,7 @@ export class PriceAxisViewRenderer implements IPriceAxisViewRenderer {
 			ctx.fill();
 
 			// draw border
-			ctx.fillStyle = getStrokeStyle(ctx, this._data.borderColor);
+			ctx.fillStyle = getStrokeStyle(this._data.borderColor);
 			ctx.fillRect(alignRight ? rightScaled - horzBorderScaled : 0, yTopScaled, horzBorderScaled, yBottomScaled - yTopScaled);
 
 			if (this._data.tickVisible) {
