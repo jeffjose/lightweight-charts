@@ -69,7 +69,7 @@ export interface HorizontalGradientColor {
 /**
  * Represents the background color of the chart.
  */
-export type Background = SolidColor | VerticalGradientColor | HorizontalGradientColor;
+export type Color = SolidColor | VerticalGradientColor | HorizontalGradientColor;
 
 /** Represents layout options */
 export interface LayoutOptions {
@@ -78,7 +78,7 @@ export interface LayoutOptions {
 	 *
 	 * @defaultValue `{ type: ColorType.Solid, color: '#FFFFFF' }`
 	 */
-	background: Background;
+	background: Color;
 
 	/**
 	 * Color of text on the scales.

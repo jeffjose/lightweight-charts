@@ -1,6 +1,6 @@
 
 import { Coordinate } from '../model/coordinate';
-import { Background, ColorType } from '../model/layout-options';
+import { Color, ColorType } from '../model/layout-options';
 
 import { HorizontalLineRendererData } from './horizontal-line-renderer';
 import { IPaneRenderer } from './ipane-renderer';
@@ -13,7 +13,7 @@ export interface PriceChannelRendererData {
 	height: number;
 	topLeftX: Coordinate;
 	topLeftY: Coordinate;
-	background: Background;
+	background: Color;
 }
 
 export class PriceChannelRenderer implements IPaneRenderer {
@@ -54,7 +54,7 @@ export class PriceChannelRenderer implements IPaneRenderer {
 		ctx.fillStyle = this._getColor(ctx, this._data.background, topLeftX, topLeftY, width, height);
 		ctx.fillRect(topLeftX, topLeftY, width, height);
 	}
-	private _getColor(ctx: CanvasRenderingContext2D, bg: Background, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+	private _getColor(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
 		switch (bg.type) {
 			case ColorType.Solid:
 				return bg.color;
