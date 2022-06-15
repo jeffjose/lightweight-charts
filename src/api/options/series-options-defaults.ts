@@ -1,3 +1,4 @@
+import { ColorType } from '../../model/layout-options';
 import {
 	AreaStyleOptions,
 	BarStyleOptions,
@@ -32,7 +33,10 @@ export const barStyleDefaults: BarStyleOptions = {
 };
 
 export const lineStyleDefaults: LineStyleOptions = {
-	color: '#2196f3',
+	color: {
+		color: '#2196f3',
+		type: ColorType.Solid,
+	},
 	lineStyle: LineStyle.Solid,
 	lineWidth: 3,
 	lineType: LineType.Simple,
@@ -84,7 +88,10 @@ export const baselineStyleDefaults: BaselineStyleOptions = {
 };
 
 export const histogramStyleDefaults: HistogramStyleOptions = {
-	color: '#26a69a',
+	color: {
+		color: '#26a69a',
+		type: ColorType.Solid,
+	},
 	base: 0,
 };
 

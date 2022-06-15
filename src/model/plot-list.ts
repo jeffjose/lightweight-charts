@@ -2,7 +2,7 @@ import { lowerbound, upperbound } from '../helpers/algorithms';
 import { ensureNotNull } from '../helpers/assertions';
 import { Nominal } from '../helpers/nominal';
 
-import { PlotRow, PlotRowValueIndex } from '../model/plot-data';
+import { PlotRow, PlotRowValue, PlotRowValueIndex } from '../model/plot-data';
 import { TimePointIndex } from '../model/time-data';
 
 /**
@@ -55,6 +55,46 @@ export class PlotList<PlotRowType extends PlotRow = PlotRow> {
 		return this.size() > 0 ? this._indexAt((this._items.length - 1) as PlotRowIndex) : null;
 	}
 
+	public minValue(): number | null {
+		if (this._items.length === 0) {
+			return null;
+		}
+		let minSeriesValue: PlotRowValue = this._items[0].value;
+
+		for (let i = 0; i < this.size(); i++) {
+			const item = this._items[i];
+
+			if (item.value[PlotRowValueIndex.Close] < minSeriesValue[PlotRowValueIndex.Close]) {
+				minSeriesValue = item.value;
+			}
+		}
+
+		return minSeriesValue[PlotRowValueIndex.Close];
+	}
+
+	public maxValue(): number | null {
+		if (this._items.length === 0) {
+			return null;
+		}
+		let maxSeriesValue: PlotRowValue = this._items[0].value;
+
+		for (let i = 0; i < this.size(); i++) {
+			const item = this._items[i];
+
+			// FIXME: double check what line renderer is using
+			// Use the first item
+			if (item.value[PlotRowValueIndex.Close] > maxSeriesValue[PlotRowValueIndex.Close]) {
+				maxSeriesValue = item.value;
+			}
+		}
+
+		return maxSeriesValue[PlotRowValueIndex.Close];
+	}
+
+	public seriesPositionAt(index: TimePointIndex): number | null {
+		return this._search(index, MismatchDirection.None);
+	}
+
 	public size(): number {
 		return this._items.length;
 	}
@@ -69,6 +109,30 @@ export class PlotList<PlotRowType extends PlotRow = PlotRow> {
 
 	public valueAt(index: TimePointIndex): PlotRowType | null {
 		return this.search(index);
+	}
+
+	public valueToTheLeftOf(index: TimePointIndex): PlotRowType | null {
+		const pos = this._searchNearestLeft(index);
+		if (pos === null) {
+			return null;
+		}
+
+		return {
+			...this._valueAt(pos),
+			index: this._indexAt(pos),
+		};
+	}
+
+	public valueToTheRightOf(index: TimePointIndex): PlotRowType | null {
+		const pos = this._searchNearestRight(index);
+		if (pos === null) {
+			return null;
+		}
+
+		return {
+			...this._valueAt(pos),
+			index: this._indexAt(pos),
+		};
 	}
 
 	public search(index: TimePointIndex, searchMode: MismatchDirection = MismatchDirection.None): PlotRowType | null {

@@ -3,6 +3,7 @@ import { DeepPartial } from '../helpers/strict-type-checks';
 import { LineStyle, LineType, LineWidth } from '../renderers/draw-line';
 
 import { AutoScaleMargins } from './autoscale-info-impl';
+import { Color } from './layout-options';
 import { PriceFormatterFn } from './price-formatter-fn';
 
 /**
@@ -151,7 +152,7 @@ export interface LineStyleOptions {
 	 *
 	 * @defaultValue `'#2196f3'`
 	 */
-	color: string;
+	color: Color;
 
 	/**
 	 * Line style.
@@ -416,7 +417,7 @@ export interface HistogramStyleOptions {
 	 *
 	 * @defaultValue `'#26a69a'`
 	 */
-	color: string;
+	color: Color;
 
 	/**
 	 * Initial level of histogram columns.

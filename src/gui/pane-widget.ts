@@ -11,6 +11,7 @@ import { Coordinate } from '../model/coordinate';
 import { IDataSource } from '../model/idata-source';
 import { InvalidationLevel } from '../model/invalidate-mask';
 import { IPriceDataSource } from '../model/iprice-data-source';
+import { ColorType } from '../model/layout-options';
 import { Pane, PaneInfo } from '../model/pane';
 import { Point } from '../model/point';
 import { TimePointIndex } from '../model/time-data';
@@ -104,6 +105,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._state.onDestroyed().subscribe(this._onStateDestroyed.bind(this), this, true);
 
 		this._paneCell = document.createElement('td');
+		this._paneCell.classList.add('cell');
 		this._paneCell.style.padding = '0';
 		this._paneCell.style.position = 'relative';
 
@@ -114,9 +116,13 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		paneWrapper.style.overflow = 'hidden';
 
 		this._leftAxisCell = document.createElement('td');
+		this._leftAxisCell.classList.add('axis');
+		this._leftAxisCell.classList.add('left');
 		this._leftAxisCell.style.padding = '0';
 
 		this._rightAxisCell = document.createElement('td');
+		this._rightAxisCell.classList.add('axis');
+		this._rightAxisCell.classList.add('right');
 		this._rightAxisCell.style.padding = '0';
 
 		this._paneCell.appendChild(paneWrapper);
@@ -138,6 +144,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		topCanvas.style.top = '0';
 
 		this._rowElement = document.createElement('tr');
+		this._rowElement.classList.add('pane');
 		this._rowElement.appendChild(this._leftAxisCell);
 		this._rowElement.appendChild(this._paneCell);
 		this._rowElement.appendChild(this._rightAxisCell);
@@ -525,13 +532,22 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 	private _drawBackground(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 		drawScaled(ctx, pixelRatio, () => {
 			const model = this._model();
-			const topColor = model.backgroundTopColor();
-			const bottomColor = model.backgroundBottomColor();
 
-			if (topColor === bottomColor) {
-				clearRect(ctx, 0, 0, this._size.w, this._size.h, bottomColor);
-			} else {
-				clearRectWithGradient(ctx, 0, 0, this._size.w, this._size.h, topColor, bottomColor);
+			const color = model.backgroundColor();
+
+			const width = this._size.w;
+			const height = this._size.h;
+
+			switch (color.type) {
+				case ColorType.Solid:
+					clearRect(ctx, 0, 0, width, height, color.color);
+					break;
+				case ColorType.VerticalGradient:
+					clearRectWithGradient(ctx, 0, 0, 0, height, width, height, color.startColor, color.endColor);
+					return;
+				case ColorType.HorizontalGradient:
+					clearRectWithGradient(ctx, 0, 0, width, 0, width, height, color.startColor, color.endColor);
+					return;
 			}
 		});
 	}

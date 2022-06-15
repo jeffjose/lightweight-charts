@@ -42,8 +42,6 @@ export class VerticalLineRenderer implements IPaneRenderer {
 		ctx.lineWidth = Math.floor(this._data.lineWidth * pixelRatio);
 		setLineStyle(ctx, this._data.lineStyle);
 
-		// TODO: jeffjose Update
-		// drawHorizontalLine(ctx, y, 0, width);
 		drawVerticalLine(ctx, x, 0, height);
 	}
 }

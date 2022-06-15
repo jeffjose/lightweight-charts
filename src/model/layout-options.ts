@@ -1,3 +1,5 @@
+import { Diff } from '../helpers/strict-type-checks';
+
 /**
  * Represents a type of color.
  */
@@ -38,12 +40,12 @@ export interface VerticalGradientColor {
 	/**
 	 * Top color
 	 */
-	topColor: string;
+	startColor: string;
 
 	/**
 	 * Bottom color
 	 */
-	bottomColor: string;
+	endColor: string;
 }
 
 /**
@@ -58,18 +60,33 @@ export interface HorizontalGradientColor {
 	/**
 	 * Left color
 	 */
-	leftColor: string;
+	startColor: string;
 
 	/**
 	 * Bottom color
 	 */
-	rightColor: string;
+	endColor: string;
 }
 
 /**
  * Represents the background color of the chart.
  */
-export type Background = SolidColor | VerticalGradientColor | HorizontalGradientColor;
+export type Color = string | SolidColor | VerticalGradientColor | HorizontalGradientColor;
+export type StrictColor = Diff<Color, string>;
+export type GradientColor = Diff<StrictColor, SolidColor>;
+
+export function getRepresentativeColor(color: Color): string {
+	if (typeof color === 'string') {
+		return color;
+	}
+	switch (color.type) {
+		case ColorType.Solid:
+			return color.color;
+		case ColorType.VerticalGradient:
+		case ColorType.HorizontalGradient:
+			return color.startColor;
+	}
+}
 
 /** Represents layout options */
 export interface LayoutOptions {
@@ -78,7 +95,7 @@ export interface LayoutOptions {
 	 *
 	 * @defaultValue `{ type: ColorType.Solid, color: '#FFFFFF' }`
 	 */
-	background: Background;
+	background: Color;
 
 	/**
 	 * Color of text on the scales.

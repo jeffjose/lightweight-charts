@@ -1,5 +1,6 @@
 import { BarPrice } from '../../model/bar';
 import { ChartModel } from '../../model/chart-model';
+import { getRepresentativeColor } from '../../model/layout-options';
 import { Series } from '../../model/series';
 import { SeriesBarColorer } from '../../model/series-bar-colorer';
 import { TimePointIndex } from '../../model/time-data';
@@ -26,7 +27,9 @@ export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineItem> {
 		this._makeValid();
 		const data: PaneRendererLineData = {
 			items: this._items,
-			lineColor: lineStyleProps.color,
+			numItems: this._items.length,
+			lineColor: getRepresentativeColor(lineStyleProps.color),
+			lineKolor: lineStyleProps.color,
 			lineStyle: lineStyleProps.lineStyle,
 			lineType: lineStyleProps.lineType,
 			lineWidth: lineStyleProps.lineWidth,
@@ -41,13 +44,16 @@ export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineItem> {
 
 	protected override _updateOptions(): void {
 		this._items.forEach((item: LineItem) => {
-			item.color = this._series.barColorer().barStyle(item.time).barColor;
+			const barColorer = this._series.barColorer().barStyle(item.time);
+			item.color = barColorer.barColor;
+			item.style = barColorer.barStyle;
 		});
 	}
 
 	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer): LineItem {
 		const item = this._createRawItemBase(time, price) as LineItem;
 		item.color = colorer.barStyle(time).barColor;
+		item.style = colorer.barStyle(time).barStyle;
 		return item;
 	}
 }

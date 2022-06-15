@@ -1,6 +1,6 @@
 import { Binding as CanvasCoordinateSpaceBinding } from 'fancy-canvas/coordinate-space';
 
-import { clearRect, drawScaled } from '../helpers/canvas-helpers';
+import { clearRect, clearRectWithGradient, drawScaled } from '../helpers/canvas-helpers';
 import { Delegate } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
 import { ISubscription } from '../helpers/isubscription';
@@ -8,7 +8,7 @@ import { makeFont } from '../helpers/make-font';
 
 import { IDataSource } from '../model/idata-source';
 import { InvalidationLevel } from '../model/invalidate-mask';
-import { LayoutOptions } from '../model/layout-options';
+import { ColorType, LayoutOptions } from '../model/layout-options';
 import { TextWidthCache } from '../model/text-width-cache';
 import { TickMarkWeight } from '../model/time-data';
 import { TimeMark } from '../model/time-scale';
@@ -58,6 +58,7 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 		this._options = chartWidget.options().layout;
 
 		this._element = document.createElement('tr');
+		this._element.classList.add('stub');
 
 		this._leftStubCell = document.createElement('td');
 		this._leftStubCell.style.padding = '0';
@@ -295,8 +296,25 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 	}
 
 	private _drawBackground(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
+		const width = this._size.w;
+		const height = this._size.h;
+		// console.log('drawBackground', this._chart.model().backgroundColor());
 		drawScaled(ctx, pixelRatio, () => {
-			clearRect(ctx, 0, 0, this._size.w, this._size.h, this._chart.model().backgroundBottomColor());
+			const model = this._chart.model();
+			const color = model.backgroundColor();
+			// console.log(color);
+
+			switch (color.type) {
+				case ColorType.Solid:
+					clearRect(ctx, 0, 0, width, height, color.color);
+					break;
+				case ColorType.VerticalGradient:
+					clearRect(ctx, 0, 0, width, height, color.endColor);
+					return;
+				case ColorType.HorizontalGradient:
+					clearRectWithGradient(ctx, 0, 0, width, 0, width, height, color.startColor, color.endColor);
+					return;
+			}
 		});
 	}
 
@@ -487,14 +505,25 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 			return options.leftPriceScale.borderVisible && model.timeScale().options().borderVisible;
 		};
 
-		const bottomColorGetter = () => model.backgroundBottomColor();
+		const bottomColorGetter = (side: 'left' | 'right') => () => {
+			const color = model.backgroundColor();
+
+			switch (color.type) {
+				case ColorType.Solid:
+					return color.color;
+				case ColorType.HorizontalGradient:
+					return side === 'left' ? color.startColor : color.endColor;
+				case ColorType.VerticalGradient:
+					return side === 'left' ? color.endColor : color.endColor;
+			}
+		};
 
 		if (options.leftPriceScale.visible && this._leftStub === null) {
-			this._leftStub = new PriceAxisStub('left', options, params, borderVisibleGetter, bottomColorGetter);
+			this._leftStub = new PriceAxisStub('left', options, params, borderVisibleGetter, bottomColorGetter('left'));
 			this._leftStubCell.appendChild(this._leftStub.getElement());
 		}
 		if (options.rightPriceScale.visible && this._rightStub === null) {
-			this._rightStub = new PriceAxisStub('right', options, params, borderVisibleGetter, bottomColorGetter);
+			this._rightStub = new PriceAxisStub('right', options, params, borderVisibleGetter, bottomColorGetter('right'));
 			this._rightStubCell.appendChild(this._rightStub.getElement());
 		}
 	}

@@ -1,5 +1,7 @@
 import { ensure, ensureNotNull } from '../helpers/assertions';
+import { colorGetter } from '../helpers/color';
 
+import { ColorType, getRepresentativeColor } from './layout-options';
 import { PlotRowValueIndex } from './plot-data';
 import { Series } from './series';
 import { SeriesPlotRow } from './series-data';
@@ -20,21 +22,44 @@ export interface PrecomputedBars {
 
 export interface BarColorerStyle {
 	barColor: string;
+	barStyle: [string, string]; // [currItemColor, nextItemColor]
 	barBorderColor: string; // Used in Candlesticks
 	barWickColor: string; // Used in Candlesticks
 }
 
 const emptyResult: BarColorerStyle = {
 	barColor: '',
+	barStyle: ['', ''],
 	barBorderColor: '',
 	barWickColor: '',
 };
 
 export class SeriesBarColorer {
 	private _series: Series;
+	private _numBars: number = 0;
+	private _minValue: number;
+	private _maxValue: number;
+	private _colorGetter: (o: number) => string;
 
 	public constructor(series: Series) {
 		this._series = series;
+		this._numBars = this._series.bars().size();
+		this._minValue = this._series.bars().minValue() ?? 0;
+		this._maxValue = this._series.bars().maxValue() ?? 0;
+
+		const targetType = this._series.seriesType();
+		const seriesOptions = this._series.options();
+		let color;
+		switch (targetType) {
+			case 'Line':
+			case 'Histogram':
+				color = (seriesOptions as LineStyleOptions | HistogramStyleOptions).color;
+				this._colorGetter = colorGetter(color);
+				break;
+			default:
+				this._colorGetter = () => '';
+				break;
+		}
 	}
 
 	public barStyle(barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
@@ -46,7 +71,6 @@ export class SeriesBarColorer {
 		switch (targetType) {
 			case 'Line':
 				return this._lineStyle(seriesOptions as LineStyleOptions, barIndex, precomputedBars);
-
 			case 'Area':
 				return this._areaStyle(seriesOptions as AreaStyleOptions);
 
@@ -126,20 +150,123 @@ export class SeriesBarColorer {
 		};
 	}
 
+	// eslint-disable-next-line complexity
 	private _lineStyle(lineStyle: LineStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Line'>;
+		const nextBar = this._searchNearestRight(barIndex, precomputedBars) as SeriesPlotRow<'Line'> ?? currentBar;
 
-		return {
-			...emptyResult,
-			barColor: currentBar.color ?? lineStyle.color,
-		};
+		let currentBarColor;
+		let nextBarColor;
+		let seriesPos;
+		let vertOffset;
+		let horizOffset;
+		let nextVertOffset;
+		let nextHorizOffset;
+
+		if (typeof lineStyle.color === 'string') {
+			return {
+				...emptyResult,
+				barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
+				barStyle: [currentBar.color ?? lineStyle.color, currentBar.color ?? lineStyle.color] as [string, string],
+			};
+		}
+
+		switch (lineStyle.color.type) {
+			case ColorType.Solid: {
+				return {
+					...emptyResult,
+					barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
+					barStyle: [currentBar.color, currentBar.color] as [string, string],
+				};
+			}
+			case ColorType.VerticalGradient: {
+				seriesPos = this._series.bars().seriesPositionAt(barIndex) ?? 0;
+				vertOffset = (currentBar.value[PlotRowValueIndex.Close] - this._minValue) / (this._maxValue - this._minValue);
+				nextVertOffset = (nextBar.value[PlotRowValueIndex.Close] - this._minValue) / (this._maxValue - this._minValue);
+
+				currentBarColor = currentBar.color ?? this._colorGetter(vertOffset);
+				nextBarColor = nextBar?.color ?? this._colorGetter(nextVertOffset);
+
+				return {
+					...emptyResult,
+					barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
+					barStyle: [currentBarColor, nextBarColor] as [string, string],
+
+				};
+			}
+			case ColorType.HorizontalGradient: {
+				seriesPos = this._series.bars().seriesPositionAt(barIndex) ?? 0;
+				horizOffset = seriesPos / this._numBars;
+				nextHorizOffset = (seriesPos + 1) / this._numBars;
+
+				currentBarColor = currentBar.color ?? this._colorGetter(horizOffset);
+				nextBarColor = nextBar?.color ?? this._colorGetter(nextHorizOffset);
+
+				return {
+					...emptyResult,
+					barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
+					barStyle: [currentBarColor, nextBarColor] as [string, string],
+
+				};
+			}
+		}
 	}
 
 	private _histogramStyle(histogramStyle: HistogramStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
-		const result: BarColorerStyle = { ...emptyResult };
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Histogram'>;
-		result.barColor = currentBar.color !== undefined ? currentBar.color : histogramStyle.color;
-		return result;
+		const nextBar = this._searchNearestRight(barIndex, precomputedBars) as SeriesPlotRow<'Histogram'>;
+
+		let currentBarColor;
+		let nextBarColor;
+		let seriesPos;
+		let vertOffset;
+		let horizOffset;
+		let nextHorizOffset;
+
+		if (typeof histogramStyle.color === 'string') {
+			return {
+				...emptyResult,
+				barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
+				barStyle: [currentBar.color ?? histogramStyle.color, currentBar.color ?? histogramStyle.color] as [string, string],
+			};
+		}
+
+		switch (histogramStyle.color.type) {
+			case ColorType.Solid: {
+				return {
+					...emptyResult,
+					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
+					barStyle: [currentBar.color, currentBar.color] as [string, string],
+				};
+			}
+			case ColorType.VerticalGradient: {
+				vertOffset = (currentBar.value[PlotRowValueIndex.Close] - this._minValue) / (this._maxValue - this._minValue);
+
+				currentBarColor = currentBar.color ?? this._colorGetter(vertOffset);
+
+				return {
+					...emptyResult,
+					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
+					barStyle: [histogramStyle.color.startColor, currentBarColor] as [string, string],
+
+				};
+			}
+			case ColorType.HorizontalGradient: {
+				seriesPos = this._series.bars().seriesPositionAt(barIndex) ?? 0;
+				horizOffset = seriesPos / this._numBars;
+				nextHorizOffset = (seriesPos + 1) / this._numBars;
+
+				currentBarColor = currentBar.color ?? this._colorGetter(horizOffset);
+				nextBarColor = nextBar?.color ?? this._colorGetter(nextHorizOffset);
+
+				return {
+					...emptyResult,
+					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
+					barStyle: [currentBarColor, nextBarColor] as [string, string],
+
+				};
+			}
+		}
 	}
 
 	private _findBar(barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): SeriesPlotRow | null {
@@ -148,5 +275,12 @@ export class SeriesBarColorer {
 		}
 
 		return this._series.bars().valueAt(barIndex);
+	}
+
+	private _searchNearestRight(barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): SeriesPlotRow | null {
+		if (precomputedBars !== undefined) {
+			return precomputedBars.value;
+		}
+		return this._series.bars().valueToTheRightOf(barIndex);
 	}
 }

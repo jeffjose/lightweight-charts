@@ -10,7 +10,7 @@ import { CustomPriceLine } from '../model/custom-price-line';
 import { IDataSource } from '../model/idata-source';
 import { InvalidationLevel } from '../model/invalidate-mask';
 import { IPriceDataSource } from '../model/iprice-data-source';
-import { LayoutOptions } from '../model/layout-options';
+import { ColorType, LayoutOptions } from '../model/layout-options';
 import { PriceScalePosition } from '../model/pane';
 import { PriceScale } from '../model/price-scale';
 import { Series } from '../model/series';
@@ -508,14 +508,22 @@ export class PriceAxisWidget implements IDestroyable {
 		const width = this._size.w;
 		const height = this._size.h;
 		drawScaled(ctx, pixelRatio, () => {
-			const model = this._pane.state().model();
-			const topColor = model.backgroundTopColor();
-			const bottomColor = model.backgroundBottomColor();
+			// FIXME: jeffjose Duplication
 
-			if (topColor === bottomColor) {
-				clearRect(ctx, 0, 0, width, height, topColor);
-			} else {
-				clearRectWithGradient(ctx, 0, 0, width, height, topColor, bottomColor);
+			const model = this._pane.state().model();
+			const color = model.backgroundColor();
+
+			switch (color.type) {
+				case ColorType.Solid:
+					clearRect(ctx, 0, 0, width, height, color.color);
+					break;
+				case ColorType.VerticalGradient:
+					clearRectWithGradient(ctx, 0, 0, 0, height, width, height, color.startColor, color.endColor);
+					return;
+				case ColorType.HorizontalGradient:
+					// clearRectWithGradient(ctx, 0, 0, width, 0, width, height, color.startColor, color.endColor);
+					clearRect(ctx, 0, 0, width, height, this._isLeft ? color.startColor : color.endColor);
+					return;
 			}
 		});
 	}

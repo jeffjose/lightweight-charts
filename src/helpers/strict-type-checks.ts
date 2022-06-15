@@ -91,3 +91,6 @@ export function notNull<T>(t: T | null): t is T {
 export function undefinedIfNull<T>(t: T | null): T | undefined {
 	return (t === null) ? undefined : t;
 }
+
+// Remove types from T that are assignable to U
+export type Diff<T, U> = T extends U ? never : T;

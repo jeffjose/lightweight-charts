@@ -1,3 +1,8 @@
+import { deltaE } from 'chroma.ts';
+import { interpolateCubehelix } from 'd3-interpolate';
+
+import { Color, ColorType, GradientColor, StrictColor } from '../model/layout-options';
+
 import { Nominal } from './nominal';
 
 /**
@@ -336,4 +341,80 @@ export function gradientColorAtPercent(topColor: string, bottomColor: string, pe
 	];
 
 	return `rgba(${resultRgba[0]}, ${resultRgba[1]}, ${resultRgba[2]}, ${resultRgba[3]})`;
+}
+
+export function interpolateColor(color1: string, color2: string): (t: number) => string {
+	return interpolateCubehelix(color1, color2);
+}
+export function interpolateColorValueAt(color1: string, color2: string, offset: number): string {
+	return interpolateColor(color1, color2)(offset);
+}
+
+// eslint-disable-next-line max-params
+export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number, skipColorDiffCheck: boolean = false): CanvasRenderingContext2D['strokeStyle'] | CanvasRenderingContext2D['fillStyle'] {
+	// <=1.0 is not perceptible by human eyes
+	// http://zschuessler.github.io/DeltaE/learn/
+	if (!skipColorDiffCheck && deltaE(color1, color2) < 1) {
+		return color1;
+	}
+	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+	const totalStops = 3;
+	gradient.addColorStop(0, color1);
+	for (const i of Array.from(Array(totalStops).keys()).map((x: number) => x + 1)) {
+		gradient.addColorStop(i / totalStops, interpolateColorValueAt(color1, color2, i / totalStops));
+	}
+	gradient.addColorStop(1, color2);
+	return gradient;
+}
+
+	// eslint-disable-next-line max-params
+function fillStyle(ctx: CanvasRenderingContext2D, topColor: string, bottomColor: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['fillStyle'] {
+	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+	gradient.addColorStop(0, topColor);
+	gradient.addColorStop(1, bottomColor);
+	return gradient;
+}
+
+export function getFillColorFromColor(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+	if (typeof bg == 'string') {
+		return bg;
+	}
+	switch (bg.type) {
+		case ColorType.Solid:
+			return bg.color;
+		case ColorType.VerticalGradient:
+			return fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0, y0 + height);
+		case ColorType.HorizontalGradient:
+			return fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0 + width, y0);
+	}
+}
+
+export function toStrictColor(color: Color): StrictColor {
+	if (typeof color == 'string') {
+		return { color: color, type: ColorType.Solid };
+	}
+
+	return color;
+}
+
+export function isStrictColor(color: Color): color is StrictColor {
+	return !!(color as StrictColor).type;
+}
+
+export function isGradientColor(color: Color): color is GradientColor {
+	return !!(color as GradientColor).startColor;
+}
+
+export function colorGetter(color: Color): (o: number) => string {
+	if (typeof color == 'string') {
+		return () => color;
+	}
+
+	switch (color.type) {
+		case ColorType.Solid:
+			return () => color.color;
+		case ColorType.VerticalGradient:
+		case ColorType.HorizontalGradient:
+			return interpolateColor(color.startColor, color.endColor);
+	}
 }
