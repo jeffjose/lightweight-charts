@@ -1,3 +1,5 @@
+import { interpolateCubehelix } from 'd3-interpolate';
+
 import { Nominal } from './nominal';
 
 /**
@@ -336,4 +338,18 @@ export function gradientColorAtPercent(topColor: string, bottomColor: string, pe
 	];
 
 	return `rgba(${resultRgba[0]}, ${resultRgba[1]}, ${resultRgba[2]}, ${resultRgba[3]})`;
+}
+
+function interpolateColorValueAt(color1: string, color2: string, offset: number): string {
+	return interpolateCubehelix(color1, color2)(offset);
+}
+
+// eslint-disable-next-line max-params
+export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['strokeStyle'] {
+	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+	const totalStops = 10;
+	for (const i of Array.from(Array(totalStops).keys()).map((x: number) => x + 1)) {
+		gradient.addColorStop(i / totalStops, interpolateColorValueAt(color1, color2, i / totalStops));
+	}
+	return gradient;
 }

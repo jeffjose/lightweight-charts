@@ -71,6 +71,30 @@ export class PlotList<PlotRowType extends PlotRow = PlotRow> {
 		return this.search(index);
 	}
 
+	public valueToTheLeftOf(index: TimePointIndex): PlotRowType | null {
+		const pos = this._searchNearestLeft(index);
+		if (pos === null) {
+			return null;
+		}
+
+		return {
+			...this._valueAt(pos),
+			index: this._indexAt(pos),
+		};
+	}
+
+	public valueToTheRightOf(index: TimePointIndex): PlotRowType | null {
+		const pos = this._searchNearestRight(index);
+		if (pos === null) {
+			return null;
+		}
+
+		return {
+			...this._valueAt(pos),
+			index: this._indexAt(pos),
+		};
+	}
+
 	public search(index: TimePointIndex, searchMode: MismatchDirection = MismatchDirection.None): PlotRowType | null {
 		const pos = this._search(index, searchMode);
 		if (pos === null) {
