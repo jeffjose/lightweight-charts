@@ -172,7 +172,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addAreaSeries(options: AreaSeriesPartialOptions = {}): ISeriesApi<'Area'> {
 		patchPriceFormat(options.priceFormat);
 
-		const strictOptions = merge(clone(seriesOptionsDefaults), areaStyleDefaults, options) as AreaSeriesOptions;
+		const strictOptions = merge(clone(seriesOptionsDefaults), clone(areaStyleDefaults), options) as AreaSeriesOptions;
 		const series = this._chartWidget.model().createSeries('Area', strictOptions);
 
 		const res = new SeriesApi<'Area'>(series, this, this);
@@ -199,7 +199,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addBarSeries(options: BarSeriesPartialOptions = {}): ISeriesApi<'Bar'> {
 		patchPriceFormat(options.priceFormat);
 
-		const strictOptions = merge(clone(seriesOptionsDefaults), barStyleDefaults, options) as BarSeriesOptions;
+		const strictOptions = merge(clone(seriesOptionsDefaults), clone(barStyleDefaults), options) as BarSeriesOptions;
 		const series = this._chartWidget.model().createSeries('Bar', strictOptions);
 
 		const res = new SeriesApi<'Bar'>(series, this, this);
@@ -213,7 +213,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		fillUpDownCandlesticksColors(options);
 		patchPriceFormat(options.priceFormat);
 
-		const strictOptions = merge(clone(seriesOptionsDefaults), candlestickStyleDefaults, options) as CandlestickSeriesOptions;
+		const strictOptions = merge(clone(seriesOptionsDefaults), clone(candlestickStyleDefaults), options) as CandlestickSeriesOptions;
 		const series = this._chartWidget.model().createSeries('Candlestick', strictOptions);
 
 		const res = new CandlestickSeriesApi(series, this, this);
@@ -226,7 +226,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addHistogramSeries(options: HistogramSeriesPartialOptions = {}): ISeriesApi<'Histogram'> {
 		patchPriceFormat(options.priceFormat);
 
-		const strictOptions = merge(clone(seriesOptionsDefaults), histogramStyleDefaults, options) as HistogramSeriesOptions;
+		const strictOptions = merge(clone(seriesOptionsDefaults), clone(histogramStyleDefaults), options) as HistogramSeriesOptions;
 		const series = this._chartWidget.model().createSeries('Histogram', strictOptions);
 
 		const res = new SeriesApi<'Histogram'>(series, this, this);
@@ -239,7 +239,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 	public addLineSeries(options: LineSeriesPartialOptions = {}): ISeriesApi<'Line'> {
 		patchPriceFormat(options.priceFormat);
 
-		const strictOptions = merge(clone(seriesOptionsDefaults), lineStyleDefaults, options) as LineSeriesOptions;
+		const strictOptions = merge(clone(seriesOptionsDefaults), clone(lineStyleDefaults), options) as LineSeriesOptions;
 		const series = this._chartWidget.model().createSeries('Line', strictOptions);
 
 		const res = new SeriesApi<'Line'>(series, this, this);
