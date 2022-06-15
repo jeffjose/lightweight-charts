@@ -41,13 +41,16 @@ export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineItem> {
 
 	protected override _updateOptions(): void {
 		this._items.forEach((item: LineItem) => {
-			item.color = this._series.barColorer().barStyle(item.time).barColor;
+			const barColorer = this._series.barColorer().barStyle(item.time);
+			item.color = barColorer.barColor;
+			item.style = barColorer.barStyle;
 		});
 	}
 
 	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer): LineItem {
 		const item = this._createRawItemBase(time, price) as LineItem;
 		item.color = colorer.barStyle(time).barColor;
+		item.style = colorer.barStyle(time).barStyle;
 		return item;
 	}
 }

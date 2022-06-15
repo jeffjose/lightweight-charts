@@ -130,12 +130,12 @@ export class SeriesBarColorer {
 
 	private _lineStyle(lineStyle: LineStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Line'>;
-		const prevBar = this._searchNearestLeft(barIndex) as SeriesPlotRow<'Line'>;
+		const nextBar = this._searchNearestRight(barIndex, precomputedBars) as SeriesPlotRow<'Line'>;
 
 		return {
 			...emptyResult,
 			barColor: currentBar.color ?? lineStyle.color,
-			barStyle: [prevBar?.color ?? lineStyle.color, currentBar.color ?? lineStyle.color] as [string, string],
+			barStyle: [currentBar.color ?? lineStyle.color, nextBar?.color ?? lineStyle.color] as [string, string],
 
 		};
 	}
@@ -155,7 +155,10 @@ export class SeriesBarColorer {
 		return this._series.bars().valueAt(barIndex);
 	}
 
-	private _searchNearestLeft(barIndex: TimePointIndex): SeriesPlotRow | null {
-		return this._series.bars().valueToTheLeftOf(barIndex);
+	private _searchNearestRight(barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): SeriesPlotRow | null {
+		if (precomputedBars !== undefined) {
+			return precomputedBars.value;
+		}
+		return this._series.bars().valueToTheRightOf(barIndex);
 	}
 }

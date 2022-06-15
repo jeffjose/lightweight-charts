@@ -37,6 +37,7 @@ export class SeriesBarsPaneView extends BarsPaneViewBase<'Bar', BarItem> {
 	protected _updateOptions(): void {
 		this._items.forEach((item: BarItem) => {
 			item.color = this._series.barColorer().barStyle(item.time).barColor;
+			item.style = this._series.barColorer().barStyle(item.time).barStyle;
 		});
 	}
 
@@ -44,6 +45,7 @@ export class SeriesBarsPaneView extends BarsPaneViewBase<'Bar', BarItem> {
 		return {
 			...this._createDefaultItem(time, bar, colorer),
 			color: colorer.barStyle(time).barColor,
+			style: colorer.barStyle(time).barStyle,
 		};
 	}
 }

@@ -1,3 +1,5 @@
+import { getCanvasGradientsFrom2Colors } from '../helpers/color';
+
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
@@ -5,7 +7,16 @@ import { LinePoint, LineStyle, LineType, LineWidth, setLineStyle } from './draw-
 import { ScaledRenderer } from './scaled-renderer';
 import { getControlPoints, walkLine } from './walk-line';
 
-export type LineItem = TimedValue & PricedValue & LinePoint & { color?: string };
+export type LineItem = TimedValue & PricedValue & LinePoint & { color?: string; style?: [string, string] };
+
+export interface RendererColorData {
+	color1: string;
+	color2: string;
+	x0: number;
+	y0: number;
+	x1: number;
+	y1: number;
+}
 
 export interface PaneRendererLineDataBase {
 	lineType: LineType;
@@ -96,9 +107,23 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			prevStrokeStyle = color;
 		};
 
+		const changeColor2 = (style: [string, string], x0: number, y0: number, x1: number, y1: number) => {
+			ctx.stroke();
+			ctx.beginPath();
+			const strokeStyle = getCanvasGradientsFrom2Colors(ctx, style[0], style[1], x0, y0, x1, y1) as string;
+			ctx.strokeStyle = strokeStyle;
+			prevStrokeStyle = strokeStyle;
+		};
+
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
+			let nextItem;
+			if (i + 1 < items.length) {
+				nextItem = items[i + 1];
+			}
+
 			const currentStrokeStyle = currItem.color ?? lineColor;
+			const currentStrokeColors = currItem.style ?? [lineColor, lineColor];
 
 			switch (lineType) {
 				case LineType.Simple:
@@ -144,12 +169,20 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			}
 
 			if (lineType !== LineType.WithSteps && currentStrokeStyle !== prevStrokeStyle) {
-				changeColor(currentStrokeStyle);
+				if (nextItem !== undefined) {
+					changeColor2(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
+				} else {
+					changeColor(currentStrokeStyle);
+				}
 				ctx.moveTo(currItem.x, currItem.y);
 			}
 
 			if (lineType !== LineType.WithBreaks && currentStrokeStyle !== prevStrokeStyle) {
-				changeColor(currentStrokeStyle);
+				if (nextItem !== undefined) {
+					changeColor2(currentStrokeColors, currItem.x, currItem.y, nextItem?.x, nextItem?.y);
+				} else {
+					changeColor(currentStrokeStyle);
+				}
 				ctx.moveTo(currItem.x, currItem.y);
 			}
 		}

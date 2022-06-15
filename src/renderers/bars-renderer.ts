@@ -10,6 +10,7 @@ export type BarCandlestickItemBase = TimedValue & BarPrices & BarCoordinates;
 
 export interface BarItem extends BarCandlestickItemBase {
 	color: string;
+	style: [string, string];
 }
 
 export interface PaneRendererBarsData {
