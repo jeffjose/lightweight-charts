@@ -1,4 +1,4 @@
-import { getColorValueAt } from '../gui/canvas-utils';
+import { CanvasStyle, getCanvasGradientsFrom2Colors, getColorValueAt } from '../gui/canvas-utils';
 
 import { Color } from '../helpers/color';
 
@@ -97,19 +97,25 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		const firstItem = items[visibleRange.from];
 		ctx.moveTo(firstItem.x, firstItem.y);
 
-		let prevStrokeStyle = firstItem.color ?? lineColor;
-		ctx.strokeStyle = getColorValueAt(prevStrokeStyle, visibleRange.from, this._numBars, firstItem.price, this._minValue, this._maxValue);
+		let prevItem = firstItem;
+		// let prevStrokeStyle = firstItem.color ?? lineColor;
+		let prevStrokeColor = getColorValueAt(firstItem.color ?? lineColor, visibleRange.from, this._numBars, firstItem.price, this._minValue, this._maxValue);
+		ctx.strokeStyle = prevStrokeColor;
 
-		const changeColor = (color: Color, index: number, numBars: number, value: number) => {
+		let prevStrokeStyle = ctx.strokeStyle as CanvasStyle;
+
+		const changeColor = (color: CanvasStyle, index: number, numBars: number, value: number) => {
 			ctx.stroke();
 			ctx.beginPath();
-			ctx.strokeStyle = getColorValueAt(color, index, numBars, value, this._minValue, this._maxValue);
+			ctx.strokeStyle = color;
 			prevStrokeStyle = color;
 		};
 
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
-			const currentStrokeStyle = getColorValueAt(currItem.color ?? lineColor, i, this._numBars, currItem.price, this._minValue, this._maxValue);
+			const currStrokeColor = getColorValueAt(currItem.color ?? lineColor, i, this._numBars, currItem.price, this._minValue, this._maxValue);
+
+			const currentStrokeStyle = getCanvasGradientsFrom2Colors(ctx, prevStrokeColor, currStrokeColor, prevItem.x, prevItem.y, currItem.x, currItem.y);
 
 			switch (lineType) {
 				case LineType.Simple:
@@ -163,6 +169,9 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 				changeColor(currentStrokeStyle, i, this._numBars, currItem.price);
 				ctx.moveTo(currItem.x, currItem.y);
 			}
+
+			prevStrokeColor = currStrokeColor;
+			prevItem = currItem;
 		}
 
 		ctx.stroke();
