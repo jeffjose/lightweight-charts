@@ -1,5 +1,7 @@
+
 import { getCanvasGradientsFrom2Colors } from '../helpers/color';
 
+import { Color } from '../model/layout-options';
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
 
@@ -22,6 +24,7 @@ export interface PaneRendererLineDataBase {
 	lineType: LineType;
 
 	items: LineItem[];
+	numItems: number;
 
 	barWidth: number;
 
@@ -79,6 +82,7 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 
 export interface PaneRendererLineData extends PaneRendererLineDataBase {
 	lineColor: string;
+	lineKolor?: Color;
 }
 
 export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData> {

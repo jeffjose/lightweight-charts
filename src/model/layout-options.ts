@@ -38,12 +38,12 @@ export interface VerticalGradientColor {
 	/**
 	 * Top color
 	 */
-	topColor: string;
+	startColor: string;
 
 	/**
 	 * Bottom color
 	 */
-	bottomColor: string;
+	endColor: string;
 }
 
 /**
@@ -58,18 +58,31 @@ export interface HorizontalGradientColor {
 	/**
 	 * Left color
 	 */
-	leftColor: string;
+	startColor: string;
 
 	/**
 	 * Bottom color
 	 */
-	rightColor: string;
+	endColor: string;
 }
 
 /**
  * Represents the background color of the chart.
  */
-export type Color = SolidColor | VerticalGradientColor | HorizontalGradientColor;
+export type Color = string | SolidColor | VerticalGradientColor | HorizontalGradientColor;
+
+export function getRepresentativeColor(color: Color): string {
+	if (typeof color === 'string') {
+		return color;
+	}
+	switch (color.type) {
+		case ColorType.Solid:
+			return color.color;
+		case ColorType.VerticalGradient:
+		case ColorType.HorizontalGradient:
+			return color.startColor;
+	}
+}
 
 /** Represents layout options */
 export interface LayoutOptions {

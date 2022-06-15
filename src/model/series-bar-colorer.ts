@@ -1,5 +1,6 @@
 import { ensure, ensureNotNull } from '../helpers/assertions';
 
+import { getRepresentativeColor } from './layout-options';
 import { PlotRowValueIndex } from './plot-data';
 import { Series } from './series';
 import { SeriesPlotRow } from './series-data';
@@ -132,9 +133,10 @@ export class SeriesBarColorer {
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Line'>;
 		const nextBar = this._searchNearestRight(barIndex, precomputedBars) as SeriesPlotRow<'Line'>;
 
+		// TODO: The actual lookup of time/price needs to happen here. In other words, breakdown large gradient into small chunks here.
 		return {
 			...emptyResult,
-			barColor: currentBar.color ?? lineStyle.color,
+			barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
 			barStyle: [currentBar.color ?? lineStyle.color, nextBar?.color ?? lineStyle.color] as [string, string],
 
 		};

@@ -55,13 +55,17 @@ export class TimeChannelRenderer implements IPaneRenderer {
 		ctx.fillRect(topLeftX, topLeftY, width, height);
 	}
 	private _getColor(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+		// FIXME: Duplication
+		if (typeof bg == 'string') {
+			return bg;
+		}
 		switch (bg.type) {
 			case ColorType.Solid:
 				return bg.color;
 			case ColorType.VerticalGradient:
-				return this._fillStyle(ctx, bg.topColor, bg.bottomColor, x0, y0, x0, y0 + height);
+				return this._fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0, y0 + height);
 			case ColorType.HorizontalGradient:
-				return this._fillStyle(ctx, bg.leftColor, bg.rightColor, x0, y0, x0 + width, y0);
+				return this._fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0 + width, y0);
 		}
 	}
 

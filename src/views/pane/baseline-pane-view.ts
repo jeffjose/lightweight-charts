@@ -58,6 +58,7 @@ export class SeriesBaselinePaneView extends LinePaneViewBase<'Baseline', LineIte
 
 		this._baselineLineRenderer.setData({
 			items: this._items,
+			numItems: this._items.length,
 
 			topColor: baselineProps.topLineColor,
 			bottomColor: baselineProps.bottomLineColor,

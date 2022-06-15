@@ -1034,19 +1034,24 @@ export class ChartModel implements IDestroyable {
 	}
 
 	private _getBackgroundColor(side: BackgroundColorSide): string {
+		// FIXME: Duplication
 		const layoutOptions = this._options.layout;
+
+		if (typeof layoutOptions.background === 'string') {
+			return layoutOptions.background;
+		}
 
 		switch (layoutOptions.background.type) {
 			case ColorType.Solid:
 				return layoutOptions.background.color;
 			case ColorType.VerticalGradient:
 				return side === BackgroundColorSide.Top ?
-				layoutOptions.background.topColor :
-				layoutOptions.background.bottomColor;
+				layoutOptions.background.startColor :
+				layoutOptions.background.endColor;
 			case ColorType.HorizontalGradient:
 				return side === BackgroundColorSide.Left ?
-				layoutOptions.background.leftColor :
-				layoutOptions.background.rightColor;
+				layoutOptions.background.startColor :
+				layoutOptions.background.endColor;
 		}
 	}
 
