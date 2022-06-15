@@ -101,8 +101,14 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		const firstItem = items[visibleRange.from];
 		ctx.moveTo(firstItem.x, firstItem.y);
 
+		let nextItem;
+		if (items.length > 1) {
+			nextItem = items[1];
+		}
+
 		let prevStrokeStyle = firstItem.color ?? lineColor;
-		ctx.strokeStyle = prevStrokeStyle;
+		let prevStrokeColors: [string, string] = [firstItem.color ?? lineColor, nextItem?.color ?? lineColor];
+		ctx.strokeStyle = getCanvasGradientsFrom2Colors(ctx, prevStrokeColors[0], prevStrokeColors[1], firstItem.x, firstItem.y, nextItem?.x ?? firstItem.x, nextItem?.y ?? firstItem.y) as string;
 
 		const changeColor = (color: string) => {
 			ctx.stroke();
@@ -117,11 +123,11 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			const strokeStyle = getCanvasGradientsFrom2Colors(ctx, style[0], style[1], x0, y0, x1, y1) as string;
 			ctx.strokeStyle = strokeStyle;
 			prevStrokeStyle = strokeStyle;
+			prevStrokeColors = style;
 		};
 
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
-			let nextItem;
 			if (i + 1 < items.length) {
 				nextItem = items[i + 1];
 			}
@@ -155,7 +161,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 
 					ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 
-					if (currentStrokeStyle !== prevStrokeStyle) {
+					if (this._checkColors(currentStrokeColors, prevStrokeColors)) {
 						changeColor(currentStrokeStyle);
 						ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 					}
@@ -172,7 +178,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 				}
 			}
 
-			if (lineType !== LineType.WithSteps && currentStrokeStyle !== prevStrokeStyle) {
+			if (lineType !== LineType.WithSteps && !this._checkColors(currentStrokeColors, prevStrokeColors)) {
 				if (nextItem !== undefined) {
 					changeColor2(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
 				} else {
@@ -181,7 +187,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 				ctx.moveTo(currItem.x, currItem.y);
 			}
 
-			if (lineType !== LineType.WithBreaks && currentStrokeStyle !== prevStrokeStyle) {
+			if (lineType !== LineType.WithBreaks && !this._checkColors(currentStrokeColors, prevStrokeColors)) {
 				if (nextItem !== undefined) {
 					changeColor2(currentStrokeColors, currItem.x, currItem.y, nextItem?.x, nextItem?.y);
 				} else {
@@ -197,5 +203,10 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 	protected override _strokeStyle(): CanvasRenderingContext2D['strokeStyle'] {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		return this._data!.lineColor;
+	}
+
+	private _checkColors(currentColors: [string, string], prevColors: [string, string]): boolean {
+		// console.log('Checking', prevColors, currentColors);
+		return currentColors[0] === prevColors[0] && currentColors[1] === prevColors[1];
 	}
 }

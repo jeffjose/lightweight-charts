@@ -134,10 +134,13 @@ export class SeriesBarColorer {
 		const nextBar = this._searchNearestRight(barIndex, precomputedBars) as SeriesPlotRow<'Line'>;
 
 		// TODO: The actual lookup of time/price needs to happen here. In other words, breakdown large gradient into small chunks here.
+
+		const currentBarColor = currentBar.color ?? lineStyle.color;
+		const nextBarColor = nextBar?.color ?? lineStyle.color;
 		return {
 			...emptyResult,
 			barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
-			barStyle: [currentBar.color ?? lineStyle.color, nextBar?.color ?? lineStyle.color] as [string, string],
+			barStyle: [currentBarColor, nextBarColor] as [string, string],
 
 		};
 	}
