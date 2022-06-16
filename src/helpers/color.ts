@@ -1,5 +1,7 @@
 import { interpolateCubehelix } from 'd3-interpolate';
 
+import { Color, ColorType } from '../model/layout-options';
+
 import { Nominal } from './nominal';
 
 /**
@@ -352,4 +354,26 @@ export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, col
 		gradient.addColorStop(i / totalStops, interpolateColorValueAt(color1, color2, i / totalStops));
 	}
 	return gradient;
+}
+
+	// eslint-disable-next-line max-params
+function fillStyle(ctx: CanvasRenderingContext2D, topColor: string, bottomColor: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['fillStyle'] {
+	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+	gradient.addColorStop(0, topColor);
+	gradient.addColorStop(1, bottomColor);
+	return gradient;
+}
+
+export function getFillColorFromColor(ctx: CanvasRenderingContext2D, bg: Color, x0: number, y0: number, width: number, height: number): CanvasRenderingContext2D['fillStyle'] {
+	if (typeof bg == 'string') {
+		return bg;
+	}
+	switch (bg.type) {
+		case ColorType.Solid:
+			return bg.color;
+		case ColorType.VerticalGradient:
+			return fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0, y0 + height);
+		case ColorType.HorizontalGradient:
+			return fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0 + width, y0);
+	}
 }
