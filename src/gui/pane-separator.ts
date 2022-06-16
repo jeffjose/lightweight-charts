@@ -32,6 +32,7 @@ export class PaneSeparator implements IDestroyable {
 		this._paneB = chartWidget.paneWidgets()[bottomPaneIndex];
 
 		this._rowElement = document.createElement('tr');
+		this._rowElement.classList.add('separator');
 		this._rowElement.style.height = SEPARATOR_HEIGHT + 'px';
 
 		this._cell = document.createElement('td');

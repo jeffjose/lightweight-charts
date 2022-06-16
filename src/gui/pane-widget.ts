@@ -105,6 +105,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._state.onDestroyed().subscribe(this._onStateDestroyed.bind(this), this, true);
 
 		this._paneCell = document.createElement('td');
+		this._paneCell.classList.add('cell');
 		this._paneCell.style.padding = '0';
 		this._paneCell.style.position = 'relative';
 
@@ -115,9 +116,13 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		paneWrapper.style.overflow = 'hidden';
 
 		this._leftAxisCell = document.createElement('td');
+		this._leftAxisCell.classList.add('axis');
+		this._leftAxisCell.classList.add('left');
 		this._leftAxisCell.style.padding = '0';
 
 		this._rightAxisCell = document.createElement('td');
+		this._rightAxisCell.classList.add('axis');
+		this._rightAxisCell.classList.add('right');
 		this._rightAxisCell.style.padding = '0';
 
 		this._paneCell.appendChild(paneWrapper);
@@ -139,6 +144,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		topCanvas.style.top = '0';
 
 		this._rowElement = document.createElement('tr');
+		this._rowElement.classList.add('pane');
 		this._rowElement.appendChild(this._leftAxisCell);
 		this._rowElement.appendChild(this._paneCell);
 		this._rowElement.appendChild(this._rightAxisCell);
