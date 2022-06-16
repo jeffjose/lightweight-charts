@@ -521,7 +521,8 @@ export class PriceAxisWidget implements IDestroyable {
 					clearRectWithGradient(ctx, 0, 0, 0, height, width, height, color.startColor, color.endColor);
 					return;
 				case ColorType.HorizontalGradient:
-					clearRectWithGradient(ctx, 0, 0, width, 0, width, height, color.startColor, color.endColor);
+					// clearRectWithGradient(ctx, 0, 0, width, 0, width, height, color.startColor, color.endColor);
+					clearRect(ctx, 0, 0, width, height, color.endColor);
 					return;
 			}
 		});

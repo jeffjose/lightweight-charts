@@ -1,6 +1,6 @@
 import { Binding as CanvasCoordinateSpaceBinding } from 'fancy-canvas/coordinate-space';
 
-import { clearRect, drawScaled } from '../helpers/canvas-helpers';
+import { clearRect, clearRectWithGradient, drawScaled } from '../helpers/canvas-helpers';
 import { Delegate } from '../helpers/delegate';
 import { IDestroyable } from '../helpers/idestroyable';
 import { ISubscription } from '../helpers/isubscription';
@@ -8,7 +8,7 @@ import { makeFont } from '../helpers/make-font';
 
 import { IDataSource } from '../model/idata-source';
 import { InvalidationLevel } from '../model/invalidate-mask';
-import { LayoutOptions } from '../model/layout-options';
+import { ColorType, LayoutOptions } from '../model/layout-options';
 import { TextWidthCache } from '../model/text-width-cache';
 import { TickMarkWeight } from '../model/time-data';
 import { TimeMark } from '../model/time-scale';
@@ -295,8 +295,23 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 	}
 
 	private _drawBackground(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
+		const width = this._size.w;
+		const height = this._size.h;
 		drawScaled(ctx, pixelRatio, () => {
-			clearRect(ctx, 0, 0, this._size.w, this._size.h, this._chart.model().backgroundEndColor());
+			const model = this._chart.model();
+			const color = model.backgroundColor();
+
+			switch (color.type) {
+				case ColorType.Solid:
+					clearRect(ctx, 0, 0, width, height, color.color);
+					break;
+				case ColorType.VerticalGradient:
+					clearRect(ctx, 0, 0, width, height, color.endColor);
+					return;
+				case ColorType.HorizontalGradient:
+					clearRectWithGradient(ctx, 0, 0, width, 0, width, height, color.startColor, color.endColor);
+					return;
+			}
 		});
 	}
 
