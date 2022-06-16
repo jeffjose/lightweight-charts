@@ -19,7 +19,7 @@ import { DefaultPriceScaleId, isDefaultPriceScale } from './default-price-scale'
 import { GridOptions } from './grid';
 import { InvalidateMask, InvalidationLevel } from './invalidate-mask';
 import { IPriceDataSource } from './iprice-data-source';
-import { ColorType, LayoutOptions } from './layout-options';
+import { ColorType, LayoutOptions, StrictColor } from './layout-options';
 import { LocalizationOptions } from './localization-options';
 import { Magnet } from './magnet';
 import { DEFAULT_STRETCH_FACTOR, Pane, PaneInfo } from './pane';
@@ -162,10 +162,8 @@ export interface PriceScaleOnPane {
 }
 
 const enum BackgroundColorSide {
-	Top,
-	Bottom,
-	Left,
-	Right
+	Start,
+	End,
 }
 
 type InvalidateHandler = (mask: InvalidateMask) => void;
@@ -347,8 +345,8 @@ export class ChartModel implements IDestroyable {
 	private _suppressSeriesMoving: boolean = false;
 	private _customPriceLineDragged: Delegate<CustomPriceLineDetails | null, PaneInfo | null> = new Delegate();
 
-	private _backgroundTopColor: string;
-	private _backgroundBottomColor: string;
+	private _backgroundStartColor: string;
+	private _backgroundEndColor: string;
 	private _gradientColorsCache: GradientColorsCache | null = null;
 
 	public constructor(invalidateHandler: InvalidateHandler, options: ChartOptionsInternal, chartWidget: ChartWidget) {
@@ -366,8 +364,8 @@ export class ChartModel implements IDestroyable {
 		this.createPane();
 		this._panes[0].setStretchFactor(DEFAULT_STRETCH_FACTOR * 2);
 
-		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
-		this._backgroundBottomColor = this._getBackgroundColor(BackgroundColorSide.Bottom);
+		this._backgroundStartColor = this._getBackgroundColor(BackgroundColorSide.Start);
+		this._backgroundEndColor = this._getBackgroundColor(BackgroundColorSide.End);
 	}
 
 	public fullUpdate(): void {
@@ -431,8 +429,8 @@ export class ChartModel implements IDestroyable {
 			this._priceScalesOptionsChanged.fire();
 		}
 
-		this._backgroundTopColor = this._getBackgroundColor(BackgroundColorSide.Top);
-		this._backgroundBottomColor = this._getBackgroundColor(BackgroundColorSide.Bottom);
+		this._backgroundStartColor = this._getBackgroundColor(BackgroundColorSide.Start);
+		this._backgroundEndColor = this._getBackgroundColor(BackgroundColorSide.End);
 
 		this.fullUpdate();
 	}
@@ -943,17 +941,28 @@ export class ChartModel implements IDestroyable {
 		this._addSeriesToPane(series, newPane);
 	}
 
-	public backgroundBottomColor(): string {
-		return this._backgroundBottomColor;
+	public backgroundEndColor(): string {
+		return this._backgroundEndColor;
 	}
 
-	public backgroundTopColor(): string {
-		return this._backgroundTopColor;
+	public backgroundStartColor(): string {
+		return this._backgroundStartColor;
+	}
+
+	public backgroundColor(): StrictColor {
+		const background = this._options.layout.background;
+		if (typeof background === 'string') {
+			return {
+				type: ColorType.Solid, color: background,
+			};
+		} else {
+			return background;
+		}
 	}
 
 	public backgroundColorAtYPercentFromTop(percent: number): string {
-		const bottomColor = this._backgroundBottomColor;
-		const topColor = this._backgroundTopColor;
+		const bottomColor = this._backgroundEndColor;
+		const topColor = this._backgroundStartColor;
 
 		if (bottomColor === topColor) {
 			// solid background
@@ -1045,11 +1054,8 @@ export class ChartModel implements IDestroyable {
 			case ColorType.Solid:
 				return layoutOptions.background.color;
 			case ColorType.VerticalGradient:
-				return side === BackgroundColorSide.Top ?
-				layoutOptions.background.startColor :
-				layoutOptions.background.endColor;
 			case ColorType.HorizontalGradient:
-				return side === BackgroundColorSide.Left ?
+				return side === BackgroundColorSide.Start ?
 				layoutOptions.background.startColor :
 				layoutOptions.background.endColor;
 		}

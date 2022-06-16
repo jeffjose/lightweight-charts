@@ -1,3 +1,5 @@
+import { Diff } from '../helpers/strict-type-checks';
+
 /**
  * Represents a type of color.
  */
@@ -70,6 +72,7 @@ export interface HorizontalGradientColor {
  * Represents the background color of the chart.
  */
 export type Color = string | SolidColor | VerticalGradientColor | HorizontalGradientColor;
+export type StrictColor = Diff<Color, string>;
 
 export function getRepresentativeColor(color: Color): string {
 	if (typeof color === 'string') {

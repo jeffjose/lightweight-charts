@@ -296,7 +296,7 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 
 	private _drawBackground(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 		drawScaled(ctx, pixelRatio, () => {
-			clearRect(ctx, 0, 0, this._size.w, this._size.h, this._chart.model().backgroundBottomColor());
+			clearRect(ctx, 0, 0, this._size.w, this._size.h, this._chart.model().backgroundEndColor());
 		});
 	}
 
@@ -487,7 +487,7 @@ export class TimeAxisWidget implements MouseEventHandlers, IDestroyable {
 			return options.leftPriceScale.borderVisible && model.timeScale().options().borderVisible;
 		};
 
-		const bottomColorGetter = () => model.backgroundBottomColor();
+		const bottomColorGetter = () => model.backgroundEndColor();
 
 		if (options.leftPriceScale.visible && this._leftStub === null) {
 			this._leftStub = new PriceAxisStub('left', options, params, borderVisibleGetter, bottomColorGetter);

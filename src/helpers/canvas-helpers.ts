@@ -1,3 +1,5 @@
+import { getCanvasGradientsFrom2Colors } from './color';
+
 /**
  * Fills rectangle's inner border (so, all the filled area is limited by the [x, x + width]*[y, y + height] region)
  * ```
@@ -52,15 +54,12 @@ export function clearRect(ctx: CanvasRenderingContext2D, x: number, y: number, w
 }
 
 // eslint-disable-next-line max-params
-export function clearRectWithGradient(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, topColor: string, bottomColor: string): void {
+export function clearRectWithGradient(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, w: number, h: number, startColor: string, endColor: string): void {
 	ctx.save();
 
 	ctx.globalCompositeOperation = 'copy';
-	const gradient = ctx.createLinearGradient(0, 0, 0, h);
-	gradient.addColorStop(0, topColor);
-	gradient.addColorStop(1, bottomColor);
-	ctx.fillStyle = gradient;
-	ctx.fillRect(x, y, w, h);
+	ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, startColor, endColor, x0, y0, x1, y1);
+	ctx.fillRect(x0, y0, w, h);
 
 	ctx.restore();
 }
