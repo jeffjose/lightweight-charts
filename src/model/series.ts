@@ -443,6 +443,14 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return this._data;
 	}
 
+	public minValue(): number | null {
+		return this._data.minValue();
+	}
+
+	public maxValue(): number | null {
+		return this._data.maxValue();
+	}
+
 	public dataAt(time: TimePointIndex): SeriesDataAtTypeMap[SeriesType] | null {
 		const prices = this._data.valueAt(time);
 		if (prices === null) {

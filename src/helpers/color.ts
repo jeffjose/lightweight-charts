@@ -1,6 +1,6 @@
 import { interpolateCubehelix } from 'd3-interpolate';
 
-import { Color, ColorType } from '../model/layout-options';
+import { Color, ColorType, GradientColor, StrictColor } from '../model/layout-options';
 
 import { Nominal } from './nominal';
 
@@ -342,8 +342,11 @@ export function gradientColorAtPercent(topColor: string, bottomColor: string, pe
 	return `rgba(${resultRgba[0]}, ${resultRgba[1]}, ${resultRgba[2]}, ${resultRgba[3]})`;
 }
 
-function interpolateColorValueAt(color1: string, color2: string, offset: number): string {
-	return interpolateCubehelix(color1, color2)(offset);
+export function interpolateColor(color1: string, color2: string): (t: number) => string {
+	return interpolateCubehelix(color1, color2);
+}
+export function interpolateColorValueAt(color1: string, color2: string, offset: number): string {
+	return interpolateColor(color1, color2)(offset);
 }
 
 // eslint-disable-next-line max-params
@@ -375,5 +378,27 @@ export function getFillColorFromColor(ctx: CanvasRenderingContext2D, bg: Color, 
 			return fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0, y0 + height);
 		case ColorType.HorizontalGradient:
 			return fillStyle(ctx, bg.startColor, bg.endColor, x0, y0, x0 + width, y0);
+	}
+}
+
+export function isStrictColor(color: Color): color is StrictColor {
+	return !!(color as StrictColor).type;
+}
+
+export function isGradientColor(color: Color): color is GradientColor {
+	return !!(color as GradientColor).startColor;
+}
+
+export function colorGetter(color: Color): (o: number) => string {
+	if (typeof color == 'string') {
+		return () => color;
+	}
+
+	switch (color.type) {
+		case ColorType.Solid:
+			return () => color.color;
+		case ColorType.VerticalGradient:
+		case ColorType.HorizontalGradient:
+			return interpolateColor(color.startColor, color.endColor);
 	}
 }

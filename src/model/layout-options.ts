@@ -73,6 +73,7 @@ export interface HorizontalGradientColor {
  */
 export type Color = string | SolidColor | VerticalGradientColor | HorizontalGradientColor;
 export type StrictColor = Diff<Color, string>;
+export type GradientColor = Diff<StrictColor, SolidColor>;
 
 export function getRepresentativeColor(color: Color): string {
 	if (typeof color === 'string') {

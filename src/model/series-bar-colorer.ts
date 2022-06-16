@@ -1,4 +1,5 @@
 import { ensure, ensureNotNull } from '../helpers/assertions';
+import { colorGetter, isStrictColor } from '../helpers/color';
 
 import { getRepresentativeColor } from './layout-options';
 import { PlotRowValueIndex } from './plot-data';
@@ -35,9 +36,30 @@ const emptyResult: BarColorerStyle = {
 
 export class SeriesBarColorer {
 	private _series: Series;
+	private _numBars: number = 0;
+	// private _minValue: number;
+	// private _maxValue: number;
+	private _colorGetter: (o: number) => string;
 
 	public constructor(series: Series) {
 		this._series = series;
+		this._numBars = this._series.bars().size();
+		// this._minValue = this._series.bars().minValue() ?? 0;
+		// this._maxValue = this._series.bars().maxValue() ?? 0;
+
+		const targetType = this._series.seriesType();
+		const seriesOptions = this._series.options();
+		let color;
+		switch (targetType) {
+			case 'Line':
+			case 'Histogram':
+				color = (seriesOptions as LineStyleOptions | HistogramStyleOptions).color;
+				this._colorGetter = colorGetter(color);
+				break;
+			default:
+				this._colorGetter = () => '';
+				break;
+		}
 	}
 
 	public barStyle(barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
@@ -49,7 +71,6 @@ export class SeriesBarColorer {
 		switch (targetType) {
 			case 'Line':
 				return this._lineStyle(seriesOptions as LineStyleOptions, barIndex, precomputedBars);
-
 			case 'Area':
 				return this._areaStyle(seriesOptions as AreaStyleOptions);
 
@@ -135,8 +156,20 @@ export class SeriesBarColorer {
 
 		// TODO: (jeffjose) The actual lookup of time/price needs to happen here. In other words, breakdown large gradient into small chunks here.
 
-		const currentBarColor = currentBar.color ?? lineStyle.color;
-		const nextBarColor = nextBar?.color ?? lineStyle.color;
+		let currentBarColor;
+		let nextBarColor;
+
+		const seriesIndex = this._series.bars().seriesIndexAt(barIndex) ?? 0;
+		const offset = seriesIndex / this._numBars;
+		const nextOffset = (seriesIndex + 1) / this._numBars;
+
+		if (isStrictColor(lineStyle.color)) {
+			currentBarColor = currentBar.color ?? this._colorGetter(offset);
+			nextBarColor = currentBar.color ?? this._colorGetter(nextOffset);
+		} else {
+			currentBarColor = currentBar.color ?? lineStyle.color;
+			nextBarColor = nextBar?.color ?? lineStyle.color;
+		}
 		return {
 			...emptyResult,
 			barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),

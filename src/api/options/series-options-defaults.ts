@@ -1,3 +1,4 @@
+import { ColorType } from '../../model/layout-options';
 import {
 	AreaStyleOptions,
 	BarStyleOptions,
@@ -32,7 +33,10 @@ export const barStyleDefaults: BarStyleOptions = {
 };
 
 export const lineStyleDefaults: LineStyleOptions = {
-	color: '#2196f3',
+	color: {
+		color: '#2196f3',
+		type: ColorType.Solid,
+	},
 	lineStyle: LineStyle.Solid,
 	lineWidth: 3,
 	lineType: LineType.Simple,
