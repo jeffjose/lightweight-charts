@@ -159,9 +159,9 @@ export class SeriesBarColorer {
 		let currentBarColor;
 		let nextBarColor;
 
-		const seriesIndex = this._series.bars().seriesIndexAt(barIndex) ?? 0;
-		const offset = seriesIndex / this._numBars;
-		const nextOffset = (seriesIndex + 1) / this._numBars;
+		const seriesPos = this._series.bars().seriesPositionAt(barIndex) ?? 0;
+		const offset = seriesPos / this._numBars;
+		const nextOffset = (seriesPos + 1) / this._numBars;
 
 		if (isStrictColor(lineStyle.color)) {
 			currentBarColor = currentBar.color ?? this._colorGetter(offset);

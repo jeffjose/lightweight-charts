@@ -93,10 +93,8 @@ export class PlotList<PlotRowType extends PlotRow = PlotRow> {
 		return maxSeriesValue[PlotRowValueIndex.Close];
 	}
 
-	public seriesIndexAt(index: TimePointIndex): number | null {
-		const value = this.search(index);
-
-		return value !== null ? value.index : null;
+	public seriesPositionAt(index: TimePointIndex): number | null {
+		return this._search(index, MismatchDirection.None);
 	}
 
 	public size(): number {
