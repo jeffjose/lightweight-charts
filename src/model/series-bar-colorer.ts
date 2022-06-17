@@ -202,7 +202,6 @@ export class SeriesBarColorer {
 
 		result.barColor = currentBar.color !== undefined ? currentBar.color : getRepresentativeColor(histogramStyle.color);
 		result.barStyle = [currentBarColor, nextBarColor] as [string, string];
-		console.log('bar-colorer');
 		return result;
 	}
 
