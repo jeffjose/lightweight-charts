@@ -1,3 +1,4 @@
+import { deltaE } from 'chroma.ts';
 import { interpolateCubehelix } from 'd3-interpolate';
 
 import { Color, ColorType, GradientColor, StrictColor } from '../model/layout-options';
@@ -352,6 +353,9 @@ export function interpolateColorValueAt(color1: string, color2: string, offset: 
 // eslint-disable-next-line max-params
 export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['strokeStyle'] | CanvasRenderingContext2D['fillStyle'] {
 	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+	if (deltaE(color1, color2) < 2) {
+		return color1;
+	}
 	const totalStops = 3;
 	for (const i of Array.from(Array(totalStops).keys()).map((x: number) => x + 1)) {
 		gradient.addColorStop(i / totalStops, interpolateColorValueAt(color1, color2, i / totalStops));

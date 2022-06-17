@@ -983,6 +983,11 @@ chownr@^1.1.1:
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.4.tgz#6fc9d7b42d32a583596337666e7d08084da2cc6b"
   integrity sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==
 
+chroma.ts@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/chroma.ts/-/chroma.ts-1.0.10.tgz#2b965d8f2c2eee44d25072902e5787fe259d4565"
+  integrity sha512-0FOQiB6LaiOwoyaxP+a4d3sCIOSf7YvBKj3TfeQM4ZBb2yskRxe4FlT2P4YNpHz7kIB5rXsfmpyniyrYRRyVHw==
+
 ci-info@^3.3.0:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.3.1.tgz#58331f6f472a25fe3a50a351ae3052936c2c7f32"
