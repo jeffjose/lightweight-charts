@@ -88,7 +88,10 @@ export const baselineStyleDefaults: BaselineStyleOptions = {
 };
 
 export const histogramStyleDefaults: HistogramStyleOptions = {
-	color: '#26a69a',
+	color: {
+		color: '#26a69a',
+		type: ColorType.Solid,
+	},
 	base: 0,
 };
 

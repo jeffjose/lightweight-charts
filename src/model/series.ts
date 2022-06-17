@@ -73,6 +73,7 @@ export interface LastValueDataResultWithData {
 	formattedPriceAbsolute: string;
 	formattedPricePercentage: string;
 	color: string;
+	style: [string, string];
 	coordinate: Coordinate;
 	index: TimePointIndex;
 }
@@ -216,6 +217,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			formattedPriceAbsolute: priceScale.formatPriceAbsolute(price),
 			formattedPricePercentage: priceScale.formatPricePercentage(price, firstValue.value),
 			color: style.barColor,
+			style: style.barStyle,
 			coordinate: coordinate,
 			index: lastIndex,
 		};

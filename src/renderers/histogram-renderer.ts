@@ -1,3 +1,4 @@
+
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue, TimePointIndex } from '../model/time-data';
 
@@ -53,6 +54,7 @@ export class PaneRendererHistogram implements IPaneRenderer {
 			const item = this._data.items[i];
 			const current = this._precalculatedCache[i - this._data.visibleRange.from];
 			const y = Math.round(item.y * pixelRatio);
+			console.log(i, item.color, item);
 			ctx.fillStyle = item.color;
 
 			let top: number;

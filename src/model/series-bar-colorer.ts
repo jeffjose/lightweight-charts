@@ -181,7 +181,28 @@ export class SeriesBarColorer {
 	private _histogramStyle(histogramStyle: HistogramStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
 		const result: BarColorerStyle = { ...emptyResult };
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Histogram'>;
-		result.barColor = currentBar.color !== undefined ? currentBar.color : histogramStyle.color;
+		const nextBar = this._searchNearestRight(barIndex, precomputedBars) as SeriesPlotRow<'Histogram'>;
+
+		// TODO: (jeffjose) The actual lookup of time/price needs to happen here. In other words, breakdown large gradient into small chunks here.
+
+		let currentBarColor;
+		let nextBarColor;
+
+		const seriesPos = this._series.bars().seriesPositionAt(barIndex) ?? 0;
+		const offset = seriesPos / this._numBars;
+		const nextOffset = (seriesPos + 1) / this._numBars;
+
+		if (isStrictColor(histogramStyle.color)) {
+			currentBarColor = currentBar.color ?? this._colorGetter(offset);
+			nextBarColor = currentBar.color ?? this._colorGetter(nextOffset);
+		} else {
+			currentBarColor = currentBar.color ?? histogramStyle.color;
+			nextBarColor = nextBar?.color ?? histogramStyle.color;
+		}
+
+		result.barColor = currentBar.color !== undefined ? currentBar.color : getRepresentativeColor(histogramStyle.color);
+		result.barStyle = [currentBarColor, nextBarColor] as [string, string];
+		console.log('bar-colorer');
 		return result;
 	}
 

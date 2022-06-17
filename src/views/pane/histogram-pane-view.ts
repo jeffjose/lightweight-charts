@@ -1,8 +1,10 @@
 import { ensureNotNull } from '../../helpers/assertions';
+import { colorGetter } from '../../helpers/color';
 
 import { BarPrice } from '../../model/bar';
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
+import { Color } from '../../model/layout-options';
 import { PlotRowValueIndex } from '../../model/plot-data';
 import { PriceScale } from '../../model/price-scale';
 import { Series } from '../../model/series';
@@ -23,13 +25,13 @@ function createEmptyHistogramData(barSpacing: number): PaneRendererHistogramData
 	};
 }
 
-function createRawItem(time: TimePointIndex, price: BarPrice, color: string): HistogramItem {
+function createRawItem(time: TimePointIndex, price: BarPrice, color: Color, offset: number): HistogramItem {
 	return {
 		time: time,
 		price: price,
 		x: NaN as Coordinate,
 		y: NaN as Coordinate,
-		color,
+		color: colorGetter(color)(offset),
 	};
 }
 
@@ -62,11 +64,18 @@ export class SeriesHistogramPaneView extends SeriesPaneViewBase<'Histogram', Tim
 
 		const defaultColor = this._series.options().color;
 
-		for (const row of this._series.bars().rows()) {
+		const rows = this._series.bars().rows();
+
+		for (let i = 0; i < rows.length; i ++) {
+			const row = rows[i];
 			const value = row.value[PlotRowValueIndex.Close] as BarPrice;
 
 			const color = row.color !== undefined ? row.color : defaultColor;
-			const item = createRawItem(row.index, value, color);
+
+			const offset = i / rows.length;
+
+			const item = createRawItem(row.index, value, color, offset);
+
 			targetIndex++;
 			if (targetIndex < this._histogramData.items.length) {
 				this._histogramData.items[targetIndex] = item;
