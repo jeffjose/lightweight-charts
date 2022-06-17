@@ -162,14 +162,14 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 					ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 
 					if (this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
-						changeColor(currentStrokeStyle);
+						// changeColor(currentStrokeStyle);
 						ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 					}
 
 					ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
 
 					if (currentStrokeStyle !== prevStrokeStyle) {
-						changeColor(currentStrokeStyle);
+						// changeColor(currentStrokeStyle);
 						ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
 					}
 
