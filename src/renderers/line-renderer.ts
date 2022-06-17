@@ -161,7 +161,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 
 					ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 
-					if (this._checkColors(currentStrokeColors, prevStrokeColors)) {
+					if (this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
 						changeColor(currentStrokeStyle);
 						ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 					}
@@ -178,7 +178,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 				}
 			}
 
-			if (lineType !== LineType.WithSteps && !this._checkColors(currentStrokeColors, prevStrokeColors)) {
+			if (lineType !== LineType.WithSteps && !this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
 				if (nextItem !== undefined) {
 					changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
 				} else {
@@ -187,7 +187,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 				ctx.moveTo(currItem.x, currItem.y);
 			}
 
-			if (lineType !== LineType.WithBreaks && !this._checkColors(currentStrokeColors, prevStrokeColors)) {
+			if (lineType !== LineType.WithBreaks && !this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
 				if (nextItem !== undefined) {
 					changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem?.x, nextItem?.y);
 				} else {
@@ -205,8 +205,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		return this._data!.lineColor;
 	}
 
-	private _checkColors(currentColors: [string, string], prevColors: [string, string]): boolean {
-		// console.log('Checking', prevColors, currentColors);
+	private _isSameColorPairs(currentColors: [string, string], prevColors: [string, string]): boolean {
 		return currentColors[0] === prevColors[0] && currentColors[1] === prevColors[1];
 	}
 }
