@@ -104,16 +104,21 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		// visibleRange can start >=0, so there can be a previous item
 		let prevItem;
 		let nextItem;
+		let prevStrokeColors: [string, string];
+		let prevStrokeStyle: string;
 		if (items.length > 1) {
 			nextItem = items[1];
 		}
+		console.log(`Total: ${items.length}: visibleRange: ${visibleRange.from} -> ${visibleRange.to}, prevItem = `, prevItem);
 		if (visibleRange.from > 0) {
 			prevItem = items[visibleRange.from - 1];
-			console.log(`visibleRange: ${visibleRange.from}, prevItem = `, prevItem);
+			prevStrokeStyle = prevItem.color ?? (firstItem.color ?? lineColor);
+			prevStrokeColors = prevItem.style ?? (firstItem.style ?? [lineColor, lineColor]);
+		} else {
+			prevStrokeStyle = firstItem.color ?? lineColor;
+			prevStrokeColors = firstItem.style ?? [lineColor, lineColor];
 		}
 
-		let prevStrokeStyle = firstItem.color ?? lineColor;
-		let prevStrokeColors: [string, string] = [prevItem?.color ?? lineColor, prevItem?.color ?? lineColor];
 		ctx.strokeStyle = getCanvasGradientsFrom2Colors(ctx, prevStrokeColors[0], prevStrokeColors[1], firstItem.x, firstItem.y, nextItem?.x ?? firstItem.x, nextItem?.y ?? firstItem.y) as string;
 
 		const changeColor = (color: string) => {
@@ -124,7 +129,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 		};
 
 		const changeColorWithGradient = (style: [string, string], x0: number, y0: number, x1: number, y1: number) => {
-			console.log(`Change from ${style[0]} -> ${style[1]}`);
+			// console.log(`Gradient from ${style[0]} -> ${style[1]}`);
 			ctx.stroke();
 			ctx.beginPath();
 			const strokeStyle = getCanvasGradientsFrom2Colors(ctx, style[0], style[1], x0, y0, x1, y1) as string;
@@ -132,8 +137,6 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			prevStrokeStyle = strokeStyle;
 			prevStrokeColors = style;
 		};
-
-		console.log(items.length);
 
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
