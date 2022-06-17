@@ -73,8 +73,13 @@ export class PaneRendererHistogram implements IPaneRenderer {
 				bottom = y - Math.floor(tickWidth / 2) + tickWidth;
 			}
 
-			if (nextItem !== undefined) {
+			// Do in-bar gradient only if numItems is <=20
+			// This is because it is a super-expensive process, so no point doing it for large dataset.
+			// The result will be indistinguisable anyway
+			if (nextItem !== undefined && this._data.items.length <= 20) {
 				ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.color, nextItem.color, current.left, top, current.right, top);
+			} else {
+				ctx.fillStyle = item.color;
 			}
 			ctx.fillRect(current.left, top, current.right - current.left + 1, bottom - top);
 		}
