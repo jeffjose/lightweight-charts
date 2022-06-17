@@ -1,4 +1,6 @@
 
+import { getCanvasGradientsFrom2Colors } from '../helpers/color';
+
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue, TimePointIndex } from '../model/time-data';
 
@@ -50,12 +52,15 @@ export class PaneRendererHistogram implements IPaneRenderer {
 		const topHistogramBase = histogramBase - Math.floor(tickWidth / 2);
 		const bottomHistogramBase = topHistogramBase + tickWidth;
 
+		let nextItem;
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; i++) {
 			const item = this._data.items[i];
+
+			if (i + 1 < this._data.items.length) {
+				nextItem = this._data.items[i + 1];
+			}
 			const current = this._precalculatedCache[i - this._data.visibleRange.from];
 			const y = Math.round(item.y * pixelRatio);
-			console.log(i, item.color, item);
-			ctx.fillStyle = item.color;
 
 			let top: number;
 			let bottom: number;
@@ -68,6 +73,9 @@ export class PaneRendererHistogram implements IPaneRenderer {
 				bottom = y - Math.floor(tickWidth / 2) + tickWidth;
 			}
 
+			if (nextItem !== undefined) {
+				ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.color, nextItem.color, current.left, top, current.right, top);
+			}
 			ctx.fillRect(current.left, top, current.right - current.left + 1, bottom - top);
 		}
 	}

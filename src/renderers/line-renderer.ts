@@ -117,7 +117,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			prevStrokeStyle = color;
 		};
 
-		const changeColor2 = (style: [string, string], x0: number, y0: number, x1: number, y1: number) => {
+		const changeColorWithGradient = (style: [string, string], x0: number, y0: number, x1: number, y1: number) => {
 			ctx.stroke();
 			ctx.beginPath();
 			const strokeStyle = getCanvasGradientsFrom2Colors(ctx, style[0], style[1], x0, y0, x1, y1) as string;
@@ -180,7 +180,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 
 			if (lineType !== LineType.WithSteps && !this._checkColors(currentStrokeColors, prevStrokeColors)) {
 				if (nextItem !== undefined) {
-					changeColor2(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
+					changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
 				} else {
 					changeColor(currentStrokeStyle);
 				}
@@ -189,7 +189,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 
 			if (lineType !== LineType.WithBreaks && !this._checkColors(currentStrokeColors, prevStrokeColors)) {
 				if (nextItem !== undefined) {
-					changeColor2(currentStrokeColors, currItem.x, currItem.y, nextItem?.x, nextItem?.y);
+					changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem?.x, nextItem?.y);
 				} else {
 					changeColor(currentStrokeStyle);
 				}
