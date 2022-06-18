@@ -1,6 +1,7 @@
 
 import { getCanvasGradientsFrom2Colors } from '../helpers/color';
 
+import { ColorType, StrictColor } from '../model/layout-options';
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue, TimePointIndex } from '../model/time-data';
 
@@ -11,7 +12,7 @@ const alignToMinimalWidthLimit = 4;
 
 export interface HistogramItem extends PricedValue, TimedValue {
 	color: string;
-	style: [string, string];
+	style: StrictColor;
 }
 
 export interface PaneRendererHistogramData {
@@ -48,8 +49,6 @@ export class PaneRendererHistogram implements IPaneRenderer {
 			this._fillPrecalculatedCache(pixelRatio);
 		}
 
-		// console.log(this._data.items.map((item: HistogramItem) => item.style));
-
 		const tickWidth = Math.max(1, Math.floor(pixelRatio));
 		const histogramBase = Math.round((this._data.histogramBase) * pixelRatio);
 		const topHistogramBase = histogramBase - Math.floor(tickWidth / 2);
@@ -76,14 +75,24 @@ export class PaneRendererHistogram implements IPaneRenderer {
 				bottom = y - Math.floor(tickWidth / 2) + tickWidth;
 			}
 
-			// Do in-bar gradient only if numItems is <=20
-			// This is because it is a super-expensive process, so no point doing it for large dataset.
-			// The result will be indistinguisable anyway
-			if (nextItem !== undefined && this._data.items.length <= 20) {
-				ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.color, nextItem.color, current.left, top, current.right, top);
-			} else {
-				ctx.fillStyle = item.color;
+			switch (item.style.type) {
+				case ColorType.Solid:
+					ctx.fillStyle = item.color;
+					break;
+				case ColorType.HorizontalGradient:
+					// Do in-bar gradient only if numItems is <=20
+					// This is because it is a super-expensive process, so no point doing it for large dataset.
+					// The result will be indistinguisable anyway
+					if (nextItem !== undefined && this._data.items.length <= 20) {
+						ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.color, nextItem.color, current.left, top, current.right, top);
+					} else {
+						ctx.fillStyle = item.color;
+					}
+					break;
+				case ColorType.VerticalGradient:
+					ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.style.startColor, item.style.endColor, current.left, bottom, current.left, top);
 			}
+
 			ctx.fillRect(current.left, top, current.right - current.left + 1, bottom - top);
 		}
 	}

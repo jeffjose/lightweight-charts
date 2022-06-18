@@ -212,30 +212,9 @@ export class SeriesBarColorer {
 		}
 	}
 
-	// eslint-disable-next-line complexity
 	private _histogramStyle(histogramStyle: HistogramStyleOptions, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle {
-		// const result: BarColorerStyle = { ...emptyResult };
 		const currentBar = ensureNotNull(this._findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Histogram'>;
 		const nextBar = this._searchNearestRight(barIndex, precomputedBars) as SeriesPlotRow<'Histogram'>;
-
-		// let currentBarColor;
-		// let nextBarColor;
-
-		// const seriesPos = this._series.bars().seriesPositionAt(barIndex) ?? 0;
-		// const offset = seriesPos / this._numBars;
-		// const nextOffset = (seriesPos + 1) / this._numBars;
-
-		// if (isStrictColor(histogramStyle.color)) {
-		// 	currentBarColor = currentBar.color ?? this._colorGetter(offset);
-		// 	nextBarColor = currentBar.color ?? this._colorGetter(nextOffset);
-		// } else {
-		// 	currentBarColor = currentBar.color ?? histogramStyle.color;
-		// 	nextBarColor = nextBar?.color ?? histogramStyle.color;
-		// }
-
-		// result.barColor = currentBar.color !== undefined ? currentBar.color : getRepresentativeColor(histogramStyle.color);
-		// result.barStyle = [currentBarColor, nextBarColor] as [string, string];
-		// return result;
 
 		let currentBarColor;
 		let nextBarColor;

@@ -64,8 +64,6 @@ export class PlotList<PlotRowType extends PlotRow = PlotRow> {
 		for (let i = 0; i < this.size(); i++) {
 			const item = this._items[i];
 
-			// FIXME: double check what line renderer is using
-			// Use the first item
 			if (item.value[PlotRowValueIndex.Close] < minSeriesValue[PlotRowValueIndex.Close]) {
 				minSeriesValue = item.value;
 			}
