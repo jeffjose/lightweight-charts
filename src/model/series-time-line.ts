@@ -2,69 +2,49 @@ import { convertTime } from '../api/data-layer';
 
 import { merge } from '../helpers/strict-type-checks';
 
-import { IPaneView } from '../views/pane/ipane-view';
-import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
-import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
-
-import { ChartModel } from './chart-model';
-import { Coordinate } from './coordinate';
-import { DataSource } from './data-source';
-import { Pane } from './pane';
-import { PriceScale } from './price-scale';
-import { UTCTimestamp } from './time-data';
-import { TimeLineOptions } from './time-line-options';
-
 // import { IPaneView } from '../views/pane/ipane-view';
 // import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
+import { CustomTimeLinePaneView } from '../views/pane/custom-time-line-pane-view';
 // import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 // import { TimeLinePriceAxisView } from '../views/price-axis/time-line-price-axis-view';
+
+import { Coordinate } from './coordinate';
+import { Series } from './series';
+import { UTCTimestamp } from './time-data';
+import { TimeLineOptions } from './time-line-options';
 
 export interface TimeLineDetails {
 	prevPrice: number;
 	currPrice: number;
 }
 
-export class TimeLine extends DataSource {
-	private readonly _model: ChartModel;
-	private readonly _timeLineView: TimeLinePaneView;
+export class SeriesTimeLine {
+	private readonly _series: Series;
+	private readonly _timeLineView: CustomTimeLinePaneView;
 	// private readonly _priceAxisView: TimeLinePriceAxisView;
 	// private readonly _panePriceAxisView: PanePriceAxisView;
 	private readonly _options: TimeLineOptions;
 
-	public constructor(model: ChartModel, options: TimeLineOptions) {
-		super();
-		this._model = model;
+	public constructor(series: Series, options: TimeLineOptions) {
+		this._series = series;
 		this._options = options;
-		this._timeLineView = new TimeLinePaneView(model, this);
+		this._timeLineView = new CustomTimeLinePaneView(series, this);
+		// this._priceAxisView = new TimeLinePriceAxisView(series, this);
+		// this._panePriceAxisView = new PanePriceAxisView(this._priceAxisView, series, series.model());
 	}
 
 	public applyOptions(options: Partial<TimeLineOptions>): void {
 		merge(this._options, options);
 		this.update();
-		this._model.lightUpdate();
+		this._series.model().lightUpdate();
 	}
 
 	public options(): TimeLineOptions {
 		return this._options;
 	}
 
-	// TODO: (jeffjose) This is used by TimeChannel
-	// When we add timeaxisview, this might be replaced with paneViews
-	public paneView(): TimeLinePaneView {
+	public paneView(): CustomTimeLinePaneView {
 		return this._timeLineView;
-	}
-
-	public paneViews(pane: Pane): readonly IPaneView[] {
-		return [this._timeLineView];
-	}
-
-	public priceAxisViews(pane: Pane, priceScale: PriceScale): IPriceAxisView[] {
-		return [];
-	}
-
-	public updateAllViews(): void {
-		this._timeLineView.update();
-		// TODO: Update timeAxisView here
 	}
 
 	// public labelPaneView(): IPaneView {
@@ -81,9 +61,11 @@ export class TimeLine extends DataSource {
 	}
 
 	public xCoord(): Coordinate | null {
-		const timeScale = this._model.timeScale();
+		const series = this._series;
+		const priceScale = series.priceScale();
+		const timeScale = series.model().timeScale();
 
-		if (timeScale.isEmpty()) {
+		if (timeScale.isEmpty() || priceScale.isEmpty()) {
 			return null;
 		}
 

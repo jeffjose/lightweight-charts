@@ -1,7 +1,7 @@
 import { generateContrastColors } from '../../helpers/color';
 
 import { Series } from '../../model/series';
-import { TimeLine } from '../../model/time-line';
+import { SeriesTimeLine } from '../../model/series-time-line';
 import {
 	PriceAxisViewRendererCommonData,
 	PriceAxisViewRendererData,
@@ -11,9 +11,9 @@ import { PriceAxisView } from './price-axis-view';
 
 export class TimeLinePriceAxisView extends PriceAxisView {
 	private readonly _series: Series;
-	private readonly _timeLine: TimeLine;
+	private readonly _timeLine: SeriesTimeLine;
 
-	public constructor(series: Series, timeline: TimeLine) {
+	public constructor(series: Series, timeline: SeriesTimeLine) {
 		super();
 		this._series = series;
 		this._timeLine = timeline;

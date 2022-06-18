@@ -1,7 +1,8 @@
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
 import { ColorType } from '../../model/layout-options';
-import { TimeChannel } from '../../model/time-channel';
+import { Series } from '../../model/series';
+import { SeriesTimeChannel } from '../../model/series-time-channel';
 import { LineStyle } from '../../renderers/draw-line';
 import { IPaneRenderer } from '../../renderers/ipane-renderer';
 import { TimeChannelRenderer, TimeChannelRendererData } from '../../renderers/time-channel-renderer';
@@ -9,7 +10,7 @@ import { TimeChannelRenderer, TimeChannelRendererData } from '../../renderers/ti
 import { CustomTimeLinePaneView } from './custom-time-line-pane-view';
 import { IPaneView } from './ipane-view';
 
-export class TimeChannelPaneView implements IPaneView {
+export class SeriesTimeChannelPaneView implements IPaneView {
 	protected readonly _timeChannelRendererData: TimeChannelRendererData= {
 		time1: {
 			width: 0,
@@ -40,13 +41,15 @@ export class TimeChannelPaneView implements IPaneView {
 		},
 	};
 
+	protected readonly _series: Series;
 	protected readonly _model: ChartModel;
 	protected readonly _timeChannelRenderer: TimeChannelRenderer = new TimeChannelRenderer();
-	private readonly _timeChannel: TimeChannel;
+	private readonly _timeChannel: SeriesTimeChannel;
 	private _invalidated: boolean = true;
 
-	public constructor(model: ChartModel, timeChannel: TimeChannel) {
-		this._model = model;
+	public constructor(series: Series, timeChannel: SeriesTimeChannel) {
+		this._series = series;
+		this._model = series.model();
 		this._timeChannel = timeChannel;
 		this._timeChannelRenderer.setData(this._timeChannelRendererData);
 	}
@@ -58,8 +61,14 @@ export class TimeChannelPaneView implements IPaneView {
 	}
 
 	public renderer(height: number, width: number): IPaneRenderer | null {
+		if (!this._series.visible()) {
+			return null;
+		}
+
 		this._timeChannel.timeLine1().update();
 		this._timeChannel.timeLine2().update();
+
+		const data = this._timeChannelRendererData;
 
 		const renderer1 = this._timeChannel.timeLine1Renderer(height, width);
 		const renderer2 = this._timeChannel.timeLine2Renderer(height, width);
@@ -68,6 +77,8 @@ export class TimeChannelPaneView implements IPaneView {
 			this._updateImpl(height, width);
 			this._invalidated = false;
 		}
+
+		this._timeChannelRenderer.setData(data);
 
 		this._timeChannelRenderer.setTimeLine1Renderer(renderer1);
 		this._timeChannelRenderer.setTimeLine2Renderer(renderer2);
@@ -81,11 +92,10 @@ export class TimeChannelPaneView implements IPaneView {
 
 		this._timeChannel.timeLine1().update();
 		this._timeChannel.timeLine2().update();
-		// this._timeChannelRenderer.setData(data);
 
 		const channelOptions = this._timeChannel.options();
 
-		if (!channelOptions.visible) {
+		if (!this._series.visible() || !channelOptions.visible) {
 			return;
 		}
 

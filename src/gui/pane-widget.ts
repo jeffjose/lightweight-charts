@@ -498,6 +498,8 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		topCtx.clearRect(0, 0, Math.ceil(this._size.w * this._topCanvasBinding.pixelRatio), Math.ceil(this._size.h * this._topCanvasBinding.pixelRatio));
 		this._drawSources(topCtx, this._canvasBinding.pixelRatio, sourceTopPaneViews);
 		this._drawCrosshair(topCtx, this._topCanvasBinding.pixelRatio);
+		this._drawTimeLines(topCtx, this._topCanvasBinding.pixelRatio);
+		this._drawChannels(topCtx, this._topCanvasBinding.pixelRatio);
 	}
 
 	public leftPriceAxisWidget(): PriceAxisWidget | null {
@@ -572,6 +574,22 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 	private _drawCrosshair(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
 		this._drawSourceImpl(ctx, pixelRatio, sourcePaneViews, drawForeground, this._model().crosshairSource());
+	}
+
+	private _drawTimeLines(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
+		const timeLines = this._model().timeLines();
+
+		for (const timeLine of timeLines) {
+			this._drawSourceImpl(ctx, pixelRatio, sourcePaneViews, drawForeground, timeLine);
+		}
+	}
+
+	private _drawChannels(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
+		const timeChannels = this._model().timeChannels();
+
+		for (const timeChannel of timeChannels) {
+			this._drawSourceImpl(ctx, pixelRatio, sourcePaneViews, drawForeground, timeChannel);
+		}
 	}
 
 	private _drawSources(ctx: CanvasRenderingContext2D, pixelRatio: number, paneViewsGetter: PaneViewsGetter): void {

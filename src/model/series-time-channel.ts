@@ -1,17 +1,14 @@
 import { merge } from '../helpers/strict-type-checks';
 
 import { IPaneRenderer } from '../renderers/ipane-renderer';
+import { CustomTimeLinePaneView } from '../views/pane/custom-time-line-pane-view';
 import { IPaneView } from '../views/pane/ipane-view';
-import { TimeChannelPaneView } from '../views/pane/time-channel-pane-view';
-import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
-import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
+import { SeriesTimeChannelPaneView } from '../views/pane/series-time-channel-pane-view';
 
-import { ChartModel } from './chart-model';
-import { DataSource } from './data-source';
-import { Pane } from './pane';
-import { PriceScale } from './price-scale';
+import { Series } from './series';
+import { SeriesTimeChannelTimeLine } from './series-time-channel-time-line';
+import { SeriesTimeLine } from './series-time-line';
 import { TimeChannelOptions } from './time-channel-options';
-import { TimeLine } from './time-line';
 import { TimeLineOptions } from './time-line-options';
 // import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
@@ -20,38 +17,38 @@ export interface TimeChannelLineDetails {
 	currPrice: number;
 }
 
-export class TimeChannel extends DataSource {
-	private readonly _model: ChartModel;
-	private readonly _timeChannelView: TimeChannelPaneView;
+export class SeriesTimeChannel {
+	private readonly _series: Series;
+	private readonly _timeChannelView: SeriesTimeChannelPaneView;
 	private readonly _options: TimeChannelOptions;
 
-	private readonly _timeLine1: TimeLine;
-	private readonly _timeLine2: TimeLine;
+	private readonly _timeLine1: SeriesTimeChannelTimeLine;
+	private readonly _timeLine2: SeriesTimeChannelTimeLine;
 
-	private readonly _timeLine1PaneView: TimeLinePaneView;
-	private readonly _timeLine2PaneView: TimeLinePaneView;
+	private readonly _timeLine1PaneView: CustomTimeLinePaneView;
+	private readonly _timeLine2PaneView: CustomTimeLinePaneView;
 
-	public constructor(model: ChartModel, options: TimeChannelOptions) {
-		super();
-		this._model = model;
+	public constructor(series: Series, options: TimeChannelOptions) {
+		this._series = series;
 		this._options = options;
 
-		this._timeLine1 = new TimeLine(model, options.time1);
-		this._timeLine2 = new TimeLine(model, options.time2);
+		this._timeLine1 = new SeriesTimeChannelTimeLine(series, options.time1, this);
+		this._timeLine2 = new SeriesTimeChannelTimeLine(series, options.time2, this);
 
 		this._timeLine1PaneView = this._timeLine1.paneView();
 		this._timeLine2PaneView = this._timeLine2.paneView();
 
-		this._timeChannelView = new TimeChannelPaneView(model, this);
+		this._timeChannelView = new SeriesTimeChannelPaneView(series, this);
 	}
 
 	public applyOptions(options: Partial<TimeChannelOptions>): void {
 		merge(this._options, options);
-		this.lightUpdate();
+		this.update();
+		this._series.model().lightUpdate();
 	}
 	public lightUpdate(): void {
 		this.update();
-		this._model.lightUpdate();
+		this._series.model().lightUpdate();
 	}
 
 	public options(): TimeChannelOptions {
@@ -66,15 +63,15 @@ export class TimeChannel extends DataSource {
 		return this._options.time2;
 	}
 
-	public timeLine1(): TimeLine {
+	public timeLine1(): SeriesTimeLine {
 		return this._timeLine1;
 	}
 
-	public timeLine2(): TimeLine {
+	public timeLine2(): SeriesTimeLine {
 		return this._timeLine2;
 	}
 
-	public timeLines(): TimeLine[] {
+	public timeLines(): SeriesTimeLine[] {
 		return [this._timeLine1, this._timeLine2];
 	}
 
@@ -94,21 +91,8 @@ export class TimeChannel extends DataSource {
 		return this._timeLine2PaneView.renderer(height, width);
 	}
 
-	public paneViews(): IPaneView[] {
-		return [this._timeChannelView];
-	}
-
-	public priceAxisViews(pane: Pane, priceScale: PriceScale): IPriceAxisView[] {
-		return [];
-	}
-
 	public paneView(): IPaneView {
 		return this._timeChannelView;
-	}
-
-	public updateAllViews(): void {
-		this._timeChannelView.update();
-		// TODO: Update timeAxisView here
 	}
 
 	// public labelPaneView(): IPaneView[] {
