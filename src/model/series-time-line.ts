@@ -4,7 +4,7 @@ import { merge } from '../helpers/strict-type-checks';
 
 // import { IPaneView } from '../views/pane/ipane-view';
 // import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
-import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
+import { CustomTimeLinePaneView } from '../views/pane/custom-time-line-pane-view';
 // import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 // import { TimeLinePriceAxisView } from '../views/price-axis/time-line-price-axis-view';
 
@@ -20,7 +20,7 @@ export interface TimeLineDetails {
 
 export class SeriesTimeLine {
 	private readonly _series: Series;
-	private readonly _timeLineView: TimeLinePaneView;
+	private readonly _timeLineView: CustomTimeLinePaneView;
 	// private readonly _priceAxisView: TimeLinePriceAxisView;
 	// private readonly _panePriceAxisView: PanePriceAxisView;
 	private readonly _options: TimeLineOptions;
@@ -28,7 +28,7 @@ export class SeriesTimeLine {
 	public constructor(series: Series, options: TimeLineOptions) {
 		this._series = series;
 		this._options = options;
-		this._timeLineView = new TimeLinePaneView(series, this);
+		this._timeLineView = new CustomTimeLinePaneView(series, this);
 		// this._priceAxisView = new TimeLinePriceAxisView(series, this);
 		// this._panePriceAxisView = new PanePriceAxisView(this._priceAxisView, series, series.model());
 	}
@@ -43,7 +43,7 @@ export class SeriesTimeLine {
 		return this._options;
 	}
 
-	public paneView(): TimeLinePaneView {
+	public paneView(): CustomTimeLinePaneView {
 		return this._timeLineView;
 	}
 

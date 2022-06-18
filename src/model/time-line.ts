@@ -2,10 +2,15 @@ import { convertTime } from '../api/data-layer';
 
 import { merge } from '../helpers/strict-type-checks';
 
-import { ChartTimeLinePaneView } from '../views/pane/chart-time-line-pane-view';
+import { IPaneView } from '../views/pane/ipane-view';
+import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
+import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
 import { ChartModel } from './chart-model';
 import { Coordinate } from './coordinate';
+import { DataSource } from './data-source';
+import { Pane } from './pane';
+import { PriceScale } from './price-scale';
 import { UTCTimestamp } from './time-data';
 import { TimeLineOptions } from './time-line-options';
 
@@ -19,17 +24,18 @@ export interface TimeLineDetails {
 	currPrice: number;
 }
 
-export class TimeLine {
+export class TimeLine extends DataSource {
 	private readonly _model: ChartModel;
-	private readonly _timeLineView: ChartTimeLinePaneView;
+	private readonly _timeLineView: TimeLinePaneView;
 	// private readonly _priceAxisView: TimeLinePriceAxisView;
 	// private readonly _panePriceAxisView: PanePriceAxisView;
 	private readonly _options: TimeLineOptions;
 
 	public constructor(model: ChartModel, options: TimeLineOptions) {
+		super();
 		this._model = model;
 		this._options = options;
-		this._timeLineView = new ChartTimeLinePaneView(model, this);
+		this._timeLineView = new TimeLinePaneView(model, this);
 	}
 
 	public applyOptions(options: Partial<TimeLineOptions>): void {
@@ -42,8 +48,17 @@ export class TimeLine {
 		return this._options;
 	}
 
-	public paneView(): ChartTimeLinePaneView {
-		return this._timeLineView;
+	public paneViews(pane: Pane): readonly IPaneView[] {
+		return [this._timeLineView];
+	}
+
+	public priceAxisViews(pane: Pane, priceScale: PriceScale): IPriceAxisView[] {
+		return [];
+	}
+
+	public updateAllViews(): void {
+		this._timeLineView.update();
+		// TODO: Update timeAxisView here
 	}
 
 	// public labelPaneView(): IPaneView {

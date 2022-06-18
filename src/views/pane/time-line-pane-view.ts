@@ -1,14 +1,14 @@
-import { Series } from '../../model/series';
-import { SeriesTimeLine } from '../../model/series-time-line';
+import { ChartModel } from '../../model/chart-model';
+import { TimeLine } from '../../model/time-line';
 import { VerticalLineRendererData } from '../../renderers/vertical-line-renderer';
 
-import { SeriesVerticalLinePaneView } from './series-vertical-line-pane-view';
+import { ChartVerticalLinePaneView } from './chart-vertical-line-pane-view';
 
-export class TimeLinePaneView extends SeriesVerticalLinePaneView {
-	private readonly _timeLine: SeriesTimeLine;
+export class TimeLinePaneView extends ChartVerticalLinePaneView {
+	private readonly _timeLine: TimeLine;
 
-	public constructor(series: Series, timeLine: SeriesTimeLine) {
-		super(series);
+	public constructor(model: ChartModel, timeLine: TimeLine) {
+		super(model);
 		this._timeLine = timeLine;
 	}
 	public rendererOptions(): VerticalLineRendererData {
@@ -20,10 +20,6 @@ export class TimeLinePaneView extends SeriesVerticalLinePaneView {
 		data.visible = false;
 
 		const lineOptions = this._timeLine.options();
-
-		if (!this._series.visible()) {
-			return;
-		}
 
 		const x = this._timeLine.xCoord();
 		if (x === null) {

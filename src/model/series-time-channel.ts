@@ -1,16 +1,16 @@
 import { merge } from '../helpers/strict-type-checks';
 
 import { IPaneRenderer } from '../renderers/ipane-renderer';
+import { CustomTimeLinePaneView } from '../views/pane/custom-time-line-pane-view';
 import { IPaneView } from '../views/pane/ipane-view';
 import { SeriesTimeChannelPaneView } from '../views/pane/series-time-channel-pane-view';
-import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
-// import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
 import { Series } from './series';
 import { SeriesTimeChannelTimeLine } from './series-time-channel-time-line';
 import { SeriesTimeLine } from './series-time-line';
 import { TimeChannelOptions } from './time-channel-options';
 import { TimeLineOptions } from './time-line-options';
+// import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
 export interface TimeChannelLineDetails {
 	prevPrice: number;
@@ -25,8 +25,8 @@ export class SeriesTimeChannel {
 	private readonly _timeLine1: SeriesTimeChannelTimeLine;
 	private readonly _timeLine2: SeriesTimeChannelTimeLine;
 
-	private readonly _timeLine1PaneView: TimeLinePaneView;
-	private readonly _timeLine2PaneView: TimeLinePaneView;
+	private readonly _timeLine1PaneView: CustomTimeLinePaneView;
+	private readonly _timeLine2PaneView: CustomTimeLinePaneView;
 
 	public constructor(series: Series, options: TimeChannelOptions) {
 		this._series = series;

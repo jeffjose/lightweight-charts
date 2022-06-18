@@ -515,6 +515,10 @@ export class ChartModel implements IDestroyable {
 		return this._crosshair;
 	}
 
+	public timeLines(): TimeLine[] {
+		return this._timeLines;
+	}
+
 	public crosshairMoved(): ISubscription<TimePointIndex | null, (Point & PaneInfo) | null> {
 		return this._crosshairMoved;
 	}

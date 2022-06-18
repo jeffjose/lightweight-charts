@@ -7,8 +7,8 @@ import { LineStyle } from '../../renderers/draw-line';
 import { IPaneRenderer } from '../../renderers/ipane-renderer';
 import { TimeChannelRenderer, TimeChannelRendererData } from '../../renderers/time-channel-renderer';
 
+import { CustomTimeLinePaneView } from './custom-time-line-pane-view';
 import { IPaneView } from './ipane-view';
-import { TimeLinePaneView } from './time-line-pane-view';
 
 export class SeriesTimeChannelPaneView implements IPaneView {
 	protected readonly _timeChannelRendererData: TimeChannelRendererData= {
@@ -92,8 +92,8 @@ export class SeriesTimeChannelPaneView implements IPaneView {
 			return;
 		}
 
-		const line1PaneView = this._timeChannel.timeLine1PaneView() as TimeLinePaneView;
-		const line2PaneView = this._timeChannel.timeLine2PaneView() as TimeLinePaneView;
+		const line1PaneView = this._timeChannel.timeLine1PaneView() as CustomTimeLinePaneView;
+		const line2PaneView = this._timeChannel.timeLine2PaneView() as CustomTimeLinePaneView;
 
 		data.time1 = line1PaneView.rendererOptions();
 		data.time2 = line2PaneView.rendererOptions();
