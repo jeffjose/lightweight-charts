@@ -55,10 +55,10 @@ import {
 	SeriesPartialOptionsMap,
 	SeriesType,
 } from './series-options';
-import { TimeChannel } from './time-channel';
+import { SeriesTimeChannel } from './series-time-channel';
+import { SeriesTimeLine } from './series-time-line';
 import { TimeChannelOptions } from './time-channel-options';
 import { TimePoint, TimePointIndex } from './time-data';
-import { TimeLine } from './time-line';
 import { TimeLineOptions } from './time-line-options';
 
 export interface LastValueDataResultWithoutData {
@@ -121,8 +121,8 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 	private readonly _customPriceLines: CustomPriceLine[] = [];
 	private readonly _priceChannels: PriceChannel[] = [];
 	private readonly _timeLineView: SeriesTimeLinePaneView = new SeriesTimeLinePaneView(this);
-	private readonly _timeLines: TimeLine[] = [];
-	private readonly _timeChannels: TimeChannel[] = [];
+	private readonly _timeLines: SeriesTimeLine[] = [];
+	private readonly _timeChannels: SeriesTimeChannel[] = [];
 	private readonly _baseHorizontalLineView: SeriesHorizontalBaseLinePaneView = new SeriesHorizontalBaseLinePaneView(this);
 	private _paneView!: IUpdatablePaneView;
 	private readonly _lastPriceAnimationPaneView: SeriesLastPriceAnimationPaneView | null = null;
@@ -365,7 +365,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		this.model().updateSource(this);
 	}
 
-	public timeLines(): TimeLine[] {
+	public timeLines(): SeriesTimeLine[] {
 		return this._timeLines;
 	}
 
@@ -377,14 +377,14 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		return ([] as CustomPriceLine[]).concat(...this._priceChannels.map((channel: PriceChannel) => channel.priceLines()));
 	}
 
-	public createTimeLine(options: TimeLineOptions): TimeLine {
-		const result = new TimeLine(this, options);
+	public createTimeLine(options: TimeLineOptions): SeriesTimeLine {
+		const result = new SeriesTimeLine(this, options);
 		this._timeLines.push(result);
 		this.model().updateSource(this);
 		return result;
 	}
 
-	public removeTimeLine(line: TimeLine): void {
+	public removeTimeLine(line: SeriesTimeLine): void {
 		const index = this._timeLines.indexOf(line);
 		if (index !== -1) {
 			this._timeLines.splice(index, 1);
@@ -392,14 +392,14 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		this.model().updateSource(this);
 	}
 
-	public createTimeChannel(options: TimeChannelOptions): TimeChannel {
-		const result = new TimeChannel(this, options);
+	public createTimeChannel(options: TimeChannelOptions): SeriesTimeChannel {
+		const result = new SeriesTimeChannel(this, options);
 		this._timeChannels.push(result);
 		this.model().updateSource(this);
 		return result;
 	}
 
-	public removeTimeChannel(channel: TimeChannel): void {
+	public removeTimeChannel(channel: SeriesTimeChannel): void {
 		const index = this._timeChannels.indexOf(channel);
 		if (index !== -1) {
 			this._timeChannels.splice(index, 1);
@@ -407,12 +407,12 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		this.model().updateSource(this);
 	}
 
-	public timeChannels(): TimeChannel[] {
+	public timeChannels(): SeriesTimeChannel[] {
 		return this._timeChannels;
 	}
 
-	public timeChannelsTimeLines(): TimeLine[] {
-		return ([] as TimeLine[]).concat(...this._timeChannels.map((channel: TimeChannel) => channel.timeLines()));
+	public timeChannelsTimeLines(): SeriesTimeLine[] {
+		return ([] as SeriesTimeLine[]).concat(...this._timeChannels.map((channel: SeriesTimeChannel) => channel.timeLines()));
 	}
 
 	public seriesType(): T {
@@ -511,10 +511,10 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const priceChannels = this._priceChannels.map((line: PriceChannel) => line.paneView());
 		res.push(...priceChannels);
 
-		const timeLineViews = this._timeLines.map((line: TimeLine) => line.paneView());
+		const timeLineViews = this._timeLines.map((line: SeriesTimeLine) => line.paneView());
 		res.push(...timeLineViews);
 
-		const timeChannels = this._timeChannels.map((line: TimeChannel) => line.paneView());
+		const timeChannels = this._timeChannels.map((line: SeriesTimeChannel) => line.paneView());
 		res.push(...timeChannels);
 
 		return res;

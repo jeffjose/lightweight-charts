@@ -2,7 +2,7 @@ import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
 import { ColorType } from '../../model/layout-options';
 import { Series } from '../../model/series';
-import { TimeChannel } from '../../model/time-channel';
+import { SeriesTimeChannel } from '../../model/series-time-channel';
 import { LineStyle } from '../../renderers/draw-line';
 import { IPaneRenderer } from '../../renderers/ipane-renderer';
 import { TimeChannelRenderer, TimeChannelRendererData } from '../../renderers/time-channel-renderer';
@@ -10,7 +10,7 @@ import { TimeChannelRenderer, TimeChannelRendererData } from '../../renderers/ti
 import { IPaneView } from './ipane-view';
 import { TimeLinePaneView } from './time-line-pane-view';
 
-export class TimeChannelPaneView implements IPaneView {
+export class SeriesTimeChannelPaneView implements IPaneView {
 	protected readonly _timeChannelRendererData: TimeChannelRendererData= {
 		time1: {
 			width: 0,
@@ -44,10 +44,10 @@ export class TimeChannelPaneView implements IPaneView {
 	protected readonly _series: Series;
 	protected readonly _model: ChartModel;
 	protected readonly _timeChannelRenderer: TimeChannelRenderer = new TimeChannelRenderer();
-	private readonly _timeChannel: TimeChannel;
+	private readonly _timeChannel: SeriesTimeChannel;
 	private _invalidated: boolean = true;
 
-	public constructor(series: Series, timeChannel: TimeChannel) {
+	public constructor(series: Series, timeChannel: SeriesTimeChannel) {
 		this._series = series;
 		this._model = series.model();
 		this._timeChannel = timeChannel;

@@ -8,9 +8,9 @@ import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
 // import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 // import { TimeLinePriceAxisView } from '../views/price-axis/time-line-price-axis-view';
 
-import { UTCTimestamp } from '../../src/model/time-data';
 import { Coordinate } from './coordinate';
 import { Series } from './series';
+import { UTCTimestamp } from './time-data';
 import { TimeLineOptions } from './time-line-options';
 
 export interface TimeLineDetails {
@@ -18,7 +18,7 @@ export interface TimeLineDetails {
 	currPrice: number;
 }
 
-export class TimeLine {
+export class SeriesTimeLine {
 	private readonly _series: Series;
 	private readonly _timeLineView: TimeLinePaneView;
 	// private readonly _priceAxisView: TimeLinePriceAxisView;

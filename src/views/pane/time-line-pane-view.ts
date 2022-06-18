@@ -1,13 +1,13 @@
 import { Series } from '../../model/series';
-import { TimeLine } from '../../model/time-line';
+import { SeriesTimeLine } from '../../model/series-time-line';
 import { VerticalLineRendererData } from '../../renderers/vertical-line-renderer';
 
 import { SeriesVerticalLinePaneView } from './series-vertical-line-pane-view';
 
 export class TimeLinePaneView extends SeriesVerticalLinePaneView {
-	private readonly _timeLine: TimeLine;
+	private readonly _timeLine: SeriesTimeLine;
 
-	public constructor(series: Series, timeLine: TimeLine) {
+	public constructor(series: Series, timeLine: SeriesTimeLine) {
 		super(series);
 		this._timeLine = timeLine;
 	}

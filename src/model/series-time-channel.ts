@@ -2,14 +2,14 @@ import { merge } from '../helpers/strict-type-checks';
 
 import { IPaneRenderer } from '../renderers/ipane-renderer';
 import { IPaneView } from '../views/pane/ipane-view';
-import { TimeChannelPaneView } from '../views/pane/time-channel-pane-view';
+import { SeriesTimeChannelPaneView } from '../views/pane/series-time-channel-pane-view';
 import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
 // import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
 import { Series } from './series';
+import { SeriesTimeChannelTimeLine } from './series-time-channel-time-line';
+import { SeriesTimeLine } from './series-time-line';
 import { TimeChannelOptions } from './time-channel-options';
-import { TimeChannelTimeLine } from './time-channel-time-line';
-import { TimeLine } from './time-line';
 import { TimeLineOptions } from './time-line-options';
 
 export interface TimeChannelLineDetails {
@@ -17,13 +17,13 @@ export interface TimeChannelLineDetails {
 	currPrice: number;
 }
 
-export class TimeChannel {
+export class SeriesTimeChannel {
 	private readonly _series: Series;
-	private readonly _timeChannelView: TimeChannelPaneView;
+	private readonly _timeChannelView: SeriesTimeChannelPaneView;
 	private readonly _options: TimeChannelOptions;
 
-	private readonly _timeLine1: TimeChannelTimeLine;
-	private readonly _timeLine2: TimeChannelTimeLine;
+	private readonly _timeLine1: SeriesTimeChannelTimeLine;
+	private readonly _timeLine2: SeriesTimeChannelTimeLine;
 
 	private readonly _timeLine1PaneView: TimeLinePaneView;
 	private readonly _timeLine2PaneView: TimeLinePaneView;
@@ -32,13 +32,13 @@ export class TimeChannel {
 		this._series = series;
 		this._options = options;
 
-		this._timeLine1 = new TimeChannelTimeLine(series, options.time1, this);
-		this._timeLine2 = new TimeChannelTimeLine(series, options.time2, this);
+		this._timeLine1 = new SeriesTimeChannelTimeLine(series, options.time1, this);
+		this._timeLine2 = new SeriesTimeChannelTimeLine(series, options.time2, this);
 
 		this._timeLine1PaneView = this._timeLine1.paneView();
 		this._timeLine2PaneView = this._timeLine2.paneView();
 
-		this._timeChannelView = new TimeChannelPaneView(series, this);
+		this._timeChannelView = new SeriesTimeChannelPaneView(series, this);
 	}
 
 	public applyOptions(options: Partial<TimeChannelOptions>): void {
@@ -63,15 +63,15 @@ export class TimeChannel {
 		return this._options.time2;
 	}
 
-	public timeLine1(): TimeLine {
+	public timeLine1(): SeriesTimeLine {
 		return this._timeLine1;
 	}
 
-	public timeLine2(): TimeLine {
+	public timeLine2(): SeriesTimeLine {
 		return this._timeLine2;
 	}
 
-	public timeLines(): TimeLine[] {
+	public timeLines(): SeriesTimeLine[] {
 		return [this._timeLine1, this._timeLine2];
 	}
 
