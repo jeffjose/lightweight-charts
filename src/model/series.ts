@@ -73,7 +73,7 @@ export interface LastValueDataResultWithData {
 	formattedPriceAbsolute: string;
 	formattedPricePercentage: string;
 	color: string;
-	style: [string, string];
+	style: [string, string]; // [currItemColor, nextItemColor]
 	coordinate: Coordinate;
 	index: TimePointIndex;
 }

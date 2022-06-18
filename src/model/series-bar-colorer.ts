@@ -22,7 +22,7 @@ export interface PrecomputedBars {
 
 export interface BarColorerStyle {
 	barColor: string;
-	barStyle: [string, string];
+	barStyle: [string, string]; // [currItemColor, nextItemColor]
 	barBorderColor: string; // Used in Candlesticks
 	barWickColor: string; // Used in Candlesticks
 }

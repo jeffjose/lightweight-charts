@@ -9,7 +9,7 @@ import { LinePoint, LineStyle, LineType, LineWidth, setLineStyle } from './draw-
 import { ScaledRenderer } from './scaled-renderer';
 import { getControlPoints, walkLine } from './walk-line';
 
-export type LineItem = TimedValue & PricedValue & LinePoint & { color?: string; style?: [string, string] };
+export type LineItem = TimedValue & PricedValue & LinePoint & { color?: string; style?: [string, string] }; // [currItemColor, nextItemColor]
 
 export interface RendererColorData {
 	color1: string;
