@@ -96,41 +96,40 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			return;
 		}
 
-		ctx.beginPath();
-
-		const firstItem = items[visibleRange.from];
-		ctx.moveTo(firstItem.x, firstItem.y);
-
-		let nextItem;
-		if (items.length > 1) {
-			nextItem = items[1];
-		}
-
-		let prevStrokeStyle = firstItem.color ?? lineColor;
-		let prevStrokeColors: [string, string] = [firstItem.color ?? lineColor, nextItem?.color ?? lineColor];
-		ctx.strokeStyle = getCanvasGradientsFrom2Colors(ctx, prevStrokeColors[0], prevStrokeColors[1], firstItem.x, firstItem.y, nextItem?.x ?? firstItem.x, nextItem?.y ?? firstItem.y) as string;
-
 		const changeColor = (color: string) => {
 			ctx.stroke();
 			ctx.beginPath();
 			ctx.strokeStyle = color;
-			prevStrokeStyle = color;
+			// prevStrokeStyle = color;
 		};
 
 		const changeColorWithGradient = (style: [string, string], x0: number, y0: number, x1: number, y1: number) => {
 			ctx.stroke();
 			ctx.beginPath();
+			ctx.lineTo(x0, y0);
 			const strokeStyle = getCanvasGradientsFrom2Colors(ctx, style[0], style[1], x0, y0, x1, y1) as string;
 			ctx.strokeStyle = strokeStyle;
-			prevStrokeStyle = strokeStyle;
-			prevStrokeColors = style;
+			// prevStrokeStyle = strokeStyle;
 		};
+
+		ctx.beginPath();
+
+		const firstItem = items[visibleRange.from];
+		ctx.moveTo(firstItem.x, firstItem.y);
+
+		let nextItem = items.length > 1 ? items[visibleRange.from + 1] : undefined;
+
+		// let prevStrokeStyle: string = firstItem.color ?? lineColor;
+		let prevStrokeColors: [string, string] = firstItem.style ?? [lineColor, lineColor];
+
+		ctx.strokeStyle = getCanvasGradientsFrom2Colors(ctx, prevStrokeColors[0], prevStrokeColors[1], firstItem.x, firstItem.y, nextItem?.x ?? firstItem.x, nextItem?.y ?? firstItem.y) as string;
 
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
 			if (i + 1 < items.length) {
 				nextItem = items[i + 1];
 			}
+			prevStrokeColors = items[i - 1].style ?? [lineColor, lineColor];
 
 			const currentStrokeStyle = currItem.color ?? lineColor;
 			const currentStrokeColors = currItem.style ?? [lineColor, lineColor];
@@ -140,14 +139,19 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 					ctx.lineTo(currItem.x, currItem.y);
 					break;
 				case LineType.WithSteps:
+					// Come close to the point
 					ctx.lineTo(currItem.x, items[i - 1].y);
 
-					if (currentStrokeStyle !== prevStrokeStyle) {
+					// Finish
+					ctx.lineTo(currItem.x, currItem.y);
+
+					if (nextItem !== undefined) {
+						changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
+					} else {
 						changeColor(currentStrokeStyle);
-						ctx.lineTo(currItem.x, items[i - 1].y);
+						ctx.moveTo(currItem.x, currItem.y);
 					}
 
-					ctx.lineTo(currItem.x, currItem.y);
 					break;
 				case LineType.Curved: {
 					const [cp1, cp2] = getControlPoints(items, i - 1, i);
@@ -159,41 +163,33 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 					const diagonalLineWidth = 30; // 30 is a magic number
 					const straightLineWidth = (fullWidth - diagonalLineWidth) / 2;
 
+					// Extend a bit from the last item
 					ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
 
-					if (this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
-						changeColor(currentStrokeStyle);
-						ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
-					}
-
+					// Diagonal
 					ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
 
-					if (currentStrokeStyle !== prevStrokeStyle) {
+					// Finish
+					ctx.lineTo(currItem.x, currItem.y);
+
+					if (nextItem !== undefined) {
+						changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
+					} else {
 						changeColor(currentStrokeStyle);
-						ctx.lineTo(currItem.x - straightLineWidth, currItem.y);
+						ctx.moveTo(currItem.x, currItem.y);
 					}
 
-					ctx.lineTo(currItem.x, currItem.y);
 					break;
 				}
 			}
 
-			if (lineType !== LineType.WithSteps && !this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
+			if (lineType !== LineType.WithSteps && lineType !== LineType.WithBreaks && !this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
 				if (nextItem !== undefined) {
 					changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
 				} else {
 					changeColor(currentStrokeStyle);
+					ctx.moveTo(currItem.x, currItem.y);
 				}
-				ctx.moveTo(currItem.x, currItem.y);
-			}
-
-			if (lineType !== LineType.WithBreaks && !this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
-				if (nextItem !== undefined) {
-					changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem?.x, nextItem?.y);
-				} else {
-					changeColor(currentStrokeStyle);
-				}
-				ctx.moveTo(currItem.x, currItem.y);
 			}
 		}
 
