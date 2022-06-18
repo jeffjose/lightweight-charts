@@ -165,11 +165,12 @@ export class SeriesBarColorer {
 
 		if (isStrictColor(lineStyle.color)) {
 			currentBarColor = currentBar.color ?? this._colorGetter(offset);
-			nextBarColor = currentBar.color ?? this._colorGetter(nextOffset);
+			nextBarColor = nextBar?.color ?? this._colorGetter(nextOffset);
 		} else {
 			currentBarColor = currentBar.color ?? lineStyle.color;
 			nextBarColor = nextBar?.color ?? lineStyle.color;
 		}
+
 		return {
 			...emptyResult,
 			barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
