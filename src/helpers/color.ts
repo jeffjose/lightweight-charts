@@ -351,17 +351,19 @@ export function interpolateColorValueAt(color1: string, color2: string, offset: 
 }
 
 // eslint-disable-next-line max-params
-export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number): CanvasRenderingContext2D['strokeStyle'] | CanvasRenderingContext2D['fillStyle'] {
+export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number, skipColorDiffCheck: boolean = false): CanvasRenderingContext2D['strokeStyle'] | CanvasRenderingContext2D['fillStyle'] {
 	// <=1.0 is not perceptible by human eyes
 	// http://zschuessler.github.io/DeltaE/learn/
-	if (deltaE(color1, color2) < 1) {
+	if (!skipColorDiffCheck && deltaE(color1, color2) < 1) {
 		return color1;
 	}
 	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
 	const totalStops = 3;
+	gradient.addColorStop(0, color1);
 	for (const i of Array.from(Array(totalStops).keys()).map((x: number) => x + 1)) {
 		gradient.addColorStop(i / totalStops, interpolateColorValueAt(color1, color2, i / totalStops));
 	}
+	gradient.addColorStop(1, color2);
 	return gradient;
 }
 

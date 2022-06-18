@@ -90,7 +90,7 @@ export class PaneRendererHistogram implements IPaneRenderer {
 					}
 					break;
 				case ColorType.VerticalGradient:
-					ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.style.startColor, item.style.endColor, current.left, bottom, current.left, top);
+					ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.style.startColor, item.style.endColor, current.left, bottom, current.left, top, false);
 			}
 
 			ctx.fillRect(current.left, top, current.right - current.left + 1, bottom - top);
