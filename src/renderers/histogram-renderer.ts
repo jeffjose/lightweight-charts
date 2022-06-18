@@ -11,6 +11,7 @@ const alignToMinimalWidthLimit = 4;
 
 export interface HistogramItem extends PricedValue, TimedValue {
 	color: string;
+	style: [string, string];
 }
 
 export interface PaneRendererHistogramData {
@@ -46,6 +47,8 @@ export class PaneRendererHistogram implements IPaneRenderer {
 		if (!this._precalculatedCache.length) {
 			this._fillPrecalculatedCache(pixelRatio);
 		}
+
+		// console.log(this._data.items.map((item: HistogramItem) => item.style));
 
 		const tickWidth = Math.max(1, Math.floor(pixelRatio));
 		const histogramBase = Math.round((this._data.histogramBase) * pixelRatio);

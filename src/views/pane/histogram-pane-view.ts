@@ -32,6 +32,7 @@ function createRawItem(time: TimePointIndex, price: BarPrice, color: Color, offs
 		x: NaN as Coordinate,
 		y: NaN as Coordinate,
 		color: colorGetter(color)(offset),
+		style: ['green', colorGetter(color)(offset)],
 	};
 }
 
