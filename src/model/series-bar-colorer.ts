@@ -242,7 +242,6 @@ export class SeriesBarColorer {
 		let seriesPos;
 		let vertOffset;
 		let horizOffset;
-		let nextVertOffset;
 		let nextHorizOffset;
 
 		if (typeof histogramStyle.color === 'string') {
@@ -262,17 +261,14 @@ export class SeriesBarColorer {
 				};
 			}
 			case ColorType.VerticalGradient: {
-				seriesPos = this._series.bars().seriesPositionAt(barIndex) ?? 0;
 				vertOffset = (currentBar.value[PlotRowValueIndex.Close] - this._minValue) / (this._maxValue - this._minValue);
-				nextVertOffset = (nextBar.value[PlotRowValueIndex.Close] - this._minValue) / (this._maxValue - this._minValue);
 
 				currentBarColor = currentBar.color ?? this._colorGetter(vertOffset);
-				nextBarColor = nextBar?.color ?? this._colorGetter(nextVertOffset);
 
 				return {
 					...emptyResult,
 					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
-					barStyle: [currentBarColor, nextBarColor] as [string, string],
+					barStyle: [histogramStyle.color.startColor, currentBarColor] as [string, string],
 
 				};
 			}
