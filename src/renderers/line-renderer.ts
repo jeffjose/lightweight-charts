@@ -96,11 +96,10 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			return;
 		}
 
-		const changeColor = (color: string) => {
+		const changeColorWithSolid = (color: string) => {
 			ctx.stroke();
 			ctx.beginPath();
 			ctx.strokeStyle = color;
-			// prevStrokeStyle = color;
 		};
 
 		const changeColorWithGradient = (style: [string, string], x0: number, y0: number, x1: number, y1: number) => {
@@ -109,27 +108,35 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			ctx.lineTo(x0, y0);
 			const strokeStyle = getCanvasGradientsFrom2Colors(ctx, style[0], style[1], x0, y0, x1, y1) as string;
 			ctx.strokeStyle = strokeStyle;
-			// prevStrokeStyle = strokeStyle;
 		};
 
 		ctx.beginPath();
 
+		// Find the first visible item
 		const firstItem = items[visibleRange.from];
+		// Move to that position
 		ctx.moveTo(firstItem.x, firstItem.y);
 
+		// Find next item so that we can setup a gradient from firstItem -> nextItem.
+		// The gradient is drawn inside changeColorWithGradient (which has ctx.stroke())
 		let nextItem = items.length > 1 ? items[visibleRange.from + 1] : undefined;
 
-		// let prevStrokeStyle: string = firstItem.color ?? lineColor;
-		let prevStrokeColors: [string, string] = firstItem.style ?? [lineColor, lineColor];
+		// Find previous colors.
+		// We start the loop from i+1, so firstItem is the prevItem
+		let prevStrokeGradientColors: [string, string] = firstItem.style ?? [lineColor, lineColor];
 
-		ctx.strokeStyle = getCanvasGradientsFrom2Colors(ctx, prevStrokeColors[0], prevStrokeColors[1], firstItem.x, firstItem.y, nextItem?.x ?? firstItem.x, nextItem?.y ?? firstItem.y) as string;
+		// Setup gradient so that we're ready to draw at the next ctx.stroke()
+		ctx.strokeStyle = getCanvasGradientsFrom2Colors(ctx, prevStrokeGradientColors[0], prevStrokeGradientColors[1], firstItem.x, firstItem.y, nextItem?.x ?? firstItem.x, nextItem?.y ?? firstItem.y) as string;
 
+		// Loop starting from i+1
 		for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 			const currItem = items[i];
 			if (i + 1 < items.length) {
+				// Pick out nextItem for setting up the next gradient
 				nextItem = items[i + 1];
 			}
-			prevStrokeColors = items[i - 1].style ?? [lineColor, lineColor];
+			// Update prevStrokeColors
+			prevStrokeGradientColors = items[i - 1].style ?? [lineColor, lineColor];
 
 			const currentStrokeStyle = currItem.color ?? lineColor;
 			const currentStrokeColors = currItem.style ?? [lineColor, lineColor];
@@ -144,13 +151,6 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 
 					// Finish
 					ctx.lineTo(currItem.x, currItem.y);
-
-					if (nextItem !== undefined) {
-						changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
-					} else {
-						changeColor(currentStrokeStyle);
-						ctx.moveTo(currItem.x, currItem.y);
-					}
 
 					break;
 				case LineType.Curved: {
@@ -172,36 +172,22 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 					// Finish
 					ctx.lineTo(currItem.x, currItem.y);
 
-					if (nextItem !== undefined) {
-						changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
-					} else {
-						changeColor(currentStrokeStyle);
-						ctx.moveTo(currItem.x, currItem.y);
-					}
-
 					break;
 				}
 			}
 
-			if (lineType !== LineType.WithSteps && lineType !== LineType.WithBreaks && !this._isSameColorPairs(currentStrokeColors, prevStrokeColors)) {
-				if (nextItem !== undefined) {
-					changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
-				} else {
-					changeColor(currentStrokeStyle);
-					ctx.moveTo(currItem.x, currItem.y);
-				}
+			if (nextItem !== undefined) {
+				changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
+			} else {
+				changeColorWithSolid(currentStrokeStyle);
+				ctx.moveTo(currItem.x, currItem.y);
+				ctx.stroke();
 			}
 		}
-
-		ctx.stroke();
 	}
 
 	protected override _strokeStyle(): CanvasRenderingContext2D['strokeStyle'] {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		return this._data!.lineColor;
-	}
-
-	private _isSameColorPairs(currentColors: [string, string], prevColors: [string, string]): boolean {
-		return currentColors[0] === prevColors[0] && currentColors[1] === prevColors[1];
 	}
 }
