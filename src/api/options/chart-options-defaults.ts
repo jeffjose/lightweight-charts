@@ -14,6 +14,8 @@ export const chartOptionsDefaults: ChartOptionsInternal = {
 	height: 0,
 	layout: layoutOptionsDefaults,
 	crosshair: crosshairOptionsDefaults,
+	timeLines: [],
+	timeChannels: [],
 	grid: gridOptionsDefaults,
 	overlayPriceScales: {
 		...priceScaleOptionsDefaults,

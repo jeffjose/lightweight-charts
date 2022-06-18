@@ -29,7 +29,10 @@ import { Series, SeriesOptionsInternal } from './series';
 import { SeriesLollipop } from './series-lollipops';
 import { SeriesMarker } from './series-markers';
 import { SeriesOptionsMap, SeriesType } from './series-options';
+import { TimeChannelOptions } from './time-channel-options';
 import { LogicalRange, TimePoint, TimePointIndex, TimeScalePoint } from './time-data';
+import { TimeLine } from './time-line';
+import { TimeLineOptions } from './time-line-options';
 import { TimeScale, TimeScaleOptions } from './time-scale';
 import { Watermark, WatermarkOptions } from './watermark';
 
@@ -250,16 +253,22 @@ export interface ChartOptions {
 	 * Left price scale options
 	 */
 	leftPriceScale: VisiblePriceScaleOptions;
+
 	/**
 	 * Right price scale options
 	 */
 	rightPriceScale: VisiblePriceScaleOptions;
+
 	/**
 	 * Overlay price scale options
 	 */
 	overlayPriceScales: OverlayPriceScaleOptions;
-	/** Structure describing price scale options for non-primary pane */
+
+	/**
+	 * Structure describing price scale options for non-primary pane
+	 */
 	nonPrimaryPriceScale: VisiblePriceScaleOptions;
+
 	/**
 	 * Time scale options
 	 */
@@ -270,6 +279,18 @@ export interface ChartOptions {
 	 *
 	 */
 	crosshair: CrosshairOptions;
+
+	/**
+	 * Time Line options
+	 *
+	 */
+	timeLines: TimeLineOptions[];
+
+	/**
+	 * Time Channel options
+	 *
+	 */
+	timeChannels: TimeChannelOptions[];
 
 	/**
 	 * A grid is represented in the chart background as a vertical and horizontal lines drawn at the levels of visible marks of price and the time scales.
@@ -331,6 +352,7 @@ export class ChartModel implements IDestroyable {
 	private readonly _panes: Pane[] = [];
 	private readonly _panesToIndex: Map<Pane, number> = new Map<Pane, number>();
 	private readonly _crosshair: Crosshair;
+	private readonly _timeLines: TimeLine[] = [];
 	private readonly _magnet: Magnet;
 	private readonly _watermark: Watermark;
 
@@ -360,6 +382,8 @@ export class ChartModel implements IDestroyable {
 		this._crosshair = new Crosshair(this, options.crosshair);
 		this._magnet = new Magnet(options.crosshair);
 		this._watermark = new Watermark(this, options.watermark);
+
+		this._timeLines = options.timeLines.map((timeLineOptions: TimeLineOptions) => new TimeLine(this, timeLineOptions));
 
 		this.createPane();
 		this._panes[0].setStretchFactor(DEFAULT_STRETCH_FACTOR * 2);
@@ -809,6 +833,7 @@ export class ChartModel implements IDestroyable {
 		this._watermark.updateAllViews();
 		this._panes.forEach((p: Pane) => p.recalculate());
 		this.updateCrosshair();
+		this._timeLines.forEach((t: TimeLine) => t.update());
 	}
 
 	public fireCustomPriceLineDragged(prevPrice: number, currPrice: number, pane: Pane): void {
