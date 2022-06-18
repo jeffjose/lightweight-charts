@@ -387,6 +387,14 @@ export function getFillColorFromColor(ctx: CanvasRenderingContext2D, bg: Color, 
 	}
 }
 
+export function toStrictColor(color: Color): StrictColor {
+	if (typeof color == 'string') {
+		return { color: color, type: ColorType.Solid };
+	}
+
+	return color;
+}
+
 export function isStrictColor(color: Color): color is StrictColor {
 	return !!(color as StrictColor).type;
 }
