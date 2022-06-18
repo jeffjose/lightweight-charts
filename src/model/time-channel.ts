@@ -4,7 +4,7 @@ import { IPaneRenderer } from '../renderers/ipane-renderer';
 import { IPaneView } from '../views/pane/ipane-view';
 import { TimeChannelPaneView } from '../views/pane/time-channel-pane-view';
 import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
-import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
+// import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
 
 import { Series } from './series';
 import { TimeChannelOptions } from './time-channel-options';
@@ -95,13 +95,13 @@ export class TimeChannel {
 		return this._timeChannelView;
 	}
 
-	public labelPaneView(): IPaneView[] {
-		return this._options.visible ? [this._timeLine1.labelPaneView(), this._timeLine2.labelPaneView()] : [];
-	}
+	// public labelPaneView(): IPaneView[] {
+	// 	return this._options.visible ? [this._timeLine1.labelPaneView(), this._timeLine2.labelPaneView()] : [];
+	// }
 
-	public priceAxisView(): IPriceAxisView[] {
-		return this._options.visible ? [this._timeLine1.priceAxisView(), this._timeLine2.priceAxisView()] : [];
-	}
+	// public priceAxisView(): IPriceAxisView[] {
+	// 	return this._options.visible ? [this._timeLine1.priceAxisView(), this._timeLine2.priceAxisView()] : [];
+	// }
 
 	public update(): void {
 		this._timeChannelView.update();

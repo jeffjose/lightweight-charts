@@ -2,11 +2,11 @@ import { convertTime } from '../api/data-layer';
 
 import { merge } from '../helpers/strict-type-checks';
 
-import { IPaneView } from '../views/pane/ipane-view';
-import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
+// import { IPaneView } from '../views/pane/ipane-view';
+// import { PanePriceAxisView } from '../views/pane/pane-price-axis-view';
 import { TimeLinePaneView } from '../views/pane/time-line-pane-view';
-import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
-import { TimeLinePriceAxisView } from '../views/price-axis/time-line-price-axis-view';
+// import { IPriceAxisView } from '../views/price-axis/iprice-axis-view';
+// import { TimeLinePriceAxisView } from '../views/price-axis/time-line-price-axis-view';
 
 import { UTCTimestamp } from '../../src/model/time-data';
 import { Coordinate } from './coordinate';
@@ -21,16 +21,16 @@ export interface TimeLineDetails {
 export class TimeLine {
 	private readonly _series: Series;
 	private readonly _timeLineView: TimeLinePaneView;
-	private readonly _priceAxisView: TimeLinePriceAxisView;
-	private readonly _panePriceAxisView: PanePriceAxisView;
+	// private readonly _priceAxisView: TimeLinePriceAxisView;
+	// private readonly _panePriceAxisView: PanePriceAxisView;
 	private readonly _options: TimeLineOptions;
 
 	public constructor(series: Series, options: TimeLineOptions) {
 		this._series = series;
 		this._options = options;
 		this._timeLineView = new TimeLinePaneView(series, this);
-		this._priceAxisView = new TimeLinePriceAxisView(series, this);
-		this._panePriceAxisView = new PanePriceAxisView(this._priceAxisView, series, series.model());
+		// this._priceAxisView = new TimeLinePriceAxisView(series, this);
+		// this._panePriceAxisView = new PanePriceAxisView(this._priceAxisView, series, series.model());
 	}
 
 	public applyOptions(options: Partial<TimeLineOptions>): void {
@@ -47,17 +47,17 @@ export class TimeLine {
 		return this._timeLineView;
 	}
 
-	public labelPaneView(): IPaneView {
-		return this._panePriceAxisView;
-	}
+	// public labelPaneView(): IPaneView {
+	// 	return this._panePriceAxisView;
+	// }
 
-	public priceAxisView(): IPriceAxisView {
-		return this._priceAxisView;
-	}
+	// public priceAxisView(): IPriceAxisView {
+	// 	return this._priceAxisView;
+	// }
 
 	public update(): void {
 		this._timeLineView.update();
-		this._priceAxisView.update();
+		// this._priceAxisView.update();
 	}
 
 	public xCoord(): Coordinate | null {

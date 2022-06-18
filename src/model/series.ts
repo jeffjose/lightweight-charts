@@ -524,16 +524,16 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 		const result = [
 			this._panePriceAxisView,
 			...this._customPriceLines.map((line: CustomPriceLine) => line.labelPaneView()),
-			...this._timeLines.map((line: TimeLine) => line.labelPaneView()),
+			// ...this._timeLines.map((line: TimeLine) => line.labelPaneView()),
 		];
 
 		for (const priceChannel of this._priceChannels) {
 			result.push(...priceChannel.labelPaneView());
 		}
 
-		for (const timeChannel of this._timeChannels) {
-			result.push(...timeChannel.labelPaneView());
-		}
+		// for (const timeChannel of this._timeChannels) {
+		// 	result.push(...timeChannel.labelPaneView());
+		// }
 
 		return result;
 	}
@@ -547,17 +547,17 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			result.push(customPriceLine.priceAxisView());
 		}
 
-		for (const timeLine of this._timeLines) {
-			result.push(timeLine.priceAxisView());
-		}
+		// for (const timeLine of this._timeLines) {
+		// 	result.push(timeLine.priceAxisView());
+		// }
 
 		for (const priceChannel of this._priceChannels) {
 			result.push(...priceChannel.priceAxisView());
 		}
 
-		for (const timeChannel of this._timeChannels) {
-			result.push(...timeChannel.priceAxisView());
-		}
+		// for (const timeChannel of this._timeChannels) {
+		// 	result.push(...timeChannel.priceAxisView());
+		// }
 		return result;
 	}
 
