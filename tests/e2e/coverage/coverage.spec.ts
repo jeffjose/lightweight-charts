@@ -15,6 +15,10 @@ import puppeteer, {
 	Page,
 } from 'puppeteer';
 
+// import pti from 'puppeteer-to-istanbul';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pti = require('puppeteer-to-istanbul');
+
 import { expectedCoverage, threshold } from './coverage-config';
 
 const coverageScript = fs.readFileSync(path.join(__dirname, 'coverage-script.js'), { encoding: 'utf-8' });
@@ -213,6 +217,9 @@ interface InternalWindow {
 
 async function getCoverageResult(page: Page): Promise<Map<string, CoverageResult>> {
 	const coverageEntries = await page.coverage.stopJSCoverage();
+
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+	pti.write(coverageEntries);
 
 	const result = new Map<string, CoverageResult>();
 

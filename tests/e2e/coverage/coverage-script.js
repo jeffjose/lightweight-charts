@@ -396,6 +396,36 @@ function runTestCase(container) {
 		}
 	);
 
+	lineSeries.createTimeLine({
+		time: data[data.length - 40].time.timestamp,
+		color: '#f0f',
+		lineWidth: 4,
+		lineStyle: LightweightCharts.LineStyle.SparseDotted,
+		draggable: true,
+	});
+
+	lineSeries.createTimeChannel({
+		time1: {
+			time: data[data.length - 4].time.timestamp,
+			color: '#f0f',
+			lineWidth: 4,
+			lineStyle: LightweightCharts.LineStyle.SparseDotted,
+			draggable: true,
+		},
+		time2: {
+			time: data[data.length - 7].time.timestamp,
+			color: '#f0f',
+			lineWidth: 1,
+			lineStyle: LightweightCharts.LineStyle.Solid,
+		},
+		background: {
+			type: LightweightCharts.ColorType.VerticalGradient,
+			startColor: '#ffffff',
+			endColor: '#f0a0a0',
+		},
+		visible: true,
+	});
+
 	// lineSeries.removePriceChannel(priceChannel1);
 
 	areaSeries.setMarkers([
@@ -425,6 +455,62 @@ function runTestCase(container) {
 			position: 'belowBar',
 			color: '#fff00a',
 			shape: 'square',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'badgeCheck',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'chevronDoubleDown',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'chevronDoubleUp',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'triangleUp',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'triangleDown',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'spotlightcircle',
+			text: 'test',
+			size: 2,
+		},
+		{
+			time: data[data.length - 1].time,
+			position: 'belowBar',
+			color: '#fff00a',
+			shape: 'spotlightcircle',
 			text: 'test',
 			size: 2,
 		},
@@ -464,7 +550,7 @@ function runTestCase(container) {
 			time: data[data.length - 1].time,
 			position: 'bottom',
 			color: '#fff00a',
-			shape: 'fingerpost',
+			shape: 'fingerpostUp',
 			text: 'test',
 			size: 1,
 		},
@@ -472,7 +558,7 @@ function runTestCase(container) {
 			time: data[data.length - 1].time,
 			position: 'top',
 			color: '#fff00a',
-			shape: 'fingerpost',
+			shape: 'fingerpostDown',
 			text: 'test',
 			size: 1,
 		},

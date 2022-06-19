@@ -35,20 +35,12 @@ export function checkTimeLineOptions(options: TimeLineOptions): void {
 	if (process.env.NODE_ENV === 'production') {
 		return;
 	}
-
-	// eslint-disable-next-line @typescript-eslint/tslint/config
-	assert(typeof options.time === 'number', `the type of 'time' time line's property must be a number, got '${typeof options.time}'`);
 }
 
 export function checkTimeChannelOptions(options: TimeChannelOptions): void {
 	if (process.env.NODE_ENV === 'production') {
 		return;
 	}
-
-	// eslint-disable-next-line @typescript-eslint/tslint/config
-	assert(typeof options.time1.time === 'number', `the type of 'time' time line's property must be a number, got '${typeof options.time1.time}'`);
-	// eslint-disable-next-line @typescript-eslint/tslint/config
-	assert(typeof options.time2.time === 'number', `the type of 'time' time line's property must be a number, got '${typeof options.time2.time}'`);
 }
 
 export function checkItemsAreOrdered(data: readonly (SeriesMarker<Time> | SeriesDataItemTypeMap[SeriesType])[], allowDuplicates: boolean = false): void {
