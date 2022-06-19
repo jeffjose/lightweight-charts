@@ -58,12 +58,16 @@ export class TimeChannelPaneView implements IPaneView {
 	}
 
 	public renderer(height: number, width: number): IPaneRenderer | null {
+		this._timeChannel.timeLine1().update();
+		this._timeChannel.timeLine2().update();
+
+		const renderer1 = this._timeChannel.timeLine1Renderer(height, width);
+		const renderer2 = this._timeChannel.timeLine2Renderer(height, width);
+
 		if (this._invalidated) {
 			this._updateImpl(height, width);
 			this._invalidated = false;
 		}
-		const renderer1 = this._timeChannel.timeLine1Renderer(height, width);
-		const renderer2 = this._timeChannel.timeLine2Renderer(height, width);
 
 		this._timeChannelRenderer.setTimeLine1Renderer(renderer1);
 		this._timeChannelRenderer.setTimeLine2Renderer(renderer2);
@@ -77,6 +81,7 @@ export class TimeChannelPaneView implements IPaneView {
 
 		this._timeChannel.timeLine1().update();
 		this._timeChannel.timeLine2().update();
+		// this._timeChannelRenderer.setData(data);
 
 		const channelOptions = this._timeChannel.options();
 

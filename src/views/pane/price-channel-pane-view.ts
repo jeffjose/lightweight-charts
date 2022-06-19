@@ -65,6 +65,9 @@ export class PriceChannelPaneView implements IPaneView {
 			return null;
 		}
 
+		this._priceChannel.priceLine1().update();
+		this._priceChannel.priceLine2().update();
+
 		const renderer1 = this._priceChannel.priceLine1Renderer(height, width);
 		const renderer2 = this._priceChannel.priceLine2Renderer(height, width);
 
