@@ -32,10 +32,6 @@ export class VerticalLineRenderer implements IPaneRenderer {
 
 		const x = Math.round(this._data.x * pixelRatio);
 
-		// if (y < 0 || y > Math.ceil(this._data.height * pixelRatio)) {
-		// 	return;
-		// }
-
 		const height = Math.ceil(this._data.height * pixelRatio);
 		ctx.lineCap = 'butt';
 		ctx.strokeStyle = this._data.color;

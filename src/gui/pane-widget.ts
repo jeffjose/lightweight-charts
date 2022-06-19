@@ -499,6 +499,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._drawSources(topCtx, this._canvasBinding.pixelRatio, sourceTopPaneViews);
 		this._drawCrosshair(topCtx, this._topCanvasBinding.pixelRatio);
 		this._drawTimeLines(topCtx, this._topCanvasBinding.pixelRatio);
+		this._drawChannels(topCtx, this._topCanvasBinding.pixelRatio);
 	}
 
 	public leftPriceAxisWidget(): PriceAxisWidget | null {
@@ -580,6 +581,14 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 		for (const timeLine of timeLines) {
 			this._drawSourceImpl(ctx, pixelRatio, sourcePaneViews, drawForeground, timeLine);
+		}
+	}
+
+	private _drawChannels(ctx: CanvasRenderingContext2D, pixelRatio: number): void {
+		const timeChannels = this._model().timeChannels();
+
+		for (const timeChannel of timeChannels) {
+			this._drawSourceImpl(ctx, pixelRatio, sourcePaneViews, drawForeground, timeChannel);
 		}
 	}
 
