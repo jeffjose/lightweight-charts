@@ -29,6 +29,7 @@ import { Series, SeriesOptionsInternal } from './series';
 import { SeriesLollipop } from './series-lollipops';
 import { SeriesMarker } from './series-markers';
 import { SeriesOptionsMap, SeriesType } from './series-options';
+import { TimeChannel } from './time-channel';
 import { TimeChannelOptions } from './time-channel-options';
 import { LogicalRange, TimePoint, TimePointIndex, TimeScalePoint } from './time-data';
 import { TimeLine } from './time-line';
@@ -353,6 +354,7 @@ export class ChartModel implements IDestroyable {
 	private readonly _panesToIndex: Map<Pane, number> = new Map<Pane, number>();
 	private readonly _crosshair: Crosshair;
 	private readonly _timeLines: TimeLine[] = [];
+	private readonly _timeChannels: TimeChannel[] = [];
 	private readonly _magnet: Magnet;
 	private readonly _watermark: Watermark;
 
@@ -384,6 +386,7 @@ export class ChartModel implements IDestroyable {
 		this._watermark = new Watermark(this, options.watermark);
 
 		this._timeLines = options.timeLines.map((timeLineOptions: TimeLineOptions) => new TimeLine(this, timeLineOptions));
+		this._timeChannels = options.timeChannels.map((timeChannelOptions: TimeChannelOptions) => new TimeChannel(this, timeChannelOptions));
 
 		this.createPane();
 		this._panes[0].setStretchFactor(DEFAULT_STRETCH_FACTOR * 2);
@@ -517,6 +520,10 @@ export class ChartModel implements IDestroyable {
 
 	public timeLines(): TimeLine[] {
 		return this._timeLines;
+	}
+
+	public timeChannels(): TimeChannel[] {
+		return this._timeChannels;
 	}
 
 	public crosshairMoved(): ISubscription<TimePointIndex | null, (Point & PaneInfo) | null> {
@@ -838,6 +845,7 @@ export class ChartModel implements IDestroyable {
 		this._panes.forEach((p: Pane) => p.recalculate());
 		this.updateCrosshair();
 		this._timeLines.forEach((t: TimeLine) => t.update());
+		this._timeChannels.forEach((t: TimeChannel) => t.update());
 	}
 
 	public fireCustomPriceLineDragged(prevPrice: number, currPrice: number, pane: Pane): void {

@@ -48,6 +48,12 @@ export class TimeLine extends DataSource {
 		return this._options;
 	}
 
+	// TODO: (jeffjose) This is used by TimeChannel
+	// When we add timeaxisview, this might be replaced with paneViews
+	public paneView(): TimeLinePaneView {
+		return this._timeLineView;
+	}
+
 	public paneViews(pane: Pane): readonly IPaneView[] {
 		return [this._timeLineView];
 	}
