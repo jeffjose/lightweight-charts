@@ -176,7 +176,7 @@ export class SeriesBarColorer {
 				return {
 					...emptyResult,
 					barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
-					barStyle: [currentBar.color, currentBar.color] as [string, string],
+					barStyle: [currentBar.color ?? lineStyle.color.color, currentBar.color ?? lineStyle.color.color] as [string, string],
 				};
 			}
 			case ColorType.VerticalGradient: {
