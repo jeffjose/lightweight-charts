@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@types/d3-interpolate": "^3.0.1",
-    "chroma.ts": "^1.0.10",
     "d3-interpolate": "^3.0.1",
     "fancy-canvas": "0.2.2"
   },

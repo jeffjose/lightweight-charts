@@ -1,4 +1,3 @@
-import { deltaE } from 'chroma.ts';
 import { interpolateCubehelix } from 'd3-interpolate';
 
 import { Color, ColorType, GradientColor, StrictColor } from '../model/layout-options';
@@ -354,9 +353,10 @@ export function interpolateColorValueAt(color1: string, color2: string, offset: 
 export function getCanvasGradientsFrom2Colors(ctx: CanvasRenderingContext2D, color1: string, color2: string, x0: number, y0: number, x1: number, y1: number, skipColorDiffCheck: boolean = false): CanvasRenderingContext2D['strokeStyle'] | CanvasRenderingContext2D['fillStyle'] {
 	// <=1.0 is not perceptible by human eyes
 	// http://zschuessler.github.io/DeltaE/learn/
-	if (!skipColorDiffCheck && deltaE(color1, color2) < 1) {
+	if (!skipColorDiffCheck && deltaE(colorStringToRgba(color1), colorStringToRgba(color2)) < 1) {
 		return color1;
 	}
+
 	const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
 	const totalStops = 3;
 	gradient.addColorStop(0, color1);
@@ -419,6 +419,8 @@ export function colorGetter(color: Color): (o: number) => string {
 	}
 }
 
+// Copied from https://github.com/antimatter15/rgb-lab
+// MIT License
 function rgb2lab(rgb: Rgba): [number, number, number] {
 	let r = rgb[0] / 255;
 	let g = rgb[1] / 255;
@@ -445,7 +447,7 @@ function rgb2lab(rgb: Rgba): [number, number, number] {
 // https://github.com/THEjoezack/ColorMine/blob/master/ColorMine/ColorSpaces/Comparisons/Cie94Comparison.cs
 
 // function deltaE(labA: [number, number, number], labB: [number, number, number]): number {
-export function deltaE2(color1: Rgba, color2: Rgba): number {
+export function deltaE(color1: Rgba, color2: Rgba): number {
 	const labA = rgb2lab(color1);
 	const labB = rgb2lab(color2);
 
