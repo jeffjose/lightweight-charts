@@ -6,6 +6,8 @@ import { crosshairOptionsDefaults } from './crosshair-options-defaults';
 import { gridOptionsDefaults } from './grid-options-defaults';
 import { layoutOptionsDefaults } from './layout-options-defaults';
 import { priceScaleOptionsDefaults } from './price-scale-options-defaults';
+import { timeChannelOptionsDefaults } from './time-channel-options-defaults';
+import { timeLineOptionsDefaults } from './time-line-options-defaults';
 import { timeScaleOptionsDefaults } from './time-scale-options-defaults';
 import { watermarkOptionsDefaults } from './watermark-options-defaults';
 
@@ -14,8 +16,8 @@ export const chartOptionsDefaults: ChartOptionsInternal = {
 	height: 0,
 	layout: layoutOptionsDefaults,
 	crosshair: crosshairOptionsDefaults,
-	timeLines: [],
-	timeChannels: [],
+	timeLines: [timeLineOptionsDefaults],
+	timeChannels: [timeChannelOptionsDefaults],
 	grid: gridOptionsDefaults,
 	overlayPriceScales: {
 		...priceScaleOptionsDefaults,
