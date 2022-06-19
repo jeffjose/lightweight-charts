@@ -6,7 +6,7 @@ function generateLineData() {
 	const res = [];
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 500; ++i) {
-		res.push({ time: time.toISOString().slice(0, 10), value: i });
+		res.push({ time: time.toISOString().slice(0, 10), value: i, color: i % 13 ? 'red' : undefined });
 
 		time.setUTCDate(time.getUTCDate() + 1);
 	}
@@ -42,6 +42,8 @@ function generateHistogramData() {
 	);
 }
 
+const data = generateLineData();
+
 // eslint-disable-next-line no-unused-vars
 function runTestCase(container) {
 	const chart = LightweightCharts.createChart(
@@ -64,6 +66,83 @@ function runTestCase(container) {
 				fontFamily: 'Roboto',
 				fontStyle: 'italic',
 			},
+			timeLines: [
+
+			],
+
+			timeChannels: [
+				{
+					time1: {
+						time: data[data.length - 4].time,
+						color: '#f0f',
+						lineWidth: 4,
+						lineStyle: LightweightCharts.LineStyle.SparseDotted,
+						draggable: true,
+					},
+					time2: {
+						time: data[data.length - 7].time,
+						color: '#f0f',
+						lineWidth: 1,
+						lineStyle: LightweightCharts.LineStyle.Solid,
+					},
+					background: {
+						type: LightweightCharts.ColorType.VerticalGradient,
+						startColor: '#ffffff',
+						endColor: '#f0a0a0',
+					},
+					visible: true,
+				},
+				{
+					time1: {
+						time: data[data.length - 4].time,
+						color: '#f0f',
+						lineWidth: 4,
+						lineStyle: LightweightCharts.LineStyle.SparseDotted,
+						draggable: true,
+					},
+					time2: {
+						time: data[data.length - 7].time,
+						color: '#f0f',
+						lineWidth: 1,
+						lineStyle: LightweightCharts.LineStyle.Solid,
+					},
+					background: {
+						type: LightweightCharts.ColorType.HorizontalGradient,
+						startColor: '#ffffff',
+						endColor: '#f0a0a0',
+					},
+					visible: true,
+				},
+				{
+					time1: {
+						time: data[data.length - 4].time,
+						color: {
+							type: LightweightCharts.ColorType.HorizontalGradient,
+							startColor: 'yellow',
+							endColor: 'pink',
+						},
+						lineWidth: 4,
+						lineStyle: LightweightCharts.LineStyle.SparseDotted,
+						draggable: true,
+					},
+					time2: {
+						time: data[data.length - 7].time,
+						color: {
+							type: LightweightCharts.ColorType.VerticalGradient,
+							startColor: 'yellow',
+							endColor: 'pink',
+						},
+						lineWidth: 1,
+						lineStyle: LightweightCharts.LineStyle.Solid,
+					},
+					background: {
+						type: LightweightCharts.ColorType.HorizontalGradient,
+						startColor: '#ffffff',
+						endColor: '#f0a0a0',
+					},
+					visible: true,
+				},
+			],
 			kineticScroll: { mouse: true },
 			layout: {
 				background: {
@@ -75,7 +154,6 @@ function runTestCase(container) {
 		}
 	);
 
-	const data = generateLineData();
 	const areaSeries = chart.addAreaSeries({
 		priceFormat: {
 			type: 'custom',
@@ -109,14 +187,126 @@ function runTestCase(container) {
 
 	histogramSeries.setData(generateHistogramData());
 
+	const histogramSeries2 = chart.addHistogramSeries({
+		color: {
+			type: 'solid',
+			color: 'red',
+		},
+		autoscaleInfoProvider: original => original(),
+	});
+
+	histogramSeries2.setData(generateHistogramData());
+
+	const histogramSeries3 = chart.addHistogramSeries({
+		color: {
+			type: 'vertical-gradient',
+			startColor: 'red',
+			endColor: 'blue',
+		},
+	});
+
+	histogramSeries3.setData(generateHistogramData());
+
+	const histogramSeries4 = chart.addHistogramSeries({
+		color: {
+			type: 'horizontal-gradient',
+			startColor: 'yellow',
+			endColor: 'blue',
+		},
+	});
+
+	histogramSeries4.setData(generateHistogramData());
+
 	const lineSeries = chart.addLineSeries({
 		lineWidth: 1,
 		color: '#ff0000',
 		priceFormat: { type: 'volume' },
 		lastPriceAnimation: LightweightCharts.LastPriceAnimationMode.OnDataUpdate,
+		croshairMarkerVisible: false,
+		pane: 0,
 	});
 
 	lineSeries.setData(generateLineData());
+
+	const lineSeries2 = chart.addLineSeries({
+		lineWidth: 1,
+		color: {
+			type: LightweightCharts.ColorType.HorizontalGradient,
+			startColor: 'yellow',
+			endColor: 'pink',
+		},
+		priceFormat: { type: 'volume' },
+		title: 'horizontal gradient',
+	});
+
+	lineSeries2.setData(generateLineData());
+
+	const lineSeries3 = chart.addLineSeries({
+		lineWidth: 1,
+		color: {
+			type: LightweightCharts.ColorType.VerticalGradient,
+			startColor: 'yellow',
+			endColor: 'pink',
+		},
+		lastValueVisible: false,
+		priceLineVisible: false,
+		lastPriceAnimation: LightweightCharts.LastPriceAnimationMode.OnDataUpdate,
+	});
+
+	lineSeries3.setData(generateLineData());
+
+	const lineSeries4 = chart.addLineSeries({
+		lineWidth: 1,
+		color: {
+			type: LightweightCharts.ColorType.Solid,
+			color: 'yellow',
+		},
+	});
+
+	lineSeries4.setData(generateLineData());
+
+	const lineSeries5 = chart.addLineSeries({
+		lineWidth: 1,
+		color: {
+			type: 'solid',
+			color: 'red',
+		},
+	});
+
+	lineSeries5.setData(generateLineData());
+
+	const lineSeries6 = chart.addLineSeries({
+		lineWidth: 1,
+		color: {
+			type: 'solid',
+			color: 'red',
+		},
+		lineType: 1,
+	});
+
+	lineSeries6.setData(generateLineData());
+
+	const lineSeries7 = chart.addLineSeries({
+		lineWidth: 1,
+		color: {
+			type: 'solid',
+			color: 'red',
+		},
+		lineType: 2,
+	});
+
+	lineSeries7.setData(generateLineData());
+
+	const lineSeries8 = chart.addLineSeries({
+		lineWidth: 1,
+		color: {
+			type: 'solid',
+			color: 'red',
+		},
+		lineType: 3,
+	});
+
+	lineSeries8.setData(generateLineData());
 
 	const baselineSeries = chart.addBaselineSeries();
 	baselineSeries.setData(generateLineData());
@@ -164,22 +354,47 @@ function runTestCase(container) {
 		draggable: true,
 	});
 
-	lineSeries.createPriceChannel({
-		price1: {
-			price: 50,
-			color: '#f0f',
-			lineWidth: 4,
-			lineStyle: LightweightCharts.LineStyle.SparseDotted,
-			draggable: true,
-		},
-		price2: {
-			price: 100,
-			color: '#f0f',
-			lineWidth: 1,
-			lineStyle: LightweightCharts.LineStyle.Solid,
-		},
-		visible: true,
-	});
+	lineSeries.createPriceChannel(
+		{
+			price1: {
+				price: 50,
+				color: '#f0f',
+				lineWidth: 4,
+				lineStyle: LightweightCharts.LineStyle.SparseDotted,
+				draggable: true,
+			},
+			price2: {
+				price: 100,
+				color: '#f0f',
+				lineWidth: 1,
+				lineStyle: LightweightCharts.LineStyle.Solid,
+			},
+			visible: true,
+		}
+	);
+
+	lineSeries.createPriceChannel(
+		{
+			price1: {
+				price: 50,
+				color: '#f0f',
+				lineWidth: 4,
+				lineStyle: LightweightCharts.LineStyle.SparseDotted,
+				draggable: true,
+			},
+			price2: {
+				price: 100,
+				color: '#f0f',
+				lineWidth: 1,
+				lineStyle: LightweightCharts.LineStyle.Solid,
+				visible: false,
+			},
+			background: {
+				color: 'red',
+			},
+			visible: true,
+		}
+	);
 
 	// lineSeries.removePriceChannel(priceChannel1);
 
@@ -261,6 +476,14 @@ function runTestCase(container) {
 			text: 'test',
 			size: 1,
 		},
+		{
+			time: data[data.length - 1].time,
+			position: 'top',
+			color: '#fff00a',
+			shape: 'diamond',
+			text: 'test',
+			size: 1,
+		},
 	]);
 
 	// apply overlay price scales while create series
@@ -300,6 +523,29 @@ function runTestCase(container) {
 							alignLabels: false,
 						},
 						localization: { dateFormat: 'yyyy MM dd' },
+					});
+
+					chart.applyOptions({
+						background: {
+							color: 'red',
+							type: 'solid',
+						},
+					});
+
+					chart.applyOptions({
+						background: {
+							startColor: 'red',
+							endColor: 'green',
+							type: 'vertical-gradient',
+						},
+					});
+
+					chart.applyOptions({
+						background: {
+							startColor: 'red',
+							endColor: 'green',
+							type: 'horizontal-gradient',
+						},
 					});
 
 					chart.priceScale('left').width();
