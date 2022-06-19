@@ -68,8 +68,8 @@ function runTestCase(container) {
 			layout: {
 				background: {
 					type: LightweightCharts.ColorType.VerticalGradient,
-					topColor: '#FFFFFF',
-					bottomColor: '#AAFFAA',
+					startColor: '#FFFFFF',
+					endColor: '#AAFFAA',
 				},
 			},
 		}
