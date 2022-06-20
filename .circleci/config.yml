@@ -2,42 +2,40 @@
 
 version: 2.1
 
-
 aliases:
   - &restore-node-modules-cache
-      name: Restore node_modules cache
-      keys:
-        - &cache-key v1-dependencies-{{ checksum "package.json" }}
+    name: Restore node_modules cache
+    keys:
+      - &cache-key v1-dependencies-{{ checksum "package.json" }}
 
   - &save-node-modules-cache
-      name: Save node_modules cache
-      paths:
-        - node_modules
-      key: *cache-key
+    name: Save node_modules cache
+    paths:
+      - node_modules
+    key: *cache-key
 
   - &restore-node-modules-cache-website
-      name: Restore node_modules cache for /website
-      keys:
-        - &cache-key-website v1-dependencies-website-{{ checksum "website/package.json" }}
+    name: Restore node_modules cache for /website
+    keys:
+      - &cache-key-website v1-dependencies-website-{{ checksum "website/package.json" }}
 
   - &save-node-modules-cache-website
-      name: Save node_modules cache for /website
-      paths:
-        - website/node_modules
-      key: *cache-key-website
+    name: Save node_modules cache for /website
+    paths:
+      - website/node_modules
+    key: *cache-key-website
 
   - &default-filters
-      tags:
-        ignore:
-          - /.*/
+    tags:
+      ignore:
+        - /.*/
 
   - &merge-based-filters
-      <<: *default-filters
-      branches:
-        ignore:
-          - master
-          - /release\/.*/
-
+    <<: *default-filters
+    branches:
+      ignore:
+        - master
+        - /release\/.*/
 
 executors:
   node16-executor:
@@ -80,7 +78,6 @@ commands:
       - store_artifacts:
           path: ./graphics-cmp-data
           when: on_fail
-
 
 jobs:
   install-deps:
@@ -187,7 +184,6 @@ jobs:
       - run-graphics-tests:
           devicePixelRatio: "2.0"
           productionBuild: true
-
 
   memleaks-tests:
     executor: node16-browsers-executor
@@ -357,3 +353,6 @@ workflows:
               only: master
           requires:
             - build-docusaurus-website
+
+orbs:
+  codecov: codecov/codecov@3.2.3

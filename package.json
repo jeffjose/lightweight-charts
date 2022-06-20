@@ -52,6 +52,7 @@
     "bytes": "~3.1.1",
     "chai": "~4.3.6",
     "chai-exclude": "~2.1.0",
+    "codecov": "^3.8.3",
     "cross-env": "~7.0.0",
     "dts-bundle-generator": "~6.5.0",
     "eslint": "~7.32.0",
@@ -113,6 +114,8 @@
     "size-limit": "size-limit",
     "verify": "npm-run-all clean -p lint check-markdown-links build:prod -p check-dts-docs tsc-verify test size-limit",
     "test": "mocha tests/unittests/**/*.spec.ts",
-    "prepare": "npm run build:prod"
+    "prepare": "npm run build:prod",
+    "coverage": "nyc report",
+    "codecov": "codecov"
   }
 }
