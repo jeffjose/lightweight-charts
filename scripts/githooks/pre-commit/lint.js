@@ -92,7 +92,7 @@ function lintFiles(files) {
 	const tsFiles = filterByExt(files, '.ts');
 	const tsxFiles = filterByExt(files, '.tsx');
 	if (tsFiles.length !== 0 || tsxFiles.length !== 0) {
-		hasErrors = run('npm run tsc-verify') || hasErrors;
+		hasErrors = run('npm run tsc-verify-nowebsite') || hasErrors;
 		hasErrors = runESLintForFiles(tsFiles) || hasErrors;
 		hasErrors = runESLintForFiles(tsxFiles) || hasErrors;
 	}
