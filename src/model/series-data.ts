@@ -6,6 +6,21 @@ export interface LinePlotRow extends PlotRow {
 	readonly color?: string;
 }
 
+export interface AreaPlotRow extends PlotRow {
+	lineColor?: string;
+	topColor?: string;
+	bottomColor?: string;
+}
+
+export interface BaselinePlotRow extends PlotRow {
+	topFillColor1?: string;
+	topFillColor2?: string;
+	topLineColor?: string;
+	bottomFillColor1?: string;
+	bottomFillColor2?: string;
+	bottomLineColor?: string;
+}
+
 export interface HistogramPlotRow extends PlotRow {
 	readonly color?: string;
 }
