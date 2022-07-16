@@ -1,5 +1,4 @@
 import { BarPrice } from '../../model/bar';
-import { getRepresentativeColor } from '../../model/layout-options';
 import { SeriesBarColorer } from '../../model/series-bar-colorer';
 import { TimePointIndex } from '../../model/time-data';
 import { LineStrokeItem, PaneRendererLine, PaneRendererLineData } from '../../renderers/line-renderer';
@@ -22,8 +21,6 @@ export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineStrokeItem,
 		const data: PaneRendererLineData = {
 			items: this._items,
 			numItems: this._items.length,
-			lineColor: getRepresentativeColor(lineStyleProps.color),
-			lineKolor: lineStyleProps.color,
 			lineStyle: lineStyleProps.lineStyle,
 			lineType: lineStyleProps.lineType,
 			lineWidth: lineStyleProps.lineWidth,
@@ -33,6 +30,4 @@ export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineStrokeItem,
 
 		this._renderer.setData(data);
 	}
-
-	// FIXME: (jeffjose) deleted a couple of function here (_updateOptions, _createRawItem)
 }

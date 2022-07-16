@@ -24,11 +24,12 @@ export interface PrecomputedBars {
 
 export interface CommonBarColorerStyle {
 	barColor: string;
-	barStyle: [string, string]; // [currItemColor, nextItemColor]
+	barGradientStops: [string, string]; // [currItemColor, nextItemColor]
 }
 
 export interface LineStrokeColorerStyle {
 	lineColor: string;
+	barGradientStops: [string, string]; // [currItemColor, nextItemColor]
 }
 
 export interface LineBarColorerStyle extends CommonBarColorerStyle, LineStrokeColorerStyle {
@@ -103,7 +104,7 @@ const barStyleFnMap: BarStylesFnMap = {
 		const color = currentBar.color ?? (isUp ? upColor : downColor);
 		return {
 			barColor: color,
-			barStyle: [color, color] as [string, string],
+			barGradientStops: [color, color] as [string, string],
 		};
 	},
 
@@ -125,7 +126,7 @@ const barStyleFnMap: BarStylesFnMap = {
 			barBorderColor: currentBar.borderColor ?? (isUp ? borderUpColor : borderDownColor),
 			barWickColor: currentBar.wickColor ?? (isUp ? wickUpColor : wickDownColor),
 			// FIXME: (jeffjose): double check this
-			barStyle: [currentBar.color ?? candlestickStyle.upColor, currentBar.color ?? candlestickStyle.upColor] as [string, string],
+			barGradientStops: [currentBar.color ?? candlestickStyle.upColor, currentBar.color ?? candlestickStyle.upColor] as [string, string],
 		};
 	},
 
@@ -138,7 +139,7 @@ const barStyleFnMap: BarStylesFnMap = {
 			topColor: currentBar.topColor ?? areaStyle.topColor,
 			bottomColor: currentBar.bottomColor ?? areaStyle.bottomColor,
 			// FIXME: (jeffjose): double check this
-			barStyle: [currentBar.lineColor ?? areaStyle.lineColor, currentBar.lineColor ?? areaStyle.lineColor] as [string, string],
+			barGradientStops: [currentBar.lineColor ?? areaStyle.lineColor, currentBar.lineColor ?? areaStyle.lineColor] as [string, string],
 		};
 	},
 
@@ -156,7 +157,7 @@ const barStyleFnMap: BarStylesFnMap = {
 			bottomFillColor1: currentBar.bottomFillColor1 ?? baselineStyle.bottomFillColor1,
 			bottomFillColor2: currentBar.bottomFillColor2 ?? baselineStyle.bottomFillColor2,
 			// FIXME: (jeffjose): double check this
-			barStyle: [currentBar.topFillColor1 ?? baselineStyle.topFillColor1, currentBar.topFillColor1 ?? baselineStyle.topFillColor1] as [string, string],
+			barGradientStops: [currentBar.topFillColor1 ?? baselineStyle.topFillColor1, currentBar.topFillColor1 ?? baselineStyle.topFillColor1] as [string, string],
 		};
 	},
 
@@ -177,7 +178,7 @@ const barStyleFnMap: BarStylesFnMap = {
 			return {
 				barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
 				lineColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
-				barStyle: [currentBar.color ?? lineStyle.color, currentBar.color ?? lineStyle.color] as [string, string],
+				barGradientStops: [currentBar.color ?? lineStyle.color, currentBar.color ?? lineStyle.color] as [string, string],
 			};
 		}
 
@@ -186,7 +187,7 @@ const barStyleFnMap: BarStylesFnMap = {
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
 					lineColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
-					barStyle: [currentBar.color ?? lineStyle.color.color, currentBar.color ?? lineStyle.color.color] as [string, string],
+					barGradientStops: [currentBar.color ?? lineStyle.color.color, currentBar.color ?? lineStyle.color.color] as [string, string],
 				};
 			}
 			case ColorType.VerticalGradient: {
@@ -202,7 +203,7 @@ const barStyleFnMap: BarStylesFnMap = {
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
 					lineColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
-					barStyle: [currentBarColor, nextBarColor] as [string, string],
+					barGradientStops: [currentBarColor, nextBarColor] as [string, string],
 
 				};
 			}
@@ -219,7 +220,7 @@ const barStyleFnMap: BarStylesFnMap = {
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
 					lineColor: currentBar.color ?? getRepresentativeColor(lineStyle.color),
-					barStyle: [currentBarColor, nextBarColor] as [string, string],
+					barGradientStops: [currentBarColor, nextBarColor] as [string, string],
 				};
 			}
 		}
@@ -242,7 +243,7 @@ const barStyleFnMap: BarStylesFnMap = {
 		if (typeof histogramStyle.color === 'string') {
 			return {
 				barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
-				barStyle: [currentBar.color ?? histogramStyle.color, currentBar.color ?? histogramStyle.color] as [string, string],
+				barGradientStops: [currentBar.color ?? histogramStyle.color, currentBar.color ?? histogramStyle.color] as [string, string],
 			};
 		}
 
@@ -250,7 +251,7 @@ const barStyleFnMap: BarStylesFnMap = {
 			case ColorType.Solid: {
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
-					barStyle: [currentBar.color, currentBar.color] as [string, string],
+					barGradientStops: [currentBar.color, currentBar.color] as [string, string],
 				};
 			}
 			case ColorType.VerticalGradient: {
@@ -260,7 +261,7 @@ const barStyleFnMap: BarStylesFnMap = {
 
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
-					barStyle: [histogramStyle.color.startColor, currentBarColor] as [string, string],
+					barGradientStops: [histogramStyle.color.startColor, currentBarColor] as [string, string],
 
 				};
 			}
@@ -274,7 +275,7 @@ const barStyleFnMap: BarStylesFnMap = {
 
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
-					barStyle: [currentBarColor, nextBarColor] as [string, string],
+					barGradientStops: [currentBarColor, nextBarColor] as [string, string],
 
 				};
 			}

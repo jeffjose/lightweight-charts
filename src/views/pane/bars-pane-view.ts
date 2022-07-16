@@ -12,7 +12,7 @@ export class SeriesBarsPaneView extends BarsPaneViewBase<'Bar', BarItem, PaneRen
 	protected readonly _renderer: PaneRendererBars = new PaneRendererBars();
 
 	protected _createRawItem(time: TimePointIndex, bar: SeriesPlotRow, colorer: SeriesBarColorer<'Bar'>): BarItem {
-		const style = colorer.barStyle(time).barStyle;
+		const style = colorer.barStyle(time).barGradientStops;
 
 		return {
 			...this._createDefaultItem(time, bar, colorer),

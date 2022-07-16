@@ -217,7 +217,7 @@ export class Series<T extends SeriesType = SeriesType> extends PriceDataSource i
 			formattedPriceAbsolute: priceScale.formatPriceAbsolute(price),
 			formattedPricePercentage: priceScale.formatPricePercentage(price, firstValue.value),
 			color: style.barColor,
-			style: style.barStyle,
+			style: style.barGradientStops,
 			coordinate: coordinate,
 			index: lastIndex,
 		};

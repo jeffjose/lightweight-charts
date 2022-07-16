@@ -45,7 +45,6 @@ export class SeriesAreaPaneView extends LinePaneViewBase<'Area', AreaFillItem & 
 			lineType: areaStyleProperties.lineType,
 			items: this._items,
 			numItems: this._items.length,
-			lineColor: areaStyleProperties.lineColor,
 			lineStyle: areaStyleProperties.lineStyle,
 			lineWidth: areaStyleProperties.lineWidth,
 			visibleRange: this._itemsVisibleRange,

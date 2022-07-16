@@ -3,7 +3,7 @@ import { SeriesItemsIndexesRange } from '../model/time-data';
 
 import { LinePoint, LineType } from './draw-line';
 
-// eslint-disable-next-line max-params
+// eslint-disable-next-line max-params, complexity
 export function walkLine<TItem extends LinePoint, TStyle>(
 	ctx: CanvasRenderingContext2D,
 	items: readonly TItem[],
@@ -12,7 +12,7 @@ export function walkLine<TItem extends LinePoint, TStyle>(
 	barWidth: number,
 	// the values returned by styleGetter are compared using the operator !==,
 	// so if styleGetter returns objects, then styleGetter should return the same object for equal styles
-	styleGetter: (ctx: CanvasRenderingContext2D, item: TItem) => TStyle,
+	styleGetter: (ctx: CanvasRenderingContext2D, item: TItem, nextItem?: TItem) => TStyle,
 	finishStyledArea: (ctx: CanvasRenderingContext2D, style: TStyle, areaFirstItem: LinePoint, newAreaFirstItem: LinePoint) => void
 ): void {
 	if (items.length === 0 || visibleRange.from >= items.length) {
@@ -20,7 +20,12 @@ export function walkLine<TItem extends LinePoint, TStyle>(
 	}
 
 	const firstItem = items[visibleRange.from];
-	let currentStyle = styleGetter(ctx, firstItem);
+
+	// // Find next item so that we can setup a gradient from firstItem -> nextItem.
+	// // The gradient is drawn inside changeColorWithGradient (which has ctx.stroke())
+	let nextItem = items.length > 1 ? items[visibleRange.from + 1] : undefined;
+
+	let currentStyle = styleGetter(ctx, firstItem, nextItem);
 	let currentStyleFirstItem = firstItem;
 
 	if (visibleRange.to - visibleRange.from < 2) {
@@ -54,7 +59,13 @@ export function walkLine<TItem extends LinePoint, TStyle>(
 
 	for (let i = visibleRange.from + 1; i < visibleRange.to; ++i) {
 		currentItem = items[i];
-		const itemStyle = styleGetter(ctx, currentItem);
+
+		if (i + 1 < items.length) {
+			// Pick out nextItem for setting up the next gradient
+			nextItem = items[i + 1];
+		}
+
+		const itemStyle = styleGetter(ctx, currentItem, nextItem);
 
 		switch (lineType) {
 			case LineType.Simple:

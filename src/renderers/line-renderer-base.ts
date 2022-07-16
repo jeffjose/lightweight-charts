@@ -46,7 +46,11 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 
 		setLineStyle(ctx, lineStyle);
 
-		ctx.strokeStyle = this._strokeStyle(ctx, items[0]);
+		if (items.length > 1) {
+			ctx.strokeStyle = this._strokeStyle(ctx, items[0], items[1]);
+		} else {
+			ctx.strokeStyle = this._strokeStyle(ctx, items[0]);
+		}
 		ctx.lineJoin = 'round';
 
 		if (this._data.items.length === 1) {
@@ -69,5 +73,5 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 		}
 	}
 
-	protected abstract _strokeStyle(ctx: CanvasRenderingContext2D, item: TData['items'][0]): CanvasRenderingContext2D['strokeStyle'];
+	protected abstract _strokeStyle(ctx: CanvasRenderingContext2D, item: TData['items'][0], nextItem?: TData['items'][0]): CanvasRenderingContext2D['strokeStyle'];
 }
