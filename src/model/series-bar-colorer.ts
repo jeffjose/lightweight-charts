@@ -1,7 +1,7 @@
 import { ensure, ensureNotNull } from '../helpers/assertions';
-import { colorGetter } from '../helpers/color';
+import { colorGetter, toStrictColor } from '../helpers/color';
 
-import { ColorType, getRepresentativeColor } from './layout-options';
+import { ColorType, getRepresentativeColor, StrictColor } from './layout-options';
 import { PlotRowValueIndex } from './plot-data';
 import { Series } from './series';
 import { SeriesPlotRow } from './series-data';
@@ -36,6 +36,7 @@ export interface LineBarColorerStyle extends CommonBarColorerStyle, LineStrokeCo
 }
 
 export interface HistogramBarColorerStyle extends CommonBarColorerStyle {
+	barColorObj: StrictColor;
 }
 export interface AreaFillColorerStyle {
 	topColor: string;
@@ -244,6 +245,7 @@ const barStyleFnMap: BarStylesFnMap = {
 			return {
 				barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
 				barGradientStops: [currentBar.color ?? histogramStyle.color, currentBar.color ?? histogramStyle.color] as [string, string],
+				barColorObj: toStrictColor(histogramStyle.color),
 			};
 		}
 
@@ -252,6 +254,7 @@ const barStyleFnMap: BarStylesFnMap = {
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
 					barGradientStops: [currentBar.color, currentBar.color] as [string, string],
+					barColorObj: toStrictColor(histogramStyle.color),
 				};
 			}
 			case ColorType.VerticalGradient: {
@@ -262,7 +265,7 @@ const barStyleFnMap: BarStylesFnMap = {
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
 					barGradientStops: [histogramStyle.color.startColor, currentBarColor] as [string, string],
-
+					barColorObj: toStrictColor(histogramStyle.color),
 				};
 			}
 			case ColorType.HorizontalGradient: {
@@ -276,7 +279,7 @@ const barStyleFnMap: BarStylesFnMap = {
 				return {
 					barColor: currentBar.color ?? getRepresentativeColor(histogramStyle.color),
 					barGradientStops: [currentBarColor, nextBarColor] as [string, string],
-
+					barColorObj: toStrictColor(histogramStyle.color),
 				};
 			}
 		}

@@ -1,3 +1,6 @@
+import { getCanvasGradientsFrom2Colors } from '../helpers/color';
+
+import { ColorType, StrictColor } from '../model/layout-options';
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue, TimePointIndex } from '../model/time-data';
 
@@ -8,6 +11,8 @@ const alignToMinimalWidthLimit = 4;
 
 export interface HistogramItem extends PricedValue, TimedValue {
 	barColor: string;
+	barColorObj: StrictColor;
+	barGradientStops: [string, string];
 }
 
 export interface PaneRendererHistogramData {
@@ -49,13 +54,13 @@ export class PaneRendererHistogram implements IPaneRenderer {
 		const topHistogramBase = histogramBase - Math.floor(tickWidth / 2);
 		const bottomHistogramBase = topHistogramBase + tickWidth;
 
-		// let nextItem;
+		let nextItem;
 		for (let i = this._data.visibleRange.from; i < this._data.visibleRange.to; i++) {
 			const item = this._data.items[i];
 
-			// if (i + 1 < this._data.items.length) {
-			// 	nextItem = this._data.items[i + 1];
-			// }
+			if (i + 1 < this._data.items.length) {
+				nextItem = this._data.items[i + 1];
+			}
 			const current = this._precalculatedCache[i - this._data.visibleRange.from];
 			const y = Math.round(item.y * pixelRatio);
 			ctx.fillStyle = item.barColor;
@@ -71,23 +76,23 @@ export class PaneRendererHistogram implements IPaneRenderer {
 				bottom = y - Math.floor(tickWidth / 2) + tickWidth;
 			}
 
-			// switch (item.style.type) {
-			// 	case ColorType.Solid:
-			// 		ctx.fillStyle = item.barColor;
-			// 		break;
-			// 	case ColorType.HorizontalGradient:
-			// 		// Do in-bar gradient only if numItems is <=20
-			// 		// This is because it is a super-expensive process, so no point doing it for large dataset.
-			// 		// The result will be indistinguisable anyway
-			// 		if (nextItem !== undefined && this._data.items.length <= 20) {
-			// 			ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.barColor, nextItem.barColor, current.left, top, current.right, top);
-			// 		} else {
-			// 			ctx.fillStyle = item.barColor;
-			// 		}
-			// 		break;
-			// 	case ColorType.VerticalGradient:
-			// 		ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.style.startColor, item.style.endColor, current.left, bottom, current.left, top, false);
-			// }
+			switch (item.barColorObj.type) {
+				case ColorType.Solid:
+					ctx.fillStyle = item.barColor;
+					break;
+				case ColorType.HorizontalGradient:
+					// Do in-bar gradient only if numItems is <=20
+					// This is because it is a super-expensive process, so no point doing it for large dataset.
+					// The result will be indistinguisable anyway
+					if (nextItem !== undefined && this._data.items.length <= 20) {
+						ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.barGradientStops[0], item.barGradientStops[1], current.left, top, current.right, top);
+					} else {
+						ctx.fillStyle = item.barGradientStops[0];
+					}
+					break;
+				case ColorType.VerticalGradient:
+					ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.barGradientStops[0], item.barGradientStops[1], current.left, bottom, current.left, top, false);
+			}
 
 			ctx.fillRect(current.left, top, current.right - current.left + 1, bottom - top);
 		}

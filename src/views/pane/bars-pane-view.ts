@@ -32,11 +32,4 @@ export class SeriesBarsPaneView extends BarsPaneViewBase<'Bar', BarItem, PaneRen
 			visibleRange: this._itemsVisibleRange,
 		});
 	}
-
-	// protected override _updateOptions(): void {
-	// 	this._items.forEach((item: BarItem) => {
-	// 		item.color = this._series.barColorer().barStyle(item.time).barColor;
-	// 		item.style = this._series.barColorer().barStyle(item.time).barStyle;
-	// 	});
-	// }
 }
