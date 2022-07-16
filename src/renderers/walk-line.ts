@@ -87,7 +87,17 @@ export function walkLine<TItem extends LinePoint, TStyle>(
 				break;
 			}
 			case LineType.WithBreaks: {
-				ctx.lineTo(currentItem.x, items[i - 1].y);
+				const fullWidth = currentItem.x - items[i - 1].x;
+				const diagonalLineWidth = 30; // 30 is a magic number
+				const straightLineWidth = (fullWidth - diagonalLineWidth) / 2;
+
+				// Extend a bit from the last item
+				ctx.lineTo(items[i - 1].x + straightLineWidth, items[i - 1].y);
+
+				// Diagonal
+				ctx.lineTo(currentItem.x - straightLineWidth, currentItem.y);
+
+				// Finish
 				ctx.lineTo(currentItem.x, currentItem.y);
 				break;
 			}
