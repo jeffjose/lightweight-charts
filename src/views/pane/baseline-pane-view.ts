@@ -2,48 +2,49 @@ import { BarPrice } from '../../model/bar';
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
 import { Series } from '../../model/series';
+import { SeriesBarColorer } from '../../model/series-bar-colorer';
 import { TimePointIndex } from '../../model/time-data';
-import { PaneRendererBaselineArea, PaneRendererBaselineLine } from '../../renderers/baseline-renderer';
+import { BaselineFillItem, PaneRendererBaselineArea } from '../../renderers/baseline-renderer-area';
+import { BaselineStrokeItem, PaneRendererBaselineLine } from '../../renderers/baseline-renderer-line';
 import { CompositeRenderer } from '../../renderers/composite-renderer';
-import { IPaneRenderer } from '../../renderers/ipane-renderer';
-import { LineItem } from '../../renderers/line-renderer';
 
 import { LinePaneViewBase } from './line-pane-view-base';
 
-export class SeriesBaselinePaneView extends LinePaneViewBase<'Baseline', LineItem> {
+export class SeriesBaselinePaneView extends LinePaneViewBase<'Baseline', BaselineFillItem & BaselineStrokeItem, CompositeRenderer> {
+	protected readonly _renderer: CompositeRenderer = new CompositeRenderer();
 	private readonly _baselineAreaRenderer: PaneRendererBaselineArea = new PaneRendererBaselineArea();
 	private readonly _baselineLineRenderer: PaneRendererBaselineLine = new PaneRendererBaselineLine();
-	private readonly _compositeRenderer: CompositeRenderer = new CompositeRenderer();
 
 	public constructor(series: Series<'Baseline'>, model: ChartModel) {
 		super(series, model);
-		this._compositeRenderer.setRenderers([this._baselineAreaRenderer, this._baselineLineRenderer]);
+		this._renderer.setRenderers([this._baselineAreaRenderer, this._baselineLineRenderer]);
 	}
 
-	public renderer(height: number, width: number): IPaneRenderer | null {
-		if (!this._series.visible()) {
-			return null;
-		}
+	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<'Baseline'>): BaselineFillItem & BaselineStrokeItem {
+		const color = colorer.barStyle(time).barColor;
+		const style = colorer.barStyle(time).barStyle;
+		return {
+			// FIXME: (jeffjose) setting offset to 0
+			...this._createRawItemBase(time, price, color, 0),
+			...colorer.barStyle(time),
+			color,
+			style,
+		};
+	}
 
+	protected _prepareRendererData(width: number, height: number): void {
 		const firstValue = this._series.firstValue();
 		if (firstValue === null) {
-			return null;
+			return;
 		}
 
 		const baselineProps = this._series.options();
-
-		this._makeValid();
 
 		const baseLevelCoordinate = this._series.priceScale().priceToCoordinate(baselineProps.baseValue.price, firstValue.value);
 		const barWidth = this._model.timeScale().barSpacing();
 
 		this._baselineAreaRenderer.setData({
 			items: this._items,
-
-			topFillColor1: baselineProps.topFillColor1,
-			topFillColor2: baselineProps.topFillColor2,
-			bottomFillColor1: baselineProps.bottomFillColor1,
-			bottomFillColor2: baselineProps.bottomFillColor2,
 
 			lineWidth: baselineProps.lineWidth,
 			lineStyle: baselineProps.lineStyle,
@@ -60,9 +61,6 @@ export class SeriesBaselinePaneView extends LinePaneViewBase<'Baseline', LineIte
 			items: this._items,
 			numItems: this._items.length,
 
-			topColor: baselineProps.topLineColor,
-			bottomColor: baselineProps.bottomLineColor,
-
 			lineWidth: baselineProps.lineWidth,
 			lineStyle: baselineProps.lineStyle,
 			lineType: baselineProps.lineType,
@@ -73,11 +71,5 @@ export class SeriesBaselinePaneView extends LinePaneViewBase<'Baseline', LineIte
 			visibleRange: this._itemsVisibleRange,
 			barWidth,
 		});
-
-		return this._compositeRenderer;
-	}
-
-	protected _createRawItem(time: TimePointIndex, price: BarPrice): LineItem {
-		return this._createRawItemBase(time, price);
 	}
 }

@@ -217,11 +217,11 @@ export interface SeriesDataItemTypeMap {
 	/**
 	 * The types of area series data.
 	 */
-	Area: SingleValueData | WhitespaceData;
+	Area: AreaData | WhitespaceData;
 	/**
 	 * The types of baseline series data.
 	 */
-	Baseline: SingleValueData | WhitespaceData;
+	Baseline: BaselineData | WhitespaceData;
 	/**
 	 * The types of line series data.
 	 */

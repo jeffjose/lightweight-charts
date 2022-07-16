@@ -24,6 +24,7 @@ export interface PrecomputedBars {
 
 export interface CommonBarColorerStyle {
 	barColor: string;
+	barStyle: [string, string]; // [currItemColor, nextItemColor]
 }
 
 export interface LineStrokeColorerStyle {
@@ -31,12 +32,9 @@ export interface LineStrokeColorerStyle {
 }
 
 export interface LineBarColorerStyle extends CommonBarColorerStyle, LineStrokeColorerStyle {
-	barStyle: [string, string]; // [currItemColor, nextItemColor]
 }
 
 export interface HistogramBarColorerStyle extends CommonBarColorerStyle {
-
-	barStyle: [string, string]; // [currItemColor, nextItemColor]
 }
 export interface AreaFillColorerStyle {
 	topColor: string;
@@ -76,7 +74,6 @@ export interface BarStylesMap {
 	Line: LineBarColorerStyle;
 	Histogram: HistogramBarColorerStyle;
 }
-
 type FindBarFn = (barIndex: TimePointIndex, precomputedBars?: PrecomputedBars) => SeriesPlotRow | null;
 
 type StyleGetterFn<T extends SeriesType> = (
@@ -95,59 +92,22 @@ type BarStylesFnMap = {
 };
 
 const barStyleFnMap: BarStylesFnMap = {
-	// private _series: Series;
-	// private _numBars: number = 0;
-	// private _minValue: number;
-	// private _maxValue: number;
-	// private _colorGetter: (o: number) => string;
-
-	// public constructor(series: Series) {
-	//	this._series = series;
-	//	this._numBars = this._series.bars().size();
-	//	this._minValue = this._series.bars().minValue() ?? 0;
-	//	this._maxValue = this._series.bars().maxValue() ?? 0;
-
-	//	const targetType = this._series.seriesType();
-	//	const seriesOptions = this._series.options();
-	//	let color;
-	//	switch (targetType) {
-	//		case 'Line':
-	//		case 'Histogram':
-	//			color = (seriesOptions as LineStyleOptions | HistogramStyleOptions).color;
-	//			this._colorGetter = colorGetter(color);
-	//			break;
-	//		default:
-	//			this._colorGetter = () => '';
-	//			break;
-	//	}
-	// }
-
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+	// eslint-disable-next-line @typescript-eslint/naming-convention, max-params
 	Bar: (findBar: FindBarFn, series: Series, barStyle: BarStyleOptions, minValue: number, maxValue: number, numBars: number, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BarColorerStyle => {
-		// precomputedBars: {value: [Array BarValues], previousValue: [Array BarValues] | undefined}
-		// Used to avoid binary search if bars are already known
-
 		const upColor = barStyle.upColor;
 		const downColor = barStyle.downColor;
 
 		const currentBar = ensureNotNull(findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Bar'>;
 		const isUp = ensure(currentBar.value[PlotRowValueIndex.Open]) <= ensure(currentBar.value[PlotRowValueIndex.Close]);
 
-		let result: BarColorerStyle;
-		if (currentBar.color !== undefined) {
-			result = {
-				barColor: currentBar.color,
-			};
-		} else {
-			result = {
-				barColor: isUp ? upColor : downColor,
-			};
-		}
-
-		return result;
+		const color = currentBar.color ?? (isUp ? upColor : downColor);
+		return {
+			barColor: color,
+			barStyle: [color, color] as [string, string],
+		};
 	},
 
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+	// eslint-disable-next-line @typescript-eslint/naming-convention, max-params
 	Candlestick: (findBar: FindBarFn, series: Series, candlestickStyle: CandlestickStyleOptions, minValue: number, maxValue: number, numBars: number, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): CandlesticksColorerStyle => {
 		const upColor = candlestickStyle.upColor;
 		const downColor = candlestickStyle.downColor;
@@ -164,10 +124,12 @@ const barStyleFnMap: BarStylesFnMap = {
 			barColor: currentBar.color ?? (isUp ? upColor : downColor),
 			barBorderColor: currentBar.borderColor ?? (isUp ? borderUpColor : borderDownColor),
 			barWickColor: currentBar.wickColor ?? (isUp ? wickUpColor : wickDownColor),
+			// FIXME: (jeffjose): double check this
+			barStyle: [currentBar.color ?? candlestickStyle.upColor, currentBar.color ?? candlestickStyle.upColor] as [string, string],
 		};
 	},
 
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+	// eslint-disable-next-line @typescript-eslint/naming-convention, max-params
 	Area: (findBar: FindBarFn, series: Series, areaStyle: AreaStyleOptions, minValue: number, maxValue: number, numBars: number, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): AreaBarColorerStyle => {
 		const currentBar = ensureNotNull(findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Area'>;
 		return {
@@ -175,10 +137,12 @@ const barStyleFnMap: BarStylesFnMap = {
 			lineColor: currentBar.lineColor ?? areaStyle.lineColor,
 			topColor: currentBar.topColor ?? areaStyle.topColor,
 			bottomColor: currentBar.bottomColor ?? areaStyle.bottomColor,
+			// FIXME: (jeffjose): double check this
+			barStyle: [currentBar.lineColor ?? areaStyle.lineColor, currentBar.lineColor ?? areaStyle.lineColor] as [string, string],
 		};
 	},
 
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+	// eslint-disable-next-line @typescript-eslint/naming-convention, max-params
 	Baseline: (findBar: FindBarFn, series: Series, baselineStyle: BaselineStyleOptions, minValue: number, maxValue: number, numBars: number, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): BaselineBarColorerStyle => {
 		const currentBar = ensureNotNull(findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Baseline'>;
 		const isAboveBaseline = currentBar.value[PlotRowValueIndex.Close] >= baselineStyle.baseValue.price;
@@ -191,10 +155,12 @@ const barStyleFnMap: BarStylesFnMap = {
 			topFillColor2: currentBar.topFillColor2 ?? baselineStyle.topFillColor2,
 			bottomFillColor1: currentBar.bottomFillColor1 ?? baselineStyle.bottomFillColor1,
 			bottomFillColor2: currentBar.bottomFillColor2 ?? baselineStyle.bottomFillColor2,
+			// FIXME: (jeffjose): double check this
+			barStyle: [currentBar.topFillColor1 ?? baselineStyle.topFillColor1, currentBar.topFillColor1 ?? baselineStyle.topFillColor1] as [string, string],
 		};
 	},
 
-	// eslint-disable-next-line @typescript-eslint/naming-convention, complexity
+	// eslint-disable-next-line @typescript-eslint/naming-convention, complexity, max-params
 	Line: (findBar: FindBarFn, series: Series, lineStyle: LineStyleOptions, minValue: number, maxValue: number, numBars: number, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): LineBarColorerStyle => {
 		const currentBar = ensureNotNull(findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Line'>;
 		const nextBar = searchNearestRight(barIndex, series, precomputedBars) as SeriesPlotRow<'Line'> ?? currentBar;
@@ -259,7 +225,7 @@ const barStyleFnMap: BarStylesFnMap = {
 		}
 	},
 
-	// eslint-disable-next-line @typescript-eslint/naming-convention
+	// eslint-disable-next-line @typescript-eslint/naming-convention, max-params
 	Histogram: (findBar: FindBarFn, series: Series, histogramStyle: HistogramStyleOptions, minValue: number, maxValue: number, numBars: number, barIndex: TimePointIndex, precomputedBars?: PrecomputedBars): HistogramBarColorerStyle => {
 		const currentBar = ensureNotNull(findBar(barIndex, precomputedBars)) as SeriesPlotRow<'Histogram'>;
 		const nextBar = searchNearestRight(barIndex, series, precomputedBars) as SeriesPlotRow<'Histogram'>;

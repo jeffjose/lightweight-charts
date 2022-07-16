@@ -11,7 +11,7 @@ const showSpacingMinimalBarWidth = 1;
 const alignToMinimalWidthLimit = 4;
 
 export interface HistogramItem extends PricedValue, TimedValue {
-	color: string;
+	barColor: string;
 	style: StrictColor;
 }
 
@@ -63,6 +63,7 @@ export class PaneRendererHistogram implements IPaneRenderer {
 			}
 			const current = this._precalculatedCache[i - this._data.visibleRange.from];
 			const y = Math.round(item.y * pixelRatio);
+			ctx.fillStyle = item.barColor;
 
 			let top: number;
 			let bottom: number;
@@ -77,16 +78,16 @@ export class PaneRendererHistogram implements IPaneRenderer {
 
 			switch (item.style.type) {
 				case ColorType.Solid:
-					ctx.fillStyle = item.color;
+					ctx.fillStyle = item.barColor;
 					break;
 				case ColorType.HorizontalGradient:
 					// Do in-bar gradient only if numItems is <=20
 					// This is because it is a super-expensive process, so no point doing it for large dataset.
 					// The result will be indistinguisable anyway
 					if (nextItem !== undefined && this._data.items.length <= 20) {
-						ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.color, nextItem.color, current.left, top, current.right, top);
+						ctx.fillStyle = getCanvasGradientsFrom2Colors(ctx, item.barColor, nextItem.barColor, current.left, top, current.right, top);
 					} else {
-						ctx.fillStyle = item.color;
+						ctx.fillStyle = item.barColor;
 					}
 					break;
 				case ColorType.VerticalGradient:

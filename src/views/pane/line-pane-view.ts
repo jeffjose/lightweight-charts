@@ -1,30 +1,24 @@
 import { BarPrice } from '../../model/bar';
-import { ChartModel } from '../../model/chart-model';
-import { getRepresentativeColor } from '../../model/layout-options';
-import { Series } from '../../model/series';
+import { Color, getRepresentativeColor } from '../../model/layout-options';
 import { SeriesBarColorer } from '../../model/series-bar-colorer';
 import { TimePointIndex } from '../../model/time-data';
-import { IPaneRenderer } from '../../renderers/ipane-renderer';
-import { LineItem, PaneRendererLine, PaneRendererLineData } from '../../renderers/line-renderer';
+import { LineStrokeItem, PaneRendererLine, PaneRendererLineData } from '../../renderers/line-renderer';
 
 import { LinePaneViewBase } from './line-pane-view-base';
 
-export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineItem> {
-	private readonly _lineRenderer: PaneRendererLine = new PaneRendererLine();
+export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineStrokeItem, PaneRendererLine> {
+	protected readonly _renderer: PaneRendererLine = new PaneRendererLine();
 
-	// eslint-disable-next-line no-useless-constructor
-	public constructor(series: Series<'Line'>, model: ChartModel) {
-		super(series, model);
+	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<'Line'>, color: Color, offset: number): LineStrokeItem {
+		return {
+			...this._createRawItemBase(time, price, color, offset),
+			...colorer.barStyle(time),
+		};
 	}
 
-	public renderer(height: number, width: number): IPaneRenderer | null {
-		if (!this._series.visible()) {
-			return null;
-		}
-
+	protected _prepareRendererData(): void {
 		const lineStyleProps = this._series.options();
 
-		this._makeValid();
 		const data: PaneRendererLineData = {
 			items: this._items,
 			numItems: this._items.length,
@@ -37,23 +31,8 @@ export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineItem> {
 			barWidth: this._model.timeScale().barSpacing(),
 		};
 
-		this._lineRenderer.setData(data);
-
-		return this._lineRenderer;
+		this._renderer.setData(data);
 	}
 
-	protected override _updateOptions(): void {
-		this._items.forEach((item: LineItem) => {
-			const barColorer = this._series.barColorer().barStyle(item.time);
-			item.color = barColorer.barColor;
-			item.style = barColorer.barStyle;
-		});
-	}
-
-	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer): LineItem {
-		const item = this._createRawItemBase(time, price) as LineItem;
-		item.color = colorer.barStyle(time).barColor;
-		item.style = colorer.barStyle(time).barStyle;
-		return item;
-	}
+	// FIXME: (jeffjose) deleted a couple of function here (_updateOptions, _createRawItem)
 }

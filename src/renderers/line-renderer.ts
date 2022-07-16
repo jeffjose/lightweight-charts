@@ -1,15 +1,12 @@
 
 import { getCanvasGradientsFrom2Colors } from '../helpers/color';
 
-import { Color } from '../model/layout-options';
-import { PricedValue } from '../model/price-scale';
-import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
+import { Color, getRepresentativeColor } from '../model/layout-options';
+import { LineStrokeColorerStyle } from '../model/series-bar-colorer';
 
-import { LinePoint, LineStyle, LineType, LineWidth, setLineStyle } from './draw-line';
-import { ScaledRenderer } from './scaled-renderer';
-import { getControlPoints, walkLine } from './walk-line';
-
-export type LineItem = TimedValue & PricedValue & LinePoint & { color?: string; style?: [string, string] }; // [currItemColor, nextItemColor]
+import { LineType } from './draw-line';
+import { LineItemBase, PaneRendererLineBase, PaneRendererLineDataBase } from './line-renderer-base';
+import { getControlPoints } from './walk-line';
 
 export interface RendererColorData {
 	color1: string;
@@ -20,67 +17,9 @@ export interface RendererColorData {
 	y1: number;
 }
 
-export interface PaneRendererLineDataBase {
-	lineType: LineType;
+export type LineStrokeItem = LineItemBase & LineStrokeColorerStyle;
 
-	items: LineItem[];
-	numItems: number;
-
-	barWidth: number;
-
-	lineWidth: LineWidth;
-	lineStyle: LineStyle;
-
-	visibleRange: SeriesItemsIndexesRange | null;
-}
-
-export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBase> extends ScaledRenderer {
-	protected _data: TData | null = null;
-
-	public setData(data: TData): void {
-		this._data = data;
-	}
-
-	protected _drawImpl(ctx: CanvasRenderingContext2D): void {
-		if (this._data === null || this._data.items.length === 0 || this._data.visibleRange === null) {
-			return;
-		}
-
-		ctx.lineCap = 'butt';
-		ctx.lineWidth = this._data.lineWidth;
-
-		setLineStyle(ctx, this._data.lineStyle);
-
-		ctx.strokeStyle = this._strokeStyle(ctx);
-		ctx.lineJoin = 'round';
-
-		if (this._data.items.length === 1) {
-			ctx.beginPath();
-
-			const point = this._data.items[0];
-			ctx.moveTo(point.x - this._data.barWidth / 2, point.y);
-			ctx.lineTo(point.x + this._data.barWidth / 2, point.y);
-
-			if (point.color !== undefined) {
-				ctx.strokeStyle = point.color;
-			}
-
-			ctx.stroke();
-		} else {
-			this._drawLine(ctx, this._data);
-		}
-	}
-
-	protected _drawLine(ctx: CanvasRenderingContext2D, data: TData): void {
-		ctx.beginPath();
-		walkLine(ctx, data.items, data.lineType, data.visibleRange as SeriesItemsIndexesRange);
-		ctx.stroke();
-	}
-
-	protected abstract _strokeStyle(ctx: CanvasRenderingContext2D): CanvasRenderingContext2D['strokeStyle'];
-}
-
-export interface PaneRendererLineData extends PaneRendererLineDataBase {
+export interface PaneRendererLineData extends PaneRendererLineDataBase<LineStrokeItem> {
 	lineColor: string;
 	lineKolor?: Color;
 }
@@ -90,7 +29,7 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 	 * Similar to {@link walkLine}, but supports color changes
 	 */
 	// eslint-disable-next-line complexity
-	protected override _drawLine(ctx: CanvasRenderingContext2D, data: PaneRendererLineData): void {
+	protected _drawLine(ctx: CanvasRenderingContext2D, data: PaneRendererLineData): void {
 		const { items, visibleRange, lineType, lineColor } = data;
 		if (items.length === 0 || visibleRange === null) {
 			return;
@@ -179,15 +118,14 @@ export class PaneRendererLine extends PaneRendererLineBase<PaneRendererLineData>
 			if (nextItem !== undefined) {
 				changeColorWithGradient(currentStrokeColors, currItem.x, currItem.y, nextItem.x, nextItem.y);
 			} else {
-				changeColorWithSolid(currentStrokeStyle);
+				changeColorWithSolid(getRepresentativeColor(currentStrokeStyle));
 				ctx.moveTo(currItem.x, currItem.y);
 				ctx.stroke();
 			}
 		}
 	}
 
-	protected override _strokeStyle(): CanvasRenderingContext2D['strokeStyle'] {
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return this._data!.lineColor;
+	protected override _strokeStyle(ctx: CanvasRenderingContext2D, item: LineStrokeItem): CanvasRenderingContext2D['strokeStyle'] {
+		return item.lineColor;
 	}
 }

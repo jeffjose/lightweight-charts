@@ -38,8 +38,8 @@ export interface CandlestickPlotRow extends PlotRow {
 export interface SeriesPlotRowTypeAtTypeMap {
 	Bar: BarPlotRow;
 	Candlestick: CandlestickPlotRow;
-	Area: PlotRow;
-	Baseline: PlotRow;
+	Area: AreaPlotRow;
+	Baseline: BaselinePlotRow;
 	Line: LinePlotRow;
 	Histogram: HistogramPlotRow;
 }
