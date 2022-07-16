@@ -4,7 +4,6 @@ import { undefinedIfNull } from '../../helpers/strict-type-checks';
 import { BarPrice } from '../../model/bar';
 import { ChartModel } from '../../model/chart-model';
 import { Coordinate } from '../../model/coordinate';
-import { Color } from '../../model/layout-options';
 import { PlotRowValueIndex } from '../../model/plot-data';
 import { PricedValue, PriceScale } from '../../model/price-scale';
 import { Series } from '../../model/series';
@@ -30,16 +29,14 @@ export abstract class LinePaneViewBase<
 		priceScale.pointsArrayToCoordinates(this._items, firstValue, undefinedIfNull(this._itemsVisibleRange));
 	}
 
-	protected abstract _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<TSeriesType>, color?: Color, offset?: number): ItemType;
+	protected abstract _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<TSeriesType>): ItemType;
 
-	protected _createRawItemBase(time: TimePointIndex, price: BarPrice, color: Color, offset: number): PricedValue & TimedValue & {color: Color; offset: number} {
+	protected _createRawItemBase(time: TimePointIndex, price: BarPrice): PricedValue & TimedValue {
 		return {
 			time: time,
 			price: price,
 			x: NaN as Coordinate,
 			y: NaN as Coordinate,
-			color: color,
-			offset: offset,
 		};
 	}
 

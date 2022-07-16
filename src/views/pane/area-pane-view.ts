@@ -21,13 +21,9 @@ export class SeriesAreaPaneView extends LinePaneViewBase<'Area', AreaFillItem & 
 	}
 
 	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<'Area'>): AreaFillItem & LineStrokeItem {
-		const color = colorer.barStyle(time).barColor;
 		return {
-			// FIXME: (jeffjose) setting offset as 0
-			...this._createRawItemBase(time, price, color, 0),
+			...this._createRawItemBase(time, price),
 			...colorer.barStyle(time),
-			color: colorer.barStyle(time).barColor,
-			style: colorer.barStyle(time).barStyle,
 		};
 	}
 

@@ -1,9 +1,7 @@
 
 import { ensureNotNull } from '../../helpers/assertions';
-import { colorGetter } from '../../helpers/color';
 
 import { BarPrice } from '../../model/bar';
-import { Color, StrictColor } from '../../model/layout-options';
 import { SeriesBarColorer } from '../../model/series-bar-colorer';
 import { TimePointIndex } from '../../model/time-data';
 import { HistogramItem, PaneRendererHistogram, PaneRendererHistogramData } from '../../renderers/histogram-renderer';
@@ -18,13 +16,10 @@ export class SeriesHistogramPaneView extends LinePaneViewBase<'Histogram', Histo
 		// (jeffjose)  For some reason, series.bars().minValue() and series.bar().maxValue() always returns null
 		// So cannot set those here, and we rely on renderer() to set the values
 		// FIXME: (this used to have more params)
-	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<'Histogram'>, color: Color, offset: number): HistogramItem {
-	// protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<'Histogram'>): HistogramItem {
+	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<'Histogram'>): HistogramItem {
 		return {
-			...this._createRawItemBase(time, price, color, offset),
+			...this._createRawItemBase(time, price),
 			...colorer.barStyle(time),
-			barColor: colorGetter(color)(offset),
-			style: color as StrictColor,
 		};
 	}
 

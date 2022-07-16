@@ -21,14 +21,9 @@ export class SeriesBaselinePaneView extends LinePaneViewBase<'Baseline', Baselin
 	}
 
 	protected _createRawItem(time: TimePointIndex, price: BarPrice, colorer: SeriesBarColorer<'Baseline'>): BaselineFillItem & BaselineStrokeItem {
-		const color = colorer.barStyle(time).barColor;
-		const style = colorer.barStyle(time).barStyle;
 		return {
-			// FIXME: (jeffjose) setting offset to 0
-			...this._createRawItemBase(time, price, color, 0),
+			...this._createRawItemBase(time, price),
 			...colorer.barStyle(time),
-			color,
-			style,
 		};
 	}
 
