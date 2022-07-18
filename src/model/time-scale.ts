@@ -73,6 +73,10 @@ export const enum TickMarkType {
 	 * A time with seconds.
 	 */
 	TimeWithSeconds,
+	/**
+	 * A time with milliseconds.
+	 */
+	TimeWithMilliseconds,
 }
 
 /**
@@ -989,6 +993,9 @@ function weightToTickMarkType(weight: TickMarkWeight, timeVisible: boolean, seco
 	switch (weight) {
 		case TickMarkWeight.LessThanMillisecond:
 		case TickMarkWeight.Millisecond:
+			return timeVisible
+				? (secondsVisible ? TickMarkType.TimeWithMilliseconds : TickMarkType.Time)
+				: TickMarkType.DayOfMonth;
 		case TickMarkWeight.Second:
 			return timeVisible
 				? (secondsVisible ? TickMarkType.TimeWithSeconds : TickMarkType.Time)

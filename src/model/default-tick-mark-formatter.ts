@@ -25,6 +25,7 @@ export function defaultTickMarkFormatter(timePoint: TimePoint, tickMarkType: Tic
 			formatOptions.minute = '2-digit';
 			break;
 
+		case TickMarkType.TimeWithMilliseconds:
 		case TickMarkType.TimeWithSeconds:
 			formatOptions.hour12 = false;
 			formatOptions.hour = '2-digit';

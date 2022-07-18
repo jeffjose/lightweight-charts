@@ -1,19 +1,19 @@
 import { TickMarkWeight, TimeScalePoint } from '../model/time-data';
 
 function hours(count: number): number {
-	return count * 60 * 60 * 1000 * 1000;
+	return count * 60 * 60 * 1000;
 }
 
 function minutes(count: number): number {
-	return count * 60 * 1000 * 1000;
+	return count * 60 * 1000;
 }
 
 function seconds(count: number): number {
-	return count * 1000 * 1000;
+	return count * 1000;
 }
 
 function milliseconds(count: number): number {
-	return count * 1000;
+	return count;
 }
 
 interface WeightDivisor {
