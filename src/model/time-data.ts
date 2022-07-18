@@ -74,7 +74,7 @@ export interface TimePoint {
  */
 export const enum TickMarkWeight {
 	LessThanMillisecond = 0,
-	Millisecond = 8,
+	Millisecond = 3,
 	Second = 10,
 	Minute1 = 20,
 	Minute5 = 21,
