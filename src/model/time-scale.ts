@@ -744,7 +744,7 @@ export class TimeScale {
 			return this._localizationOptions.timeFormatter(timeScalePoint.originalTime as unknown as Time);
 		}
 
-		return this._dateTimeFormatter.format(new Date(timeScalePoint.time.timestamp * 1000));
+		return this._dateTimeFormatter.format(new Date(timeScalePoint.time.timestamp));
 	}
 
 	private _isAllScalingAndScrollingDisabled(): boolean {
@@ -987,7 +987,8 @@ export class TimeScale {
 // eslint-disable-next-line complexity
 function weightToTickMarkType(weight: TickMarkWeight, timeVisible: boolean, secondsVisible: boolean): TickMarkType {
 	switch (weight) {
-		case TickMarkWeight.LessThanSecond:
+		case TickMarkWeight.LessThanMillisecond:
+		case TickMarkWeight.Millisecond:
 		case TickMarkWeight.Second:
 			return timeVisible
 				? (secondsVisible ? TickMarkType.TimeWithSeconds : TickMarkType.Time)

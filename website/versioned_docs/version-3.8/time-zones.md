@@ -62,8 +62,8 @@ One of possible solutions (and looks like the most simplest one) is to use appro
 ```js
 // you could use this function to convert all your times to required time zone
 function timeToTz(originalTime, timeZone) {
-    const zonedDate = new Date(new Date(originalTime * 1000).toLocaleString('en-US', { timeZone }));
-    return zonedDate.getTime() / 1000;
+    const zonedDate = new Date(new Date(originalTime).toLocaleString('en-US', { timeZone }));
+    return zonedDate.getTime();
 }
 ```
 
@@ -73,8 +73,8 @@ If you don't need to work with time zones in general, but only needs to support 
 
 ```js
 function timeToLocal(originalTime) {
-    const d = new Date(originalTime * 1000);
-    return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()) / 1000;
+    const d = new Date(originalTime);
+    return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds());
 }
 ```
 
@@ -86,8 +86,8 @@ You could also achieve the result by using [`date-fns-tz`](https://github.com/ma
 import { utcToZonedTime } from 'date-fns-tz';
 
 function timeToTz(originalTime, timeZone) {
-    const zonedDate = utcToZonedTime(new Date(originalTime * 1000), timeZone);
-    return zonedDate.getTime() / 1000;
+    const zonedDate = utcToZonedTime(new Date(originalTime), timeZone);
+    return zonedDate.getTime();
 }
 ```
 

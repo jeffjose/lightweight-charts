@@ -19,6 +19,6 @@ function runTestCase(container) {
 		}),
 	});
 
-	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0)).getTime() / 1000;
+	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0)).getTime();
 	mainSeries.setData([{ time: time, value: 100 }]);
 }

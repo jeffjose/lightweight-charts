@@ -64,8 +64,8 @@ export interface ITimeScaleApi {
 	 * @example
 	 * ```js
 	 * chart.timeScale().setVisibleRange({
-	 *     from: (new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0))).getTime() / 1000,
-	 *     to: (new Date(Date.UTC(2018, 1, 1, 0, 0, 0, 0))).getTime() / 1000,
+	 *     from: (new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0))).getTime(),
+	 *     to: (new Date(Date.UTC(2018, 1, 1, 0, 0, 0, 0))).getTime(),
 	 * });
 	 * ```
 	 */
@@ -84,7 +84,7 @@ export interface ITimeScaleApi {
 	 * @param range - Target visible logical range of data.
 	 * @example
 	 * ```js
-	 * chart.timeScale().setVisibleLogicalRange({ from: 0, to: Date.now() / 1000 });
+	 * chart.timeScale().setVisibleLogicalRange({ from: 0, to: Date.now() });
 	 * ```
 	 */
 	setVisibleLogicalRange(range: Range<number>): void;

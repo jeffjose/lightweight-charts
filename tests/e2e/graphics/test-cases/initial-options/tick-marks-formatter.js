@@ -1,7 +1,7 @@
 function dataItem(date, val) {
 	return {
 		value: val,
-		time: new Date(date).getTime() / 1000,
+		time: new Date(date).getTime(),
 	};
 }
 
@@ -25,7 +25,7 @@ function runTestCase(container) {
 			tickMarkFormatter: (time, tickMarkType, locale) => {
 				const date = LightweightCharts.isBusinessDay(time)
 					? new Date(Date.UTC(time.year, time.month - 1, time.day))
-					: new Date(time * 1000);
+					: new Date(time);
 
 				switch (tickMarkType) {
 					case LightweightCharts.TickMarkType.Year:

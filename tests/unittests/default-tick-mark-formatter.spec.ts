@@ -7,7 +7,7 @@ import { TickMarkType } from '../../src/model/time-scale';
 
 function time(dateTimeStr: string): TimePoint {
 	return {
-		timestamp: new Date(dateTimeStr).getTime() / 1000 as UTCTimestamp,
+		timestamp: new Date(dateTimeStr).getTime() as UTCTimestamp,
 	};
 }
 

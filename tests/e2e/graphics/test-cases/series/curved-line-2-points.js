@@ -6,8 +6,8 @@ function runTestCase(container) {
 	});
 
 	const data = [
-		{ time: new Date(2000, 0, 1).getTime() / 1000, value: 5 },
-		{ time: new Date(2000, 1, 1).getTime() / 1000, value: 15 },
+		{ time: new Date(2000, 0, 1).getTime(), value: 5 },
+		{ time: new Date(2000, 1, 1).getTime(), value: 15 },
 	];
 
 	lineSeries.setData(data);

@@ -4,12 +4,12 @@ function generateData(count, from, empty = false) {
 	for (let i = 0; i < count; ++i) {
 		if (!empty) {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 				value: i,
 			});
 		} else {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 			});
 		}
 
@@ -51,7 +51,7 @@ async function shiftTimeScale({ from, to }) {
 }
 
 function addDataToLeft() {
-	data = [...generateData(3, (data[0].time - ONE_DAY_IN_SEC * 3) * 1000), ...data];
+	data = [...generateData(3, (data[0].time - ONE_DAY_IN_SEC * 3)), ...data];
 	areaSeries.setData(data);
 }
 

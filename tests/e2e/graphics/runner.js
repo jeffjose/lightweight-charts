@@ -67,7 +67,7 @@ function runMocha(closeServer) {
 			closeServer();
 		}
 
-		const timeInSecs = (Date.now() - startTime) / 1000;
+		const timeInSecs = (Date.now() - startTime);
 		console.log(`Done in ${timeInSecs.toFixed(2)}s with ${failures} error(s)`);
 
 		process.exitCode = failures !== 0 ? 1 : 0;

@@ -4,12 +4,12 @@ function generateData(priceOffset) {
 	for (let i = 0; i < 500; ++i) {
 		if (i % 100 === 99) {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 				value: i + priceOffset,
 			});
 		} else {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 			});
 		}
 

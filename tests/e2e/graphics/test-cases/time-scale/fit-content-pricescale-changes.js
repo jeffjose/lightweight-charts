@@ -4,7 +4,7 @@ function generateData(down) {
 	const points = down ? 1000 : 10000;
 	for (let i = 0; i < points; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: down ? 1000 - i : i,
 		});
 

@@ -4,12 +4,12 @@ function generateData(priceOffset) {
 	for (let i = 0; i < 500; ++i) {
 		if (i % 100 === 0) {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 				value: 200 + 200 * Math.sin(Math.PI * (i + 25) / 37) + priceOffset,
 			});
 		} else {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 			});
 		}
 
@@ -56,7 +56,7 @@ function runTestCase(container) {
 	secondSeries.setData(generateData(100));
 
 	chart.timeScale().setVisibleRange({
-		from: (new Date(Date.UTC(2018, 1, 10, 0, 0, 0, 0))).getTime() / 1000,
-		to: (new Date(Date.UTC(2018, 1, 20, 0, 0, 0, 0))).getTime() / 1000,
+		from: (new Date(Date.UTC(2018, 1, 10, 0, 0, 0, 0))).getTime(),
+		to: (new Date(Date.UTC(2018, 1, 20, 0, 0, 0, 0))).getTime(),
 	});
 }

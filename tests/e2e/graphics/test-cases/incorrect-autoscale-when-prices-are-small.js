@@ -7,7 +7,7 @@ function generateData() {
 	const time = new Date(startDate);
 	for (let i = 0; time.getTime() < endDate.getTime(); ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: i / 1000 + 0.6,
 		});
 
@@ -25,7 +25,7 @@ function runTestCase(container) {
 
 	firstSeries.setData(generateData());
 	secondSeries.setData([
-		{ time: startDate.getTime() / 1000, value: 0.5 },
-		{ time: endDate.getTime() / 1000, value: 0.5 },
+		{ time: startDate.getTime(), value: 0.5 },
+		{ time: endDate.getTime(), value: 0.5 },
 	]);
 }

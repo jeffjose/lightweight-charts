@@ -4,7 +4,7 @@ function generateData(step) {
 	for (let i = 0; i < 30; ++i) {
 		if (i % step === 0) {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 				value: i,
 			});
 		}

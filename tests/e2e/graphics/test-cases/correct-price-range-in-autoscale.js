@@ -4,7 +4,7 @@ function generateData(valueOffset, daysStep) {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; time.getTime() < endDate.getTime(); ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: i + valueOffset,
 		});
 

@@ -3,7 +3,7 @@ function generateData() {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 500; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: i,
 		});
 
@@ -20,7 +20,7 @@ function generateBarData() {
 		const step = (i % 20) / 1000;
 		const base = i / 5;
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			open: base * (1 - step),
 			high: base * (1 + 2 * step),
 			low: base * (1 - 2 * step),

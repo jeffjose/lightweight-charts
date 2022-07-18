@@ -1,14 +1,14 @@
 function generateData() {
 	const res = [
 		{
-			time: new Date('2017-12-31').getTime() / 1000,
+			time: new Date('2017-12-31').getTime(),
 			value: 0,
 		},
 	];
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 500; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: i,
 		});
 
@@ -17,11 +17,11 @@ function generateData() {
 
 	res.push(
 		{
-			time: new Date('2020-01-01').getTime() / 1000,
+			time: new Date('2020-01-01').getTime(),
 			value: 500,
 		},
 		{
-			time: new Date('2020-01-02').getTime() / 1000,
+			time: new Date('2020-01-02').getTime(),
 			value: 500,
 		}
 	);

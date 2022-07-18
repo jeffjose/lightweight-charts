@@ -5,7 +5,7 @@ function generateData() {
 
 	for (let i = 0; i < 25; ++i) {
 		const item = {
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: Math.sin(i),
 			color,
 		};

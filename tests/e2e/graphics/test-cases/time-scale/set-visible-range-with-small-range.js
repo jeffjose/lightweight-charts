@@ -3,7 +3,7 @@ function generateData() {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 5; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: i,
 		});
 
@@ -21,7 +21,7 @@ function runTestCase(container) {
 
 	// we should respect min/max bar spacing values
 	chart.timeScale().setVisibleRange({
-		from: (new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0))).getTime() / 1000,
-		to: (new Date(Date.UTC(2018, 0, 2, 0, 0, 0, 0))).getTime() / 1000,
+		from: (new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0))).getTime(),
+		to: (new Date(Date.UTC(2018, 0, 2, 0, 0, 0, 0))).getTime(),
 	});
 }

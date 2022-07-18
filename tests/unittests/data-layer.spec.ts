@@ -426,7 +426,7 @@ describe('DataLayer', () => {
 			const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 
 			for (let i = 0; i < 10; ++i) {
-				const timestamp = time.getTime() / 1000;
+				const timestamp = time.getTime();
 				res.push(dataItemAt(timestamp as UTCTimestamp));
 				time.setUTCDate(time.getUTCDate() + 1);
 			}

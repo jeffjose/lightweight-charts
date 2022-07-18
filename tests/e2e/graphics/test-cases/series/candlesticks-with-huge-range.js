@@ -12,7 +12,7 @@ function generateData() {
 	const time = new Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 10000; ++i) {
 		const item = {
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 		};
 		time.setUTCDate(time.getUTCDate() + 1);
 
@@ -30,7 +30,7 @@ function runTestCase(container) {
 	mainSeries.setData(generateData());
 
 	chart.timeScale().setVisibleRange({
-		from: (new Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0))).getTime() / 1000,
-		to: (new Date(Date.UTC(2019, 0, 2, 0, 0, 0, 0))).getTime() / 1000,
+		from: (new Date(Date.UTC(2000, 0, 1, 0, 0, 0, 0))).getTime(),
+		to: (new Date(Date.UTC(2019, 0, 2, 0, 0, 0, 0))).getTime(),
 	});
 }

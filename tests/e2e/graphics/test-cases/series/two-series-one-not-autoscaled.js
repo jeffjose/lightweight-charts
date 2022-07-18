@@ -4,7 +4,7 @@ function generateData(amplitude) {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 500; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: 50 + amplitude * Math.sin(Math.PI * i / 50),
 		});
 

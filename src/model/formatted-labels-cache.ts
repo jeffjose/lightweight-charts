@@ -26,7 +26,7 @@ export class FormattedLabelsCache {
 	public format(tickMark: TickMark): string {
 		const time = tickMark.time;
 		const cacheKey = time.businessDay === undefined
-			? new Date(time.timestamp * 1000).getTime()
+			? new Date(time.timestamp).getTime()
 			: new Date(Date.UTC(time.businessDay.year, time.businessDay.month - 1, time.businessDay.day)).getTime();
 
 		const tick = this._cache.get(cacheKey);

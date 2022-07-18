@@ -4,12 +4,12 @@ function generateData(count, from, empty = false) {
 	for (let i = 0; i < count; ++i) {
 		if (!empty) {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 				value: i,
 			});
 		} else {
 			res.push({
-				time: time.getTime() / 1000,
+				time: time.getTime(),
 			});
 		}
 
@@ -61,12 +61,12 @@ async function shiftTimeScale({ from, to }) {
 }
 
 function addDataToRight(data, areaSeries) {
-	data.push(...generateData(3, (data[data.length - 1].time + ONE_DAY_IN_SEC) * 1000));
+	data.push(...generateData(3, (data[data.length - 1].time + ONE_DAY_IN_SEC)));
 	areaSeries.setData(data);
 }
 
 function addWhitespaceToRight(data, areaSeries) {
-	data.push(...generateData(3, (data[data.length - 1].time + ONE_DAY_IN_SEC) * 1000, true));
+	data.push(...generateData(3, (data[data.length - 1].time + ONE_DAY_IN_SEC), true));
 	areaSeries.setData(data);
 }
 

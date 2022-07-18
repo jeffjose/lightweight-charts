@@ -3,7 +3,7 @@ function generateData(colors) {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 30; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: i,
 			color: colors[i % colors.length],
 		});

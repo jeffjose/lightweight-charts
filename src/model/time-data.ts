@@ -16,7 +16,7 @@ import { RangeImpl } from './range-impl';
  * @example
  * ```ts
  * const timestamp = 1529899200 as UTCTimestamp; // Literal timestamp representing 2018-06-25T04:00:00.000Z
- * const timestamp2 = (Date.now() / 1000) as UTCTimestamp;
+ * const timestamp2 = Date.now() as UTCTimestamp;
  * ```
  */
 export type UTCTimestamp = Nominal<number, 'UTCTimestamp'>;
@@ -73,7 +73,8 @@ export interface TimePoint {
  * @example Between 2020-01-01 and 2020-02-02 there is a month of difference, i.e. for 2020-02-02 weight would be a month.
  */
 export const enum TickMarkWeight {
-	LessThanSecond = 0,
+	LessThanMillisecond = 0,
+	Millisecond = 8,
 	Second = 10,
 	Minute1 = 20,
 	Minute5 = 21,

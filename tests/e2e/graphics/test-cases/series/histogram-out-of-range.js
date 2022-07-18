@@ -53,15 +53,15 @@ function runTestCase(container) {
 	]);
 
 	chart.timeScale().setVisibleRange({
-		from: (new Date(Date.UTC(2018, 11, 1, 0, 0, 0, 0))).getTime() / 1000,
-		to: (new Date(Date.UTC(2018, 11, 31, 0, 0, 0, 0))).getTime() / 1000,
+		from: (new Date(Date.UTC(2018, 11, 1, 0, 0, 0, 0))).getTime(),
+		to: (new Date(Date.UTC(2018, 11, 31, 0, 0, 0, 0))).getTime(),
 	});
 
 	return new Promise(resolve => {
 		setTimeout(() => {
 			chart.timeScale().setVisibleRange({
-				from: (new Date(Date.UTC(2018, 11, 14, 0, 0, 0, 0))).getTime() / 1000,
-				to: (new Date(Date.UTC(2018, 11, 31, 0, 0, 0, 0))).getTime() / 1000,
+				from: (new Date(Date.UTC(2018, 11, 14, 0, 0, 0, 0))).getTime(),
+				to: (new Date(Date.UTC(2018, 11, 31, 0, 0, 0, 0))).getTime(),
 			});
 
 			resolve();

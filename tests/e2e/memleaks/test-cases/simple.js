@@ -17,7 +17,7 @@ function businessDayToTimestamp(time) {
 	d.setUTCMonth(time.month - 1);
 	d.setUTCDate(time.day);
 	d.setUTCHours(0, 0, 0, 0);
-	return d.getTime() / 1000;
+	return d.getTime();
 }
 
 function generateData() {

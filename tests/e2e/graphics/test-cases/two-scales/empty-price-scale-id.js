@@ -14,7 +14,7 @@ function generateData() {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 500; ++i) {
 		const item = {
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 		};
 		time.setUTCDate(time.getUTCDate() + 1);
 
@@ -35,7 +35,7 @@ function generateDataLine(offset) {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 500; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: (offset || 0) + i,
 			color: colors[i % colors.length],
 		});

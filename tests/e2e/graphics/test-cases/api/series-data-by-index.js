@@ -37,7 +37,7 @@ function generateCandlestickData() {
 
 	for (let i = 0; i < 10; i++) {
 		result.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			open: 4 + i,
 			high: 9 + i,
 			low: i,

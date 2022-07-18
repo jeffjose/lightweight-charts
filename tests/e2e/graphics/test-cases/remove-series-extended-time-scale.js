@@ -3,7 +3,7 @@ function generateData(step, startDay) {
 	const time = new Date(Date.UTC(2018, 0, startDay, 0, 0, 0, 0));
 	for (let i = 0; i < 10; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: 50 + Math.sin(Math.PI * i / 50),
 		});
 

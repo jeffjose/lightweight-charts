@@ -3,7 +3,7 @@ function generateData() {
 	const time = new Date(Date.UTC(2018, 0, 1, 0, 0, 0, 0));
 	for (let i = 0; i < 50; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: i * (-1),
 		});
 
@@ -12,7 +12,7 @@ function generateData() {
 
 	for (let i = 0; i < 100; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: -50 + i,
 		});
 
@@ -21,7 +21,7 @@ function generateData() {
 
 	for (let i = 0; i < 100; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: 50 - i,
 		});
 
@@ -30,7 +30,7 @@ function generateData() {
 
 	for (let i = 0; i < 100; ++i) {
 		res.push({
-			time: time.getTime() / 1000,
+			time: time.getTime(),
 			value: -50 + i,
 		});
 
