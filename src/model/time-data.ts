@@ -74,7 +74,7 @@ export interface TimePoint {
  */
 export const enum TickMarkWeight {
 	LessThanMillisecond = 0,
-	Millisecond = 3,
+	Millisecond = 1, // lower numbers made proper label bolding. No unnecessary / redundant bolding
 	Second = 10,
 	Minute1 = 20,
 	Minute5 = 21,
