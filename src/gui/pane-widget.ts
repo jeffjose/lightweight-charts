@@ -207,6 +207,10 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		return this._rowElement;
 	}
 
+	public addClass(cls: string): void {
+		this._rowElement.classList.add(cls);
+	}
+
 	public updatePriceAxisWidgetsStates(): void {
 		if (this._state === null) {
 			return;

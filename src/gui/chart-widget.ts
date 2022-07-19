@@ -631,6 +631,9 @@ export class ChartWidget implements IDestroyable {
 
 			// insert paneWidget
 			this._tableElement.insertBefore(paneWidget.getElement(), this._timeAxisWidget.getElement());
+
+			// Add a pane-${i} class here so that we can identify easily
+			paneWidget.addClass(`pane-${i}`);
 		}
 
 		for (let i = 0; i < targetPaneWidgetsCount; i++) {
