@@ -116,9 +116,6 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		paneWrapper.style.position = 'relative';
 		paneWrapper.style.overflow = 'hidden';
 
-		const legendWrapper = document.createElement('div');
-		legendWrapper.classList.add('legend');
-
 		this._leftAxisCell = document.createElement('td');
 		this._leftAxisCell.classList.add('axis');
 		this._leftAxisCell.classList.add('left');
@@ -130,7 +127,6 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		this._rightAxisCell.style.padding = '0';
 
 		this._paneCell.appendChild(paneWrapper);
-		this._paneCell.appendChild(legendWrapper);
 
 		this._canvasBinding = createBoundCanvas(paneWrapper, new Size(16, 16));
 		this._canvasBinding.subscribeCanvasConfigured(this._canvasConfiguredHandler);
