@@ -196,6 +196,8 @@ export class ChartWidget implements IDestroyable {
 		this._tableElement.style.height = heightStr;
 		this._tableElement.style.width = widthStr;
 
+		this._paneSeparators.forEach((sep: PaneSeparator) => sep.update());
+
 		if (forceRepaint) {
 			this._drawImpl(new InvalidateMask(InvalidationLevel.Full));
 		} else {
