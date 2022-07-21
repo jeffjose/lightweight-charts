@@ -196,8 +196,6 @@ export class ChartWidget implements IDestroyable {
 		this._tableElement.style.height = heightStr;
 		this._tableElement.style.width = widthStr;
 
-		this._paneSeparators.forEach((sep: PaneSeparator) => sep.update());
-
 		if (forceRepaint) {
 			this._drawImpl(new InvalidateMask(InvalidationLevel.Full));
 		} else {
@@ -225,6 +223,9 @@ export class ChartWidget implements IDestroyable {
 		// not ideal solution for sure, but it work's for now ¯\_(ツ)_/¯
 		this._model.applyOptions(options);
 		this._updateTimeAxisVisibility();
+
+		// Update pane separators
+		this._paneSeparators.forEach((sep: PaneSeparator) => sep.update());
 
 		const width = options.width || this._width;
 		const height = options.height || this._height;
