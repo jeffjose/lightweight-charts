@@ -308,5 +308,7 @@ export interface IChartApi {
 	 */
 	swapPane(first: number, second: number): void;
 
+	getNumPanes(): number;
+
 	getPaneElements(): HTMLElement[];
 }

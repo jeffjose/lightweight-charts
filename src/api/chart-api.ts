@@ -322,6 +322,10 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 		this._chartWidget.model().swapPane(first, second);
 	}
 
+	public getNumPanes(): number {
+		return this._chartWidget.paneWidgets().length;
+	}
+
 	public getPaneElements(): HTMLElement[] {
 		return this._chartWidget.paneWidgets().map((paneWidget: PaneWidget) => paneWidget.getPaneCell());
 	}
