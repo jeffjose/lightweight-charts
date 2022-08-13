@@ -51,7 +51,10 @@ export const chartOptionsDefaults: ChartOptionsInternal = {
 			time: true,
 			price: true,
 		},
-		axisDoubleClickReset: true,
+		axisDoubleClickReset: {
+			time: true,
+			price: true,
+		},
 		mouseWheel: true,
 		pinch: true,
 	},
