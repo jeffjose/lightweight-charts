@@ -10,6 +10,7 @@ import { ISubscription } from '../helpers/isubscription';
 import { DeepPartial, merge } from '../helpers/strict-type-checks';
 
 import { PriceAxisViewRendererOptions } from '../renderers/iprice-axis-view-renderer';
+import { LineItemBase } from '../renderers/line-renderer-base';
 import { PriceAxisRendererOptionsProvider } from '../renderers/price-axis-renderer-options-provider';
 
 import { Coordinate } from './coordinate';
@@ -172,7 +173,7 @@ export interface AxisDoubleClickOptions {
 
 export interface HoveredObject {
 	hitTestData?: unknown;
-	object?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint>;
+	object?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint> | LineItemBase;
 }
 
 export interface HoveredSource {

@@ -402,8 +402,10 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		}
 
 		const sources = state.orderedSources();
+		//console.log('sources', sources)
 		for (const source of sources) {
 			const sourceResult = this._hitTestPaneView(source.paneViews(state), x, y);
+			//console.log(sourceResult)
 			if (sourceResult !== null) {
 				return {
 					source: source,
@@ -639,6 +641,7 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 
 	private _hitTestPaneView(paneViews: readonly IPaneView[], x: Coordinate, y: Coordinate): HitTestPaneViewResult | null {
 		const state = ensureNotNull(this._state);
+		//console.log('paneViews', paneViews.length, paneViews)
 		for (const paneView of paneViews) {
 			const renderer = paneView.renderer(this._size.h, this._size.w, state);
 			if (renderer !== null && renderer.hitTest) {

@@ -128,6 +128,7 @@ export class ChartApi implements IChartApi, DataUpdatesConsumer<SeriesType> {
 
 		this._chartWidget.clicked().subscribe(
 			(paramSupplier: MouseEventParamsImplSupplier) => {
+
 				if (this._clickedDelegate.hasListeners()) {
 					this._clickedDelegate.fire(this._convertMouseParams(paramSupplier()));
 				}

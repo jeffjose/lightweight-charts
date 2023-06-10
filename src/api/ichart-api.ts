@@ -14,6 +14,7 @@ import {
 	SeriesType,
 } from '../model/series-options';
 import { Logical, Time, TimePoint } from '../model/time-data';
+import { LineItemBase } from '../renderers/line-renderer-base';
 
 import { BarData, HistogramData, LineData } from './data-consumer';
 import { IPriceScaleApi } from './iprice-scale-api';
@@ -58,7 +59,7 @@ export interface MouseEventParams {
 	/**
 	 * The object at the point of the mouse event.
 	 */
-	target?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint>;
+	target?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint> | LineItemBase;
 }
 
 /**

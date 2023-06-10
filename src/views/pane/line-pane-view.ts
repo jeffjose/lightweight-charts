@@ -29,5 +29,6 @@ export class SeriesLinePaneView extends LinePaneViewBase<'Line', LineStrokeItem,
 		};
 
 		this._renderer.setData(data);
+		this._renderer.setModel(this._model);
 	}
 }

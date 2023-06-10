@@ -9,6 +9,7 @@ export abstract class ScaledRenderer implements IPaneRenderer {
 		ctx.scale(pixelRatio, pixelRatio);
 		this._drawImpl(ctx, isHovered, hitTestData);
 		ctx.restore();
+
 	}
 
 	public drawBackground(ctx: CanvasRenderingContext2D, pixelRatio: number, isHovered: boolean, hitTestData?: unknown): void {

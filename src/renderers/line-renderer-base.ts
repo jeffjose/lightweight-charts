@@ -1,3 +1,4 @@
+import { ChartModel } from '../model/chart-model';
 import { Color, getRepresentativeColor } from '../model/layout-options';
 import { PricedValue } from '../model/price-scale';
 import { SeriesItemsIndexesRange, TimedValue } from '../model/time-data';
@@ -28,13 +29,18 @@ function finishStyledArea(ctx: CanvasRenderingContext2D, style: CanvasRenderingC
 }
 
 export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBase> extends ScaledRenderer {
+	private _model: ChartModel | null = null;
 	protected _data: TData | null = null;
 
 	public setData(data: TData): void {
 		this._data = data;
 	}
+ 
+	public setModel(model: ChartModel): void {
+		this._model = model;
+	}
 
-	protected _drawImpl(ctx: CanvasRenderingContext2D): void {
+	protected _drawImpl(ctx: CanvasRenderingContext2D, isHovered: boolean, hitTestData?: unknown): void {
 		if (this._data === null || this._data.items.length === 0 || this._data.visibleRange === null) {
 			return;
 		}
@@ -70,6 +76,14 @@ export abstract class PaneRendererLineBase<TData extends PaneRendererLineDataBas
 			// walkLine(ctx, data.items, data.lineType, data.visibleRange as SeriesItemsIndexesRange);
 			walkLine(ctx, items, lineType, visibleRange, barWidth, this._strokeStyle.bind(this), finishStyledArea);
 			ctx.stroke();
+		}
+
+		if (this._model !== null) {
+			if (isHovered) {
+				this._model.setMouseCursor();
+			} else {
+				this._model.resetMouseCursor();
+			}
 		}
 	}
 
