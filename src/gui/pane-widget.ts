@@ -521,6 +521,10 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		return this._rightPriceAxisWidget;
 	}
 
+	public getPaneIndex(pane: Pane): number {
+		return this._model().getPaneIndex(pane) ?? 0;
+	}
+
 	private _onStateDestroyed(): void {
 		if (this._state !== null) {
 			this._state.onDestroyed().unsubscribeAll(this);
@@ -534,7 +538,8 @@ export class PaneWidget implements IDestroyable, MouseEventHandlers {
 		const y = event.localY;
 
 		if (this._clicked.hasListeners()) {
-			this._clicked.fire(this._model().timeScale().coordinateToIndex(x), { x, y });
+			const paneIndex = this.getPaneIndex(this.state());
+			this._clicked.fire(this._model().timeScale().coordinateToIndex(x), { x, y, paneIndex });
 		}
 	}
 
