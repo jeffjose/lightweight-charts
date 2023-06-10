@@ -22,7 +22,6 @@ import { SeriesPlotRow } from '../model/series-data';
 import { SeriesLollipop } from '../model/series-lollipops';
 import { SeriesMarker } from '../model/series-markers';
 import { OriginalTime, TimePoint, TimePointIndex } from '../model/time-data';
-import { LineItemBase } from '../renderers/line-renderer-base';
 
 import { createPreconfiguredCanvas, getCanvasDevicePixelRatio, getContext2D, Size } from './canvas-utils';
 import { PaneSeparator, SEPARATOR_HEIGHT } from './pane-separator';
@@ -35,7 +34,7 @@ export interface MouseEventParamsImpl extends PaneInfo {
 	point?: Point;
 	seriesData: Map<Series, SeriesPlotRow>;
 	hoveredSeries?: Series;
-	hoveredObject?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint> | LineItemBase;
+	hoveredObject?: SeriesMarker<TimePoint> | SeriesLollipop<TimePoint>;
 }
 
 export type MouseEventParamsImplSupplier = () => MouseEventParamsImpl;
