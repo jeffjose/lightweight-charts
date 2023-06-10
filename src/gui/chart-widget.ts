@@ -66,6 +66,9 @@ export class ChartWidget implements IDestroyable {
 	private _customPriceLineDragged: Delegate<CustomPriceLineDraggedEventParamsImplSupplier> = new Delegate();
 	private _onWheelBound: (event: WheelEvent) => void;
 
+	// jeffjose (optmization with support for updating width for newly added panes)
+	private _prevNumPanes: number;
+
 	public constructor(container: HTMLElement, options: ChartOptionsInternal) {
 		this._options = options;
 
@@ -124,6 +127,9 @@ export class ChartWidget implements IDestroyable {
 		this._updateTimeAxisVisibility();
 		this._model.timeScale().optionsApplied().subscribe(this._model.fullUpdate.bind(this._model), this);
 		this._model.priceScalesOptionsChanged().subscribe(this._model.fullUpdate.bind(this._model), this);
+
+		// jeffjose (optimization)
+		this._prevNumPanes = 0;
 	}
 
 	public model(): ChartModel {
@@ -441,8 +447,11 @@ export class ChartWidget implements IDestroyable {
 		}
 
 		// perf optimization (jeffjose)
-		if (paneWidth !== paneOrigWidth) {
+		if (this._prevNumPanes != this._paneWidgets.length || paneWidth !== paneOrigWidth) {
+
 			this._model.setWidth(paneWidth);
+
+			this._prevNumPanes = this._paneWidgets.length
 		}
 
 		if (this._leftPriceAxisWidth !== leftPriceAxisWidth) {
